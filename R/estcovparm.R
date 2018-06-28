@@ -5,7 +5,7 @@
 #'
 #' The parameters used in the function can be inherited from the FPBKpred function
 #'
-#' @param formula is an R linear model formula specifying the counts as the
+#' @param formula is  an R linear model formula specifying the counts as the
 #' response variable as well as covariates for predicting counts of animals or plants
 #' on the unsampled sites.
 #' @param data is the data set with the response column of counts, the covariates to
