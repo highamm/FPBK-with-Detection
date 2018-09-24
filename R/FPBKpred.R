@@ -20,6 +20,8 @@
 #' @export FPBKpred
 
 
+formula <- MOOSE_TOTA ~ 1
+data <- Testdata
 
 FPBKpred <- function(formula, data, xcoordcol, ycoordcol,
   covstruct = "Exponential", FPBK.col = NULL) {

@@ -22,9 +22,9 @@ estcovparm <- function(formula, data, xcoordcol, ycoordcol,
   CorModel = "Exponential") {
 
   ## only estimate parameters using sampled sites only
-  response.col <- as.character(attr(stats::terms(formula, data = df), "variables"))[2]
-  ind.sa <- !is.na(df[, response.col])
-  data.sa <- df[ind.sa, ]
+  response.col <- as.character(attr(stats::terms(formula, data = data), "variables"))[2]
+  ind.sa <- !is.na(data[, response.col])
+  data.sa <- data[ind.sa, ]
 
 
   names.theta <- c("nugget", "parsil", "range")
@@ -36,7 +36,7 @@ estcovparm <- function(formula, data, xcoordcol, ycoordcol,
 
   nparm <- length(names.theta)
 
-  n <- length(data.sa$counts)
+  n <- length(data.sa[ ,response.col])
   p <- length(attr(stats::terms(formula), "variables")) - 2
 
 
@@ -70,7 +70,7 @@ estcovparm <- function(formula, data, xcoordcol, ycoordcol,
 
   ## construct the design matrix based on the formula input
   XDesign <- as.matrix(cbind(rep(1, nrow(data.sa)),
-    data.sa[ ,as.character(attr(stats::terms(formula, data = df),
+    data.sa[ ,as.character(attr(stats::terms(formula, data = data),
       "variables"))[-c(1, 2)]]))
 
   m2loglik <- rep(NA, nrow(theta))
@@ -86,7 +86,7 @@ if (CorModel == "Exponential") {
 
     ## optimize using Nelder-Mead
     parmest <- optim(theta[max.lik.obs, ], m2LL.FPBK.nodet.exp,
-      zcol = data.sa$counts,
+      zcol = data.sa[ ,response.col],
       XDesign = XDesign,
       xcoord = data.sa[ ,xcoordcol], ycoord = data.sa[ ,ycoordcol],
       method = "Nelder-Mead")
@@ -149,9 +149,9 @@ dummyvar <- runif(20, 0, 1)
 xcoordcol <- "xcoords"; ycoordcol <- "ycoords"
 CorModel = "Exponential"
 
-df <- as.data.frame(cbind(counts, pred1, pred2, xcoords, ycoords, dummyvar))
+data <- as.data.frame(cbind(counts, pred1, pred2, xcoords, ycoords, dummyvar))
 
 formula <- counts ~ pred1 + pred2
 
-##estcovparm(formula = formula, data = df, xcoordcol = xcoordcol,
+##estcovparm(formula = formula, data = data, xcoordcol = xcoordcol,
 ##  ycoordcol = ycoordcol, CorModel = "Exponential")[[1]]
