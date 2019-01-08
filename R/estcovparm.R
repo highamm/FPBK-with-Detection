@@ -22,8 +22,10 @@ estcovparm <- function(formula, data, xcoordcol, ycoordcol,
   CorModel = "Exponential") {
 
   ## only estimate parameters using sampled sites only
-  response.col <- as.character(attr(stats::terms(formula, data = data), "variables"))[2]
-  ind.sa <- !is.na(data[, response.col])
+  fullmf <- stats::model.frame(formula, na.action = na.pass)
+  yvar <- stats::model.response(fullmf, "numeric")
+  
+  ind.sa <- !is.na(yvar)
   data.sa <- data[ind.sa, ]
 
 
@@ -36,18 +38,18 @@ estcovparm <- function(formula, data, xcoordcol, ycoordcol,
 
   nparm <- length(names.theta)
 
-  n <- length(data.sa[ ,response.col])
+  n <- length(yvar[ind.sa])
   p <- length(attr(stats::terms(formula), "variables")) - 2
 
 
   ## distance matrix for all of the sites
   distmatall <- matrix(0, nrow = nrow(data), ncol = nrow(data))
-  distmatall[lower.tri(distmatall)] <- stats::dist(as.matrix(cbind(data[ ,xcoordcol], data[ ,ycoordcol])))
-  distmat <- distmatall + t(distmatall)
+  distmatall[lower.tri(distmatall)] <- stats::dist(as.matrix(cbind(xcoordcol, ycoordcol)))
+  distmatall <- distmatall + t(distmatall)
 
   ## constructing the distance matrix between sampled sites only
   sampdistmat <- matrix(0, n, n)
-  sampdistmat[lower.tri(sampdistmat)] <- stats::dist(as.matrix(cbind(data.sa[ ,xcoordcol], data.sa[ ,ycoordcol])))
+  sampdistmat[lower.tri(sampdistmat)] <- stats::dist(as.matrix(cbind(xcoordcol[ind.sa], ycoordcol[ind.sa])))
   distmat <- sampdistmat + t(sampdistmat)
 
   ## perform a grid search on log scale to find an appropriate
@@ -55,29 +57,28 @@ estcovparm <- function(formula, data, xcoordcol, ycoordcol,
   ## of nugget to partial sill ratios as well as a few different
   ## range parameters spanning the maximum distance of the distance matrix
 
-  possible.nugget <- c(stats::var(data.sa[ ,response.col]),
-    stats::var(data.sa[ ,response.col]) / 2,
-    stats::var(data.sa[ ,response.col]) / 4)
+  possible.nugget <- c(stats::var(yvar[ind.sa]),
+    stats::var(yvar[ind.sa]) / 2,
+    stats::var(yvar[ind.sa]) / 4)
   possible.theta1 <- log(possible.nugget)
-  possible.parsil <- c(stats::var(data.sa[ ,response.col]),
-    stats::var(data.sa[ ,response.col]) / 2,
-    stats::var(data.sa[ ,response.col]) / 4)
+  possible.parsil <- c(stats::var(yvar[ind.sa]),
+    stats::var(yvar[ind.sa]) / 2,
+    stats::var(yvar[ind.sa]) / 4)
   possible.theta2 <- log(possible.parsil)
   possible.range <- c(max(distmat), max(distmat) / 2, max(distmat) / 4)
   possible.theta3 <- log(possible.range)
 
   theta <- expand.grid(possible.theta1, possible.theta2, possible.theta3)
 
+
   ## construct the design matrix based on the formula input
-  XDesign <- as.matrix(cbind(rep(1, nrow(data.sa)),
-    data.sa[ ,as.character(attr(stats::terms(formula, data = data),
-      "variables"))[-c(1, 2)]]))
+  XDesign <- stats::model.matrix(formula)
 
   m2loglik <- rep(NA, nrow(theta))
 
 if (CorModel == "Exponential") {
     for (i in 1:nrow(theta)) {
-      m2loglik[i] <- m2LL.FPBK.nodet.exp(theta = theta[i, ], zcol = data.sa[ ,response.col],
+      m2loglik[i] <- m2LL.FPBK.nodet.exp(theta = theta[i, ], zcol = yvar[ind.sa],
         XDesign = XDesign,
         xcoord = data.sa[ ,xcoordcol], ycoord = data.sa[ ,ycoordcol])
     }
@@ -86,7 +87,7 @@ if (CorModel == "Exponential") {
 
     ## optimize using Nelder-Mead
     parmest <- optim(theta[max.lik.obs, ], m2LL.FPBK.nodet.exp,
-      zcol = data.sa[ ,response.col],
+      zcol = yvar[ind.sa],
       XDesign = XDesign,
       xcoord = data.sa[ ,xcoordcol], ycoord = data.sa[ ,ycoordcol],
       method = "Nelder-Mead")
@@ -109,7 +110,7 @@ if (CorModel == "Exponential") {
 } else if (CorModel == "Spherical") {
 
   for (i in 1:nrow(theta)) {
-    m2loglik[i] <- m2LL.FPBK.nodet.sph(theta = theta[i, ], zcol = data.sa[ ,response.col],
+    m2loglik[i] <- m2LL.FPBK.nodet.sph(theta = theta[i, ], zcol = yvar[ind.sa],
       XDesign = XDesign,
       xcoord = data.sa[ ,xcoordcol], ycoord = data.sa[ ,ycoordcol])
   }

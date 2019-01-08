@@ -9,8 +9,8 @@
 #' on the unsampled sites.
 #' @param data is the data set with the response column of counts, the covariates to
 #' be used for the block kriging, and the spatial coordinates for all of the sites.
-#' @param xcoordcol is the name of the column in the data frame with x coordinates
-#' @param ycoordcol is the name of the column in the data frame with y coordinates
+#' @param xcoordcol is the name of the column in the data frame with x coordinates or longitudinal coordinates
+#' @param ycoordcol is the name of the column in the data frame with y coordinates or latitudinal cooredinates
 #' @param covstruct is the covariance structure. By default, `covstruct` is
 #' Exponential but other options include the Matern, Spherical, and Gaussian.
 #' @param FPBK.col is a vector in the data set that contains the weights for
@@ -20,8 +20,6 @@
 #' @export FPBKpred
 
 
-formula <- MOOSE_TOTA ~ 1
-data <- Testdata
 
 FPBKpred <- function(formula, data, xcoordcol, ycoordcol,
   covstruct = "Exponential", FPBK.col = NULL) {
@@ -31,7 +29,16 @@ FPBKpred <- function(formula, data, xcoordcol, ycoordcol,
   ## with the weights for the sites that we are predicting (eg. a vector
   ## of 1's and 0's for predicting the total of the sites marked with 1's)
 
-  if (is.null(FPBK.col) == TRUE) {
+  
+  ## ASSUME that coordinates are lat/lon. Convert these to UTM
+   data$xcoordsUTM <- LLtoUTM(cm = base::mean(data[ ,xcoordcol]),
+      lat = data[ ,ycoordcol], lon = data[ ,xcoordcol])$xy[ ,1]
+   data$ycoordsUTM <- LLtoUTM(cm = base::mean(data[ ,xcoordcol]),
+     lat = data[ ,ycoordcol], lon = data[ ,xcoordcol])$xy[ ,2]
+  
+   
+   
+   if (is.null(FPBK.col) == TRUE) {
     predwts <- rep(1, nrow(data))
   } else if (is.character(FPBK.col) == TRUE) {
     predwts <- data[ ,FPBK.col]
@@ -43,67 +50,61 @@ FPBKpred <- function(formula, data, xcoordcol, ycoordcol,
   ## divide data set into sampled sites and unsampled sites based
   ## on whether the response variable has a number (for sampled sites)
   ## or NA (for unsampled sites)
-  response.col <- as.character(attr(stats::terms(formula, data = data), "variables"))[2]
-  ind.sa <- !is.na(data[, response.col])
-  ind.un <- is.na(data[, response.col])
+  
+  fullmf <- stats::model.frame(formula, na.action = na.pass)
+  yvar <- stats::model.response(fullmf, "numeric")
+
+##response.col <- as.character(attr(stats::terms(formula, data = data), "variables"))[2]
+  ind.sa <- !is.na(yvar)
+  ind.un <- is.na(yvar)
   data.sa <- data[ind.sa, ]
   data.un <- data[ind.un, ]
 
-  ## change factor count responses or character count responses to numeric
-  if(is.factor(data.sa[ ,response.col])) {
-    data.sa[ ,response.col] <- as.numeric(as.character(data.sa[ ,response.col]))
-  }
-  if(is.character(data.sa[ ,response.col])) {
-    data.sa[ ,response.col] <- as.numeric(data.sa[ ,response.col])
-  }
 
   ## display some warnings if the user, for example tries to input the
   ## vector of xcoordinates as the input instead of the name of the column
   if(is.character(xcoordcol) == FALSE) {
-    stop("xcoords must be a character giving the name of the column in the data set
+    stop("xcoords must be a string giving the
+      name of the column in the data set
       with the x coordinates")
   }
   if(is.character(ycoordcol) == FALSE) {
-    stop("ycoords must be a character giving the name of the column in the data set
+    stop("ycoords must be a string giving the
+      name of the column in the data set
       with the y coordinates")
   }
 
-  ## put a 1 here for each value of the response in order to create the model matrix
-  data.un[ ,response.col] <- 1
 
   ## create the design matrix for unsampled sites, for all of the sites,
   ## and for the sampled sites, respectively.
-  m.un <- stats::model.frame(formula, data.un)
+  m.un <- stats::model.frame(formula, data.un, na.action = na.pass)
   Xu <- stats::model.matrix(formula, m.un)
+  X <- stats::model.matrix(formula, fullmf)
 
-  X <- stats::model.matrix(formula, stats::model.frame(formula,
-    data, na.action = "na.pass"))
-
-  ## sampled response values
-  z.sa <- stats::model.frame(formula, data.sa)
-  z.sa <- matrix(data.sa[ ,names(z.sa)[1]], ncol = 1)
-  m.sa <- stats::model.frame(formula, data.sa)
+  ## sampled response values and design matrix
+  m.sa <- stats::model.frame(formula, na.action = na.omit)
+  z.sa <- stats::model.response(m.sa)
   Xs <- stats::model.matrix(formula, m.sa)
 
   ## x and y coordinates for sampled and unsampled sites
-  x.sa <- data.sa[ ,xcoordcol]
-  y.sa <- data.sa[ ,ycoordcol]
-  x.un <- data.un[ ,xcoordcol]
-  y.un <- data.un[ ,ycoordcol]
+  x.sa <- data$xcoordsUTM[ind.sa]
+  y.sa <- data$ycoordsUTM[ind.sa]
+  x.un <- data$xcoordsUTM[ind.un]
+  y.un <- data$ycoordsUTM[ind.un]
 
   ## number of sites that were sampled
-  n.sa <- sum(ind.sa)
+  n.sa <- nrow(Xs)
   ## number of sites that were not sampled
-  n.un <- sum(ind.un)
+  n.un <- nrow(Xu)
 
   B <- predwts
   Bs <- B[ind.sa]
   Bu <- B[ind.un]
 
   ## estimate the spatial parameters, the covariance matrix, and
-  ## the inverse of the covariance matrix
-  spat.est <- estcovparm(formula = formula, data = data, xcoordcol = xcoordcol,
-    ycoordcol, CorModel = covstruct)
+  ## the inverse of the covariance matrix, ina list
+  spat.est <- estcovparm(formula = formula, data = data, xcoordcol = data$xcoordsUTM,
+    data$ycoordsUTM, CorModel = covstruct)
   parms.est <- spat.est[[1]]
   Sigma <- spat.est[[2]]
   Sigmai <- spat.est[[3]]
@@ -114,17 +115,25 @@ FPBKpred <- function(formula, data, xcoordcol, ycoordcol,
   Sigma.us <- Sigma[ind.un, ind.sa]
   Sigma.su <- t(Sigma.us)
   Sigma.ss <- Sigma[ind.sa, ind.sa]
-  Sigma.ssi <- solve(Sigma.ss)
+      
+       ## give warning if covariance matrix cannot be inverted
+      if(abs(det(Sigma.ss)) <= .Machine$double.eps) {
+        warning("Covariance matrix is compulationally singular and
+          cannot be inverted")
+      }
+        
+  Sigma.ssi <- solve(Sigma.ss, tol = .Machine$double.eps)
 
   ## the generalized least squares regression coefficient estimates
   betahat <- solve((t(Xs) %*% Sigma.ssi %*% Xs)) %*%
-     (t(Xs) %*% Sigma.ssi %*% as.matrix(data.sa[ ,response.col]))
+     (t(Xs) %*% Sigma.ssi %*% as.matrix(z.sa))
 
   ## estimator for the mean vector
   muhats <- Xs %*% betahat
   muhatu <- Xu %*% betahat
 
   ## matrices used in the kriging equations
+  ## notation follow Ver Hoef (2008)
   Cmat <- Sigma.ss %*% as.matrix(Bs) + Sigma.su %*% as.matrix(Bu)
   Dmat <- t(X) %*% matrix(B) - t(Xs) %*% Sigma.ssi %*% Cmat
   Vmat <- solve(t(Xs) %*% Sigma.ssi %*% Xs)
@@ -136,10 +145,10 @@ FPBKpred <- function(formula, data, xcoordcol, ycoordcol,
   ## creating a column in the outgoing data set for predicted counts as
   ## well as a column indicating whether or not the observation was sampled
   ## or predicted
-  data$preds <- data[ ,response.col]
+  data$preds <- yvar
   data$preds[is.na(data$preds) == TRUE] <- zhatu
   data$sampind <- 1
-  data$sampind[is.na(data[ ,response.col]) == TRUE] <- 0
+  data$sampind[is.na(data$preds) == TRUE] <- 0
 
   ## the FPBK predictor
   FPBKpredictor <- t(Bs) %*% z.sa + t(Bu) %*% zhatu
@@ -150,6 +159,12 @@ FPBKpred <- function(formula, data, xcoordcol, ycoordcol,
     t(Cmat) %*% Sigma.ssi %*% Cmat +
     t(Dmat) %*% Vmat %*% Dmat
 
+  
+  ## returns a list with 3 components:
+  ## 1.) the kriging predictor and prediction variance
+  ## 2.) a matrix with x and y coordinates, kriged predctions, and
+  ## indicators for whether sites were sampled or not
+  ## 3.) a vector of the estimated spatial parameters
   return(list(FPBKpredictor, pred.var.obs,
     as.matrix(cbind(data[ ,xcoordcol], data[, ycoordcol], data$preds, data$sampind)),
     as.vector(c(nugget.effect, parsil.effect, range.effect))))
@@ -164,7 +179,9 @@ df <- as.data.frame(cbind(counts, pred1, pred2, xcoords, ycoords, dummyvar))
 data <- df
 FPBK.col <- NULL
 xcoordcol <- "xcoords"; ycoordcol <- "ycoords"
+formula <- counts ~ poly(pred1, 2) + pred2
 formula <- counts ~ pred1 + pred2
+lm(formula)
 formula <- counts ~ 1
 
 ##FPBKpred(formula = formula, data = data, xcoordcol = xcoordcol,
