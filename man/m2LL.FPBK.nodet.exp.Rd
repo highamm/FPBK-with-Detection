@@ -4,7 +4,7 @@
 \alias{m2LL.FPBK.nodet.exp}
 \title{Estimation Function}
 \usage{
-m2LL.FPBK.nodet.exp(theta, zcol, XDesign, xcoord, ycoord)
+m2LL.FPBK.nodet.exp(theta, zcol, XDesign, xcoord, ycoord, CorModel)
 }
 \arguments{
 \item{theta}{is the parameter vector of (nugget, partialsill, range)}
@@ -16,6 +16,8 @@ m2LL.FPBK.nodet.exp(theta, zcol, XDesign, xcoord, ycoord)
 \item{xcoord}{is a vector of the x spatial coordinates (in UTM)}
 
 \item{ycoord}{is a vector of the y spatial coordinates (in UTM)}
+
+\item{CorModel}{is the geostatistical spatial correlation model to be used. See the \code{corModels} documentation for possible models to use.}
 }
 \value{
 A numeric output of minus 2 times the restricted log likelihood to be minimized by `optim` to obtain spatial parameter estimates.

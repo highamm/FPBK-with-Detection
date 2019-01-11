@@ -8,6 +8,7 @@
 #' @param XDesign is the design matrix containing the covariates used to predict animal or plant abundance (including a column of 1's for the intercept).
 #' @param xcoord is a vector of the x spatial coordinates (in UTM)
 #' @param ycoord is a vector of the y spatial coordinates (in UTM)
+#' @param CorModel is the geostatistical spatial correlation model to be used. See the \code{corModels} documentation for possible models to use.
 
 #' @return A numeric output of minus 2 times the restricted log likelihood to be minimized by `optim` to obtain spatial parameter estimates.
 #' @importFrom stats optim
@@ -17,7 +18,8 @@
 
 ## split into different functions for different covariance matrix structures
 
-m2LL.FPBK.nodet.exp <- function(theta, zcol, XDesign, xcoord, ycoord) {
+m2LL.FPBK.nodet.exp <- function(theta, zcol, XDesign, xcoord, ycoord,
+  CorModel) {
   ## Exponential
 
   n <- length(zcol)
@@ -32,9 +34,15 @@ m2LL.FPBK.nodet.exp <- function(theta, zcol, XDesign, xcoord, ycoord) {
   Dismat <- DM + t(DM)
 
   ## construct spatial autocorrelation matrix using exponential covariance structure
-  Sigmat <- parsil * exp(-Dismat / range)
-  Cmat.nodet <- diag(nugget, nrow = nrow(Sigmat)) + Sigmat
-
+  if (CorModel == "Exponential") {
+    Sigmat <- parsil * corModelExponential(Dismat / range)
+    Cmat.nodet <- diag(nugget, nrow = nrow(Sigmat)) + Sigmat
+  } else if (CorModel == "Spherical") {
+    Sigmat <- parsil * corModelSpherical(Dismat / range)
+    Cmat.nodet <- diag(nugget, nrow = nrow(Sigmat)) +
+       Sigmat
+  }
+  
   ## using REML to obtain the restricted maximum likelihood
   Ci <- mginv(Cmat.nodet, tol = 1e-21)
   covbi <- t(XDesign) %*% Ci %*% XDesign

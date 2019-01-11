@@ -14,7 +14,9 @@
 #' @import ggplot2
 #' @export FPBKoutput
 
-
+## next steps: write up delta method
+## look at adding an extra covariance parameter to est.cov
+## consider scaling the nugget variance for the stratified sites
 
 FPBKoutput <- function(pred.info, conf_level = 0.95,
   get_krigmap = FALSE,

@@ -1,10 +1,16 @@
+#' Spatial Correlation Models
+#'
+#' @param distance.matrix The distance matrix for sampled sites, often divided by the range parameter.
+#' 
+#' @return Correlation Matrix
 
-# --------------- A BUNCH OF SPATIAL CORRELATION MODELS
 
 corModelExponential <- function(distance.matrix)
 {
 	exp(-distance.matrix) 
 }
+
+#' @describeIn corModelExponential Exponential Radon 2 Correlation Structure
 corModelExpRadon2 <- function(distance.matrix)
 {
 	(1 + distance.matrix)*exp(-distance.matrix) 
@@ -13,7 +19,9 @@ corModelExpRadon4 <- function(distance.matrix)
 {
 	(1 + distance.matrix + distance.matrix^2/3)*exp(-distance.matrix) 
 }
-CorModel.Gaussian <- function(distance.matrix)
+
+#' @describeIn corModelExponential Gaussian Correlation Structure
+corModelGaussian <- function(distance.matrix)
 {
 	exp(-distance.matrix^2) 
 }
@@ -33,6 +41,10 @@ corModelCauchyMag <- function(distance.matrix)
 {
 	1/(sqrt(1+distance.matrix^2))^3
 }
+
+#' @describeIn corModelExponential Cauchy Correlation Structure
+#' @param extrap Smoothness parameter (optional)
+
 corModelCauchy <- function(distance.matrix, extrap)
 {
 	1/(1+distance.matrix^2)^extrap
@@ -45,12 +57,17 @@ corModelCircular <- function(distance.matrix)
 	CovMat[distance.matrix >= 1] <- 0
 	CovMat
 }
-CorModelSpherical <- function(distance.matrix)
+
+#' @describeIn corModelExponential Spherical Correlation Structure
+
+corModelSpherical <- function(distance.matrix)
 {
 	CovMat <- (1 - 1.5*distance.matrix + 0.5*distance.matrix^3)
 	CovMat[distance.matrix > 1] <- 0
 	CovMat
 }
+#' @describeIn corModelExponential Cubic Correlation Structure
+
 corModelCubic <- function(distance.matrix)
 {
 	CovMat <- (1 - 7*distance.matrix^2 + 35*distance.matrix^3/4 - 7*distance.matrix^5/2

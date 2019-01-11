@@ -77,11 +77,11 @@ estcovparm <- function(formula, data, xcoordcol, ycoordcol,
 
   m2loglik <- rep(NA, nrow(theta))
 
-if (CorModel == "Exponential") {
     for (i in 1:nrow(theta)) {
       m2loglik[i] <- m2LL.FPBK.nodet.exp(theta = theta[i, ], zcol = yvar[ind.sa],
         XDesign = XDesign,
-        xcoord = data.sa$xcoordsUTM, ycoord = data.sa$ycoordsUTM)
+        xcoord = data.sa$xcoordsUTM, ycoord = data.sa$ycoordsUTM,
+        CorModel = CorModel)
     }
 
     max.lik.obs <- which(m2loglik == min(m2loglik))
@@ -91,7 +91,8 @@ if (CorModel == "Exponential") {
       zcol = yvar[ind.sa],
       XDesign = XDesign,
       xcoord = data.sa$xcoordsUTM, ycoord = data.sa$ycoordsUTM,
-      method = "Nelder-Mead")
+      method = "Nelder-Mead",
+      CorModel = CorModel)
 
     ## extract the covariance parameter estimates. When we deal with covariance
     ## functions with more than 3 parameters, this section will need to be modified
@@ -102,44 +103,52 @@ if (CorModel == "Exponential") {
     range.effect <- exp(parmest$par[3])
     parms.est <- c(nugget.effect, parsil.effect, range.effect)
 
-    Sigma <- diag(nugget.effect,
-      nrow = nrow(distmatall)) +
-      parsil.effect * exp(-distmatall / range.effect)
+    if (CorModel == "Exponential") {
+      Sigma <- parsil.effect *
+        corModelExponential(distmatall / range.effect) +
+        diag(nugget.effect, nrow = nrow(distmatall))
+      Sigmai <- solve(Sigma)
+    } else if (CorModel == "Spherical") {
+      Sigma <-  parsil.effect *
+        corModelSpherical(distmatall / range.effect) +
+        diag(nugget.effect, nrow = nrow(distmatall))
+      Sigmai <- solve(Sigma)
+    }
 
-    Sigmai <- solve(Sigma)
 
-} else if (CorModel == "Spherical") {
+    
+    ## spherical code
 
-  for (i in 1:nrow(theta)) {
-    m2loglik[i] <- m2LL.FPBK.nodet.sph(theta = theta[i, ], zcol = yvar[ind.sa],
-      XDesign = XDesign,
-      xcoord = data.sa$xcoordsUTM, ycoord = data.sa$ycoordsUTM)
-  }
+  # for (i in 1:nrow(theta)) {
+  #   m2loglik[i] <- m2LL.FPBK.nodet.sph(theta = theta[i, ], zcol = yvar[ind.sa],
+  #     XDesign = XDesign,
+  #     xcoord = data.sa$xcoordsUTM, ycoord = data.sa$ycoordsUTM)
+  # }
+  # 
+  # max.lik.obs <- which(m2loglik == min(m2loglik))
+  # 
+  # ## optimize using Nelder-Mead
+  # parmest <- optim(theta[max.lik.obs, ], m2LL.FPBK.nodet.sph,
+  #   zcol = data.sa$counts,
+  #   XDesign = XDesign,
+  #   xcoord = data.sa$xcoordsUTM, ycoord = data.sa$ycoordsUTM,
+  #   method = "Nelder-Mead")
+  # 
+  # min2loglik <- parmest$value
+  # 
+  # nugget.effect <- exp(parmest$par[1])
+  # parsil.effect <- exp(parmest$par[2])
+  # range.effect <- exp(parmest$par[3])
+  # parms.est <- c(nugget.effect, parsil.effect, range.effect)
+  # 
+  # cormatSpher <- 1 - (3 / 2) * (distmat / range.effect) +
+  #   (1 / 2) * (distmat / range.effect) ^ 3
+  # cormatSpher[distmat > range.effect] <- 0
+  # Sigma <- diag(nugget.effect, nrow = nrow(distmat)) +
+  #   parsil.effect * cormatSpher
+  # 
+  # Sigmai <- solve(Sigma)
 
-  max.lik.obs <- which(m2loglik == min(m2loglik))
-
-  ## optimize using Nelder-Mead
-  parmest <- optim(theta[max.lik.obs, ], m2LL.FPBK.nodet.sph,
-    zcol = data.sa$counts,
-    XDesign = XDesign,
-    xcoord = data.sa$xcoordsUTM, ycoord = data.sa$ycoordsUTM,
-    method = "Nelder-Mead")
-
-  min2loglik <- parmest$value
-
-  nugget.effect <- exp(parmest$par[1])
-  parsil.effect <- exp(parmest$par[2])
-  range.effect <- exp(parmest$par[3])
-  parms.est <- c(nugget.effect, parsil.effect, range.effect)
-
-  cormatSpher <- 1 - (3 / 2) * (distmat / range.effect) +
-    (1 / 2) * (distmat / range.effect) ^ 3
-  cormatSpher[distmat > range.effect] <- 0
-  Sigma <- diag(nugget.effect, nrow = nrow(distmat)) +
-    parsil.effect * cormatSpher
-
-  Sigmai <- solve(Sigma)
-}
 
   return(list(parms.est, Sigma, Sigmai))
 }
