@@ -5,7 +5,7 @@
 \title{Perform Finite Population Block Kriging}
 \usage{
 FPBKpred(formula, data, xcoordcol, ycoordcol, covstruct = "Exponential",
-  FPBK.col = NULL)
+  FPBK.col = NULL, detectionest = c(1, 0))
 }
 \arguments{
 \item{formula}{is an R linear model formula specifying the counts as the
@@ -15,15 +15,17 @@ on the unsampled sites.}
 \item{data}{is the data set with the response column of counts, the covariates to
 be used for the block kriging, and the spatial coordinates for all of the sites.}
 
-\item{xcoordcol}{is the name of the column in the data frame with x coordinates}
+\item{xcoordcol}{is the name of the column in the data frame with x coordinates or longitudinal coordinates}
 
-\item{ycoordcol}{is the name of the column in the data frame with y coordinates}
+\item{ycoordcol}{is the name of the column in the data frame with y coordinates or latitudinal coordinates}
 
 \item{covstruct}{is the covariance structure. By default, `covstruct` is
 Exponential but other options include the Matern, Spherical, and Gaussian.}
 
 \item{FPBK.col}{is a vector in the data set that contains the weights for
 prediction. The default setting predicts the population total}
+
+\item{detectionest}{is a vector of an overall sightability estimate (between `0` and `1`) with a standard error. If the user does not have a standard error, then putting `0` as the standard error will create a confidence interval that is too narrow but will give an accurate prediction for the total.}
 }
 \value{
 a list with the estimated population total, the estimated prediction

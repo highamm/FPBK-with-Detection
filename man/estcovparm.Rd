@@ -7,7 +7,7 @@
 estcovparm(formula, data, xcoordcol, ycoordcol, CorModel = "Exponential")
 }
 \arguments{
-\item{formula}{is an R linear model formula specifying the counts as the
+\item{formula}{is  an R linear model formula specifying the counts as the
 response variable as well as covariates for predicting counts of animals or plants
 on the unsampled sites.}
 

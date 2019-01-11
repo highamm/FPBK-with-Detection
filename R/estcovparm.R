@@ -22,7 +22,8 @@ estcovparm <- function(formula, data, xcoordcol, ycoordcol,
   CorModel = "Exponential") {
 
   ## only estimate parameters using sampled sites only
-  fullmf <- stats::model.frame(formula, na.action = na.pass)
+  fullmf <- stats::model.frame(formula, na.action = 
+      stats::na.pass)
   yvar <- stats::model.response(fullmf, "numeric")
   
   ind.sa <- !is.na(yvar)
@@ -44,12 +45,12 @@ estcovparm <- function(formula, data, xcoordcol, ycoordcol,
 
   ## distance matrix for all of the sites
   distmatall <- matrix(0, nrow = nrow(data), ncol = nrow(data))
-  distmatall[lower.tri(distmatall)] <- stats::dist(as.matrix(cbind(xcoordcol, ycoordcol)))
+  distmatall[lower.tri(distmatall)] <- stats::dist(as.matrix(cbind(data$xcoordsUTM, data$ycoordsUTM)))
   distmatall <- distmatall + t(distmatall)
 
   ## constructing the distance matrix between sampled sites only
   sampdistmat <- matrix(0, n, n)
-  sampdistmat[lower.tri(sampdistmat)] <- stats::dist(as.matrix(cbind(xcoordcol[ind.sa], ycoordcol[ind.sa])))
+  sampdistmat[lower.tri(sampdistmat)] <- stats::dist(as.matrix(cbind(data$xcoordsUTM[ind.sa], data$ycoordsUTM[ind.sa])))
   distmat <- sampdistmat + t(sampdistmat)
 
   ## perform a grid search on log scale to find an appropriate
@@ -80,7 +81,7 @@ if (CorModel == "Exponential") {
     for (i in 1:nrow(theta)) {
       m2loglik[i] <- m2LL.FPBK.nodet.exp(theta = theta[i, ], zcol = yvar[ind.sa],
         XDesign = XDesign,
-        xcoord = data.sa[ ,xcoordcol], ycoord = data.sa[ ,ycoordcol])
+        xcoord = data.sa$xcoordsUTM, ycoord = data.sa$ycoordsUTM)
     }
 
     max.lik.obs <- which(m2loglik == min(m2loglik))
@@ -89,7 +90,7 @@ if (CorModel == "Exponential") {
     parmest <- optim(theta[max.lik.obs, ], m2LL.FPBK.nodet.exp,
       zcol = yvar[ind.sa],
       XDesign = XDesign,
-      xcoord = data.sa[ ,xcoordcol], ycoord = data.sa[ ,ycoordcol],
+      xcoord = data.sa$xcoordsUTM, ycoord = data.sa$ycoordsUTM,
       method = "Nelder-Mead")
 
     ## extract the covariance parameter estimates. When we deal with covariance
@@ -112,7 +113,7 @@ if (CorModel == "Exponential") {
   for (i in 1:nrow(theta)) {
     m2loglik[i] <- m2LL.FPBK.nodet.sph(theta = theta[i, ], zcol = yvar[ind.sa],
       XDesign = XDesign,
-      xcoord = data.sa[ ,xcoordcol], ycoord = data.sa[ ,ycoordcol])
+      xcoord = data.sa$xcoordsUTM, ycoord = data.sa$ycoordsUTM)
   }
 
   max.lik.obs <- which(m2loglik == min(m2loglik))
@@ -121,7 +122,7 @@ if (CorModel == "Exponential") {
   parmest <- optim(theta[max.lik.obs, ], m2LL.FPBK.nodet.sph,
     zcol = data.sa$counts,
     XDesign = XDesign,
-    xcoord = data.sa[ ,xcoordcol], ycoord = data.sa[ ,ycoordcol],
+    xcoord = data.sa$xcoordsUTM, ycoord = data.sa$ycoordsUTM,
     method = "Nelder-Mead")
 
   min2loglik <- parmest$value

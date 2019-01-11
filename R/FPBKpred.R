@@ -10,19 +10,21 @@
 #' @param data is the data set with the response column of counts, the covariates to
 #' be used for the block kriging, and the spatial coordinates for all of the sites.
 #' @param xcoordcol is the name of the column in the data frame with x coordinates or longitudinal coordinates
-#' @param ycoordcol is the name of the column in the data frame with y coordinates or latitudinal cooredinates
+#' @param ycoordcol is the name of the column in the data frame with y coordinates or latitudinal coordinates
 #' @param covstruct is the covariance structure. By default, `covstruct` is
 #' Exponential but other options include the Matern, Spherical, and Gaussian.
 #' @param FPBK.col is a vector in the data set that contains the weights for
 #' prediction. The default setting predicts the population total
+#' @param detectionest is a vector of an overall sightability estimate (between `0` and `1`) with a standard error. If the user does not have a standard error, then putting `0` as the standard error will create a confidence interval that is too narrow but will give an accurate prediction for the total.
 #' @return a list with the estimated population total, the estimated prediction
 #' variance, and the vector of predicted counts for all of the sites.
+#' @import stats
 #' @export FPBKpred
 
 
-
 FPBKpred <- function(formula, data, xcoordcol, ycoordcol,
-  covstruct = "Exponential", FPBK.col = NULL) {
+  covstruct = "Exponential", FPBK.col = NULL,
+  detectionest = c(1, 0)) {
 
   ## if FPBK.col is left out, we are predicting the population total.
   ## Otherwise, FPBK.col is the name of the column in the data set
@@ -51,7 +53,8 @@ FPBKpred <- function(formula, data, xcoordcol, ycoordcol,
   ## on whether the response variable has a number (for sampled sites)
   ## or NA (for unsampled sites)
   
-  fullmf <- stats::model.frame(formula, na.action = na.pass)
+  fullmf <- stats::model.frame(formula, na.action = 
+      stats::na.pass)
   yvar <- stats::model.response(fullmf, "numeric")
 
 ##response.col <- as.character(attr(stats::terms(formula, data = data), "variables"))[2]
@@ -77,12 +80,14 @@ FPBKpred <- function(formula, data, xcoordcol, ycoordcol,
 
   ## create the design matrix for unsampled sites, for all of the sites,
   ## and for the sampled sites, respectively.
-  m.un <- stats::model.frame(formula, data.un, na.action = na.pass)
+  m.un <- stats::model.frame(formula, data.un, na.action = 
+      stats::na.pass)
   Xu <- stats::model.matrix(formula, m.un)
   X <- stats::model.matrix(formula, fullmf)
 
   ## sampled response values and design matrix
-  m.sa <- stats::model.frame(formula, na.action = na.omit)
+  m.sa <- stats::model.frame(formula, na.action = 
+      stats::na.omit)
   z.sa <- stats::model.response(m.sa)
   Xs <- stats::model.matrix(formula, m.sa)
 
@@ -131,7 +136,11 @@ FPBKpred <- function(formula, data, xcoordcol, ycoordcol,
   ## estimator for the mean vector
   muhats <- Xs %*% betahat
   muhatu <- Xu %*% betahat
-
+  
+  data$muhat <- rep(NA, nrow(data))
+  data$muhat[ind.sa == TRUE] <- muhats
+  data$muhat[ind.sa == FALSE] <- muhatu
+  
   ## matrices used in the kriging equations
   ## notation follow Ver Hoef (2008)
   Cmat <- Sigma.ss %*% as.matrix(Bs) + Sigma.su %*% as.matrix(Bu)
@@ -148,32 +157,72 @@ FPBKpred <- function(formula, data, xcoordcol, ycoordcol,
   data$preds <- yvar
   data$preds[is.na(data$preds) == TRUE] <- zhatu
   data$sampind <- 1
-  data$sampind[is.na(data$preds) == TRUE] <- 0
+  data$sampind[is.na(data$counts) == TRUE] <- 0
 
+  if (detectionest[1] <= 0 | detectionest[1] > 1) {
+    stop("Detection Estimator in argument `detectionest` must
+      be between 0 and 1 (0, 1]")
+  }
+  
+  if (detectionest[2] < 0) {
+    stop("Detection standard error in argument `detectionest` must be
+      greater than 0")
+  }
+  
+  if (length(detectionest) != 2 | is.numeric(detectionest) == FALSE) {
+    stop("`detectionest` argument must be a vector with exactly two 
+      numeric components: an estimate for detection and the 
+      standard error of that estimate. See documentation if
+      the user does not have a standard error for detection.")
+  }
+  
   ## the FPBK predictor
-  FPBKpredictor <- t(Bs) %*% z.sa + t(Bu) %*% zhatu
+  FPBKpredictor <- (t(Bs) %*% z.sa + t(Bu) %*% zhatu) /
+    detectionest[1] ## divided by the estimator for sightability
 
   ## the prediction variance for the FPBK predictor
-  pred.var.obs <- t(as.matrix(B)) %*% Sigma %*%
+  ## if detectionest is left as the default, we assume
+  ## perfect detection with no variability in the detection estimate
+
+  pred.var.obs <- (t(as.matrix(B)) %*% Sigma %*%
     as.matrix(B) -
     t(Cmat) %*% Sigma.ssi %*% Cmat +
-    t(Dmat) %*% Vmat %*% Dmat
-
+    t(Dmat) %*% Vmat %*% Dmat) / detectionest[1]^2 + 
+    (FPBKpredictor * detectionest[1]) ^ 2 * ((detectionest[2] / 
+        detectionest[1] ^ 2) ^ 2) +
+    (t(as.matrix(B)) %*% Sigma %*%
+        as.matrix(B) -
+        t(Cmat) %*% Sigma.ssi %*% Cmat +
+        t(Dmat) %*% Vmat %*% Dmat) * ((detectionest[2] / 
+            detectionest[1] ^ 2) ^ 2)
+    
   
   ## returns a list with 3 components:
   ## 1.) the kriging predictor and prediction variance
   ## 2.) a matrix with x and y coordinates, kriged predctions, and
   ## indicators for whether sites were sampled or not
   ## 3.) a vector of the estimated spatial parameters
-  return(list(FPBKpredictor, pred.var.obs,
-    as.matrix(cbind(data[ ,xcoordcol], data[, ycoordcol], data$preds, data$sampind)),
-    as.vector(c(nugget.effect, parsil.effect, range.effect))))
+  df_out <- data.frame(cbind(data$xcoordsUTM, data$ycoordsUTM,
+    data$preds, data$sampind, data$muhat))
+  colnames(df_out) <- c("xcoords", "ycoords", "preds", 
+    "sampind", "muhat")
+  obj <- list(FPBKpredictor, pred.var.obs,
+    df_out,
+    as.vector(c(nugget.effect, parsil.effect, range.effect)))
+  
+  names(obj) <- c("FPBK_Prediction", "PredVar",
+    "Pred_df", "SpatialParms")
+  
+  return(obj)
+
 }
 
 
 counts <- c(1, NA, NA, NA, 3, 1:35)
 pred1 <- runif(40, 0, 1); pred2 <- rnorm(40, 0, 1)
-xcoords <- runif(40, 0, 1); ycoords <- runif(40, 0, 1)
+xcoordinit <- 1:7; ycoordinit <- 1:7
+grids <- expand.grid(xcoordinit, ycoordinit)[1:40, ]
+xcoords <- grids$Var1; ycoords <- grids$Var2
 dummyvar <- runif(40, 0, 1)
 df <- as.data.frame(cbind(counts, pred1, pred2, xcoords, ycoords, dummyvar))
 data <- df
@@ -181,7 +230,6 @@ FPBK.col <- NULL
 xcoordcol <- "xcoords"; ycoordcol <- "ycoords"
 formula <- counts ~ poly(pred1, 2) + pred2
 formula <- counts ~ pred1 + pred2
-lm(formula)
 formula <- counts ~ 1
 
 ##FPBKpred(formula = formula, data = data, xcoordcol = xcoordcol,
