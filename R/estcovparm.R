@@ -164,5 +164,5 @@ data <- as.data.frame(cbind(counts, pred1, pred2, xcoords, ycoords, dummyvar))
 
 formula <- counts ~ pred1 + pred2
 
-##estcovparm(formula = formula, data = data, xcoordcol = xcoordcol,
-##  ycoordcol = ycoordcol, CorModel = "Exponential")[[1]]
+estcovparm(formula = formula, data = data, xcoordcol = xcoordcol,
+  ycoordcol = ycoordcol, CorModel = "Exponential")[[1]]

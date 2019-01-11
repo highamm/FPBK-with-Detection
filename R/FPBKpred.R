@@ -108,7 +108,8 @@ FPBKpred <- function(formula, data, xcoordcol, ycoordcol,
 
   ## estimate the spatial parameters, the covariance matrix, and
   ## the inverse of the covariance matrix, ina list
-  spat.est <- estcovparm(formula = formula, data = data, xcoordcol = data$xcoordsUTM,
+  spat.est <- estcovparm(formula = formula, data = data,
+    xcoordcol = data$xcoordsUTM,
     data$ycoordsUTM, CorModel = covstruct)
   parms.est <- spat.est[[1]]
   Sigma <- spat.est[[2]]
@@ -220,7 +221,7 @@ FPBKpred <- function(formula, data, xcoordcol, ycoordcol,
 
 counts <- c(1, NA, NA, NA, 3, 1:35)
 pred1 <- runif(40, 0, 1); pred2 <- rnorm(40, 0, 1)
-xcoordinit <- 1:7; ycoordinit <- 1:7
+xcoordinit <- runif(40, -162, -160); ycoordinit <- runif(40, 60, 62)
 grids <- expand.grid(xcoordinit, ycoordinit)[1:40, ]
 xcoords <- grids$Var1; ycoords <- grids$Var2
 dummyvar <- runif(40, 0, 1)
@@ -233,4 +234,4 @@ formula <- counts ~ pred1 + pred2
 formula <- counts ~ 1
 
 ##FPBKpred(formula = formula, data = data, xcoordcol = xcoordcol,
-##  ycoordcol = ycoordcol, covstruct = "Exponential", FPBK.col = NULL)
+##  ycoordcol = ycoordcol, covstruct = "Spherical", FPBK.col = NULL)
