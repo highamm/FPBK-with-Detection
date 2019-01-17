@@ -11,11 +11,12 @@
 #' be used for the block kriging, and the spatial coordinates for all of the sites.
 #' @param xcoordcol is the name of the column in the data frame with x coordinates or longitudinal coordinates
 #' @param ycoordcol is the name of the column in the data frame with y coordinates or latitudinal coordinates
-#' @param covstruct is the covariance structure. By default, `covstruct` is
+#' @param CorModel is the covariance structure. By default, `CorModel` is
 #' Exponential but other options include the Matern, Spherical, and Gaussian.
 #' @param FPBK.col is a vector in the data set that contains the weights for
 #' prediction. The default setting predicts the population total
 #' @param detectionest is a vector of an overall sightability estimate (between `0` and `1`) with a standard error. If the user does not have a standard error, then putting `0` as the standard error will create a confidence interval that is too narrow but will give an accurate prediction for the total.
+#' @param coordtype specifies whether spatial coordinates are in latitude, longitude (\code{LatLon}) form or UTM (\code{UTM}) form.
 #' @return a list with the estimated population total, the estimated prediction
 #' variance, and the vector of predicted counts for all of the sites.
 #' @import stats
@@ -23,8 +24,8 @@
 
 
 FPBKpred <- function(formula, data, xcoordcol, ycoordcol,
-  covstruct = "Exponential", FPBK.col = NULL,
-  detectionest = c(1, 0)) {
+  CorModel = "Exponential", FPBK.col = NULL,
+  detectionest = c(1, 0), coordtype = "LatLon") {
 
   ## if FPBK.col is left out, we are predicting the population total.
   ## Otherwise, FPBK.col is the name of the column in the data set
@@ -33,11 +34,17 @@ FPBKpred <- function(formula, data, xcoordcol, ycoordcol,
 
   
   ## ASSUME that coordinates are lat/lon. Convert these to UTM
+  if (coordtype != "LatLon" & coordtype != "UTM") {
+    stop("coordtype must be a character string LatLon or UTM")
+  } else if (coordtype == "LatLon") {
    data$xcoordsUTM <- LLtoUTM(cm = base::mean(data[ ,xcoordcol]),
       lat = data[ ,ycoordcol], lon = data[ ,xcoordcol])$xy[ ,1]
    data$ycoordsUTM <- LLtoUTM(cm = base::mean(data[ ,xcoordcol]),
      lat = data[ ,ycoordcol], lon = data[ ,xcoordcol])$xy[ ,2]
-  
+  } else if (coordtype == "UTM") {
+    data$xcoordsUTM <- data[ ,xcoordcol]
+    data$ycoordsUTM <- data[ ,ycoordcol]
+  }
    
    
    if (is.null(FPBK.col) == TRUE) {
@@ -110,7 +117,7 @@ FPBKpred <- function(formula, data, xcoordcol, ycoordcol,
   ## the inverse of the covariance matrix, ina list
   spat.est <- estcovparm(formula = formula, data = data,
     xcoordsvec = data$xcoordsUTM,
-    ycoordsvec = data$ycoordsUTM, CorModel = covstruct)
+    ycoordsvec = data$ycoordsUTM, CorModel = CorModel)
   parms.est <- spat.est[[1]]
   Sigma <- spat.est[[2]]
   Sigmai <- spat.est[[3]]
@@ -219,9 +226,10 @@ FPBKpred <- function(formula, data, xcoordcol, ycoordcol,
 }
 
 
-counts <- c(1, NA, NA, NA, 3, 1:35)
+counts <- rpois(40, 20)
+counts[c(2, 7, 19, 20, 24)] <- NA
 pred1 <- runif(40, 0, 1); pred2 <- rnorm(40, 0, 1)
-xcoordinit <- runif(40, -162, -160); ycoordinit <- runif(40, 60, 62)
+xcoordinit <- 1:7; ycoordinit <- 1:7
 grids <- expand.grid(xcoordinit, ycoordinit)[1:40, ]
 xcoords <- grids$Var1; ycoords <- grids$Var2
 dummyvar <- runif(40, 0, 1)
@@ -229,9 +237,11 @@ df <- as.data.frame(cbind(counts, pred1, pred2, xcoords, ycoords, dummyvar))
 data <- df
 FPBK.col <- NULL
 xcoordcol <- "xcoords"; ycoordcol <- "ycoords"
+coordtype <- "UTM"
 formula <- counts ~ poly(pred1, 2) + pred2
 formula <- counts ~ pred1 + pred2
 formula <- counts ~ 1
 
 ##FPBKpred(formula = formula, data = data, xcoordcol = xcoordcol,
-##  ycoordcol = ycoordcol, covstruct = "Gaussian", FPBK.col = NULL)[[2]]
+##  ycoordcol = ycoordcol, CorModel = "Gaussian",
+##  coordtype = "UTM", FPBK.col = NULL)[[1]]

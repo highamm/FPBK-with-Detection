@@ -4,11 +4,11 @@
 \alias{FPBKoutput}
 \title{Create maps and summaries from FPBK results.}
 \usage{
-FPBKoutput(pred.info, conf_level = 0.95, get_krigmap = FALSE,
-  get_variogram = FALSE)
+FPBKoutput(pred_info, conf_level = 0.95, get_krigmap = FALSE,
+  get_variogram = FALSE, CorModel = "Exponential")
 }
 \arguments{
-\item{pred.info}{is the output from \code{FPBK.pred} in this package.}
+\item{pred_info}{is the output from \code{FPBK.pred} in this package.}
 
 \item{conf_level}{is the desired confidence level for the prediction}
 
@@ -17,6 +17,9 @@ the kriged responses is returned}
 
 \item{get_variogram}{is an indicator for whether or not
 a variogram of the residuals should be returned}
+
+\item{CorModel}{Covariance model used, which is required to obtain 
+the appropriate fitted model semi-variogram.}
 }
 \value{
 maps of the kriged and observed counts, the fitted model variogram,

@@ -106,22 +106,23 @@ estcovparm <- function(formula, data, xcoordsvec, ycoordsvec,
     if (CorModel == "Exponential") {
       Sigma <- parsil.effect *
         corModelExponential(distmatall, range.effect) +
-        diag(nugget.effect, nrow = nrow(distmatall))
-      Sigmai <- solve(Sigma)
+        diag(nugget.effect, nrow = nrow(distmatall)) 
     } else if (CorModel == "Gaussian") {
       Sigma <- parsil.effect * 
         (corModelGaussian(distmatall, range.effect)) + 
         diag(nugget.effect, nrow = nrow(distmatall))
-      Sigmai <- solve(Sigma)
     } else if (CorModel == "Spherical") {
       Sigma <-  parsil.effect *
         corModelSpherical(distmatall, range.effect) +
-        diag(nugget.effect, nrow = nrow(distmatall))
-      Sigmai <- solve(Sigma)
+        diag(nugget.effect, nrow = nrow(distmatall)) 
     }
 
-
+    ## diagonalization to stabilize the resulting covariance matrix
+    if (nugget.effect / parsil.effect < 0.001) {
+      Sigma <- Sigma + diag(0.1, nrow = nrow(Sigma))
+    }
     
+    Sigmai <- solve(Sigma)
     ## spherical code
 
   # for (i in 1:nrow(theta)) {
