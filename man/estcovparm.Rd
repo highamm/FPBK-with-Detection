@@ -4,7 +4,7 @@
 \alias{estcovparm}
 \title{Estimate Covariance Parameters}
 \usage{
-estcovparm(formula, data, xcoordcol, ycoordcol, CorModel = "Exponential")
+estcovparm(formula, data, xcoordsvec, ycoordsvec, CorModel = "Exponential")
 }
 \arguments{
 \item{formula}{is  an R linear model formula specifying the counts as the
@@ -14,9 +14,9 @@ on the unsampled sites.}
 \item{data}{is the data set with the response column of counts, the covariates to
 be used for the block kriging, and the spatial coordinates for all of the sites.}
 
-\item{xcoordcol}{is the name of the column in the data frame with x coordinates}
+\item{xcoordsvec}{is a vector of x coordinates}
 
-\item{ycoordcol}{is the name of the column in the data frame with y coordinates}
+\item{ycoordsvec}{is a vector of y coordinates}
 
 \item{CorModel}{is the covariance structure. By default, `covstruct` is
 Exponential but other options include the Matern, Spherical, and Gaussian.}

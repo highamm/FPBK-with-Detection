@@ -1,6 +1,6 @@
 #' Estimation Function
 #'
-#' The primary purpose of \code{m2LL.FPBK.nodet.exp} is to estimate the spatial
+#' The primary purpose of \code{m2LL.FPBK.nodet} is to estimate the spatial
 #' covariance parameters using REML.
 #'
 #' @param theta is the parameter vector of (nugget, partialsill, range)
@@ -14,11 +14,11 @@
 #' @importFrom stats optim
 #' @importFrom stats glm
 #' @importFrom stats rbinom
-#' @export m2LL.FPBK.nodet.exp
+#' @export m2LL.FPBK.nodet
 
 ## split into different functions for different covariance matrix structures
 
-m2LL.FPBK.nodet.exp <- function(theta, zcol, XDesign, xcoord, ycoord,
+m2LL.FPBK.nodet <- function(theta, zcol, XDesign, xcoord, ycoord,
   CorModel) {
   ## Exponential
 
@@ -35,10 +35,13 @@ m2LL.FPBK.nodet.exp <- function(theta, zcol, XDesign, xcoord, ycoord,
 
   ## construct spatial autocorrelation matrix using exponential covariance structure
   if (CorModel == "Exponential") {
-    Sigmat <- parsil * corModelExponential(Dismat / range)
+    Sigmat <- parsil * corModelExponential(Dismat, range)
+    Cmat.nodet <- diag(nugget, nrow = nrow(Sigmat)) + Sigmat
+  } else if (CorModel == "Gaussian") {
+    Sigmat <- parsil * (corModelGaussian(Dismat, range))
     Cmat.nodet <- diag(nugget, nrow = nrow(Sigmat)) + Sigmat
   } else if (CorModel == "Spherical") {
-    Sigmat <- parsil * corModelSpherical(Dismat / range)
+    Sigmat <- parsil * corModelSpherical(Dismat, range)
     Cmat.nodet <- diag(nugget, nrow = nrow(Sigmat)) +
        Sigmat
   }
@@ -107,7 +110,6 @@ pred1 <- runif(40, 0, 1); pred2 <- rnorm(40, 0, 1)
 XDesign <- as.matrix(cbind(rep(1, 40), pred1, pred2))
 xcoord <- runif(40, 0, 1); ycoord <- runif(40, 0, 1)
 
-##m2LL.FPBK.nodet.exp(theta = theta, zcol = zcol, XDesign = XDesign,
+##m2LL.FPBK.nodet(theta = theta, zcol = zcol, XDesign = XDesign,
 ##  xcoord = xcoords, ycoord = ycoords)
-##m2LL.FPBK.nodet.sph(theta = theta, zcol = zcol, XDesign = XDesign,
-##  xcoord = xcoords, ycoord = ycoords)
+

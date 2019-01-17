@@ -9,20 +9,23 @@
 \alias{corModelCubic}
 \title{Spatial Correlation Models}
 \usage{
-corModelExponential(distance.matrix)
+corModelExponential(distance.matrix, range)
 
 corModelExpRadon2(distance.matrix)
 
-corModelGaussian(distance.matrix)
+corModelGaussian(distance.matrix, range)
 
 corModelCauchy(distance.matrix, extrap)
 
-corModelSpherical(distance.matrix)
+corModelSpherical(distance.matrix, range)
 
 corModelCubic(distance.matrix)
 }
 \arguments{
-\item{distance.matrix}{The distance matrix for sampled sites, often divided by the range parameter.}
+\item{distance.matrix}{The distance matrix for sampled sites}
+
+\item{range}{The range that determines how quickly covariance
+among sites tapers}
 
 \item{extrap}{Smoothness parameter (optional)}
 }

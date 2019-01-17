@@ -109,8 +109,8 @@ FPBKpred <- function(formula, data, xcoordcol, ycoordcol,
   ## estimate the spatial parameters, the covariance matrix, and
   ## the inverse of the covariance matrix, ina list
   spat.est <- estcovparm(formula = formula, data = data,
-    xcoordcol = data$xcoordsUTM,
-    data$ycoordsUTM, CorModel = covstruct)
+    xcoordsvec = data$xcoordsUTM,
+    ycoordsvec = data$ycoordsUTM, CorModel = covstruct)
   parms.est <- spat.est[[1]]
   Sigma <- spat.est[[2]]
   Sigmai <- spat.est[[3]]
@@ -234,4 +234,4 @@ formula <- counts ~ pred1 + pred2
 formula <- counts ~ 1
 
 ##FPBKpred(formula = formula, data = data, xcoordcol = xcoordcol,
-##  ycoordcol = ycoordcol, covstruct = "Spherical", FPBK.col = NULL)
+##  ycoordcol = ycoordcol, covstruct = "Gaussian", FPBK.col = NULL)[[2]]
