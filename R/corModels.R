@@ -11,7 +11,6 @@ corModelExponential <- function(distance.matrix, range)
 	exp(-distance.matrix / range) 
 }
 
-#' @describeIn corModelExponential Exponential Radon 2 Correlation Structure
 corModelExpRadon2 <- function(distance.matrix)
 {
 	(1 + distance.matrix)*exp(-distance.matrix) 
@@ -46,7 +45,7 @@ corModelCauchyMag <- function(distance.matrix)
 #' @describeIn corModelExponential Cauchy Correlation Structure
 #' @param extrap Smoothness parameter (optional)
 
-corModelCauchy <- function(distance.matrix, extrap)
+corModelCauchy <- function(distance.matrix, range, extrap)
 {
 	1/(1+distance.matrix^2)^extrap
 }

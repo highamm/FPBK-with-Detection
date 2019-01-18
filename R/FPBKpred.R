@@ -13,8 +13,12 @@
 #' @param ycoordcol is the name of the column in the data frame with y coordinates or latitudinal coordinates
 #' @param CorModel is the covariance structure. By default, `CorModel` is
 #' Exponential but other options include the Matern, Spherical, and Gaussian.
-#' @param FPBK.col is a vector in the data set that contains the weights for
+#' @param FPBKcol is a vector in the data set that contains the weights for
 #' prediction. The default setting predicts the population total
+#' @param areacol is the name of the column that has the area
+#' for each site of interest. If left blank, it is assumed
+#' that each site has an equal area and the kriging is done
+#' on the counts directly.
 #' @param detectionest is a vector of an overall sightability estimate (between `0` and `1`) with a standard error. If the user does not have a standard error, then putting `0` as the standard error will create a confidence interval that is too narrow but will give an accurate prediction for the total.
 #' @param coordtype specifies whether spatial coordinates are in latitude, longitude (\code{LatLon}) form or UTM (\code{UTM}) form.
 #' @return a list with the estimated population total, the estimated prediction
@@ -24,35 +28,46 @@
 
 
 FPBKpred <- function(formula, data, xcoordcol, ycoordcol,
-  CorModel = "Exponential", FPBK.col = NULL,
+  CorModel = "Exponential", FPBKcol = NULL,
+  areacol = NULL,
   detectionest = c(1, 0), coordtype = "LatLon") {
 
-  ## if FPBK.col is left out, we are predicting the population total.
-  ## Otherwise, FPBK.col is the name of the column in the data set
+  ## if FPBKcol is left out, we are predicting the population total.
+  ## Otherwise, FPBKcol is the name of the column in the data set
   ## with the weights for the sites that we are predicting (eg. a vector
   ## of 1's and 0's for predicting the total of the sites marked with 1's)
+  
+  if(is.null(areacol) == TRUE) {
+    area <- rep(1, nrow(data))
+  } else if (is.character(areacol) == TRUE) {
+    area <- data[ ,areacol]
+  } else{
+    stop("areacol must be a character specifying the name of the
+      column of areas in the data set")
+  }
 
   
   ## ASSUME that coordinates are lat/lon. Convert these to UTM
   if (coordtype != "LatLon" & coordtype != "UTM") {
     stop("coordtype must be a character string LatLon or UTM")
   } else if (coordtype == "LatLon") {
-   data$xcoordsUTM <- LLtoUTM(cm = base::mean(data[ ,xcoordcol]),
+   xcoordsUTM <- LLtoUTM(cm = base::mean(data[ ,xcoordcol]),
       lat = data[ ,ycoordcol], lon = data[ ,xcoordcol])$xy[ ,1]
-   data$ycoordsUTM <- LLtoUTM(cm = base::mean(data[ ,xcoordcol]),
+   ycoordsUTM <- LLtoUTM(cm = base::mean(data[ ,xcoordcol]),
      lat = data[ ,ycoordcol], lon = data[ ,xcoordcol])$xy[ ,2]
   } else if (coordtype == "UTM") {
-    data$xcoordsUTM <- data[ ,xcoordcol]
-    data$ycoordsUTM <- data[ ,ycoordcol]
+    xcoordsUTM <- data[ ,xcoordcol]
+    ycoordsUTM <- data[ ,ycoordcol]
   }
    
    
-   if (is.null(FPBK.col) == TRUE) {
+   if (is.null(FPBKcol) == TRUE) {
     predwts <- rep(1, nrow(data))
-  } else if (is.character(FPBK.col) == TRUE) {
-    predwts <- data[ ,FPBK.col]
+  } else if (is.character(FPBKcol) == TRUE) {
+    predwts <- data[ ,FPBKcol]
   } else{
-    stop("FPBK.col must be a character specifying the name of the column of
+    stop("FPBKcol must be a character specifying the name of the
+      column of
       prediction weights in the data set")
   }
 
@@ -60,9 +75,13 @@ FPBKpred <- function(formula, data, xcoordcol, ycoordcol,
   ## on whether the response variable has a number (for sampled sites)
   ## or NA (for unsampled sites)
   
+  ## want to krig the density now, not the count
+  
+
   fullmf <- stats::model.frame(formula, na.action = 
-      stats::na.pass)
+      stats::na.pass, data = data)
   yvar <- stats::model.response(fullmf, "numeric")
+  density <- yvar / area
 
 ##response.col <- as.character(attr(stats::terms(formula, data = data), "variables"))[2]
   ind.sa <- !is.na(yvar)
@@ -97,27 +116,32 @@ FPBKpred <- function(formula, data, xcoordcol, ycoordcol,
       stats::na.omit)
   z.sa <- stats::model.response(m.sa)
   Xs <- stats::model.matrix(formula, m.sa)
-
+  z.density <- z.sa / area[ind.sa]
+  
   ## x and y coordinates for sampled and unsampled sites
-  x.sa <- data$xcoordsUTM[ind.sa]
-  y.sa <- data$ycoordsUTM[ind.sa]
-  x.un <- data$xcoordsUTM[ind.un]
-  y.un <- data$ycoordsUTM[ind.un]
+  x.sa <- xcoordsUTM[ind.sa]
+  y.sa <- ycoordsUTM[ind.sa]
+  x.un <- xcoordsUTM[ind.un]
+  y.un <- ycoordsUTM[ind.un]
 
   ## number of sites that were sampled
   n.sa <- nrow(Xs)
   ## number of sites that were not sampled
   n.un <- nrow(Xu)
 
-  B <- predwts
+  ## double check that this is what we would want when areas
+  ## are not equal to 1
+  B <- predwts * area
   Bs <- B[ind.sa]
   Bu <- B[ind.un]
 
+  
   ## estimate the spatial parameters, the covariance matrix, and
-  ## the inverse of the covariance matrix, ina list
-  spat.est <- estcovparm(formula = formula, data = data,
-    xcoordsvec = data$xcoordsUTM,
-    ycoordsvec = data$ycoordsUTM, CorModel = CorModel)
+  ## the inverse of the covariance matrix
+  spat.est <- estcovparm(response = density,
+    designmatrix = as.matrix(X),
+    xcoordsvec = xcoordsUTM,
+    ycoordsvec = ycoordsUTM, CorModel = CorModel)
   parms.est <- spat.est[[1]]
   Sigma <- spat.est[[2]]
   Sigmai <- spat.est[[3]]
@@ -139,33 +163,37 @@ FPBKpred <- function(formula, data, xcoordcol, ycoordcol,
 
   ## the generalized least squares regression coefficient estimates
   betahat <- solve((t(Xs) %*% Sigma.ssi %*% Xs)) %*%
-     (t(Xs) %*% Sigma.ssi %*% as.matrix(z.sa))
+     (t(Xs) %*% Sigma.ssi %*% as.matrix(z.density))
 
   ## estimator for the mean vector
   muhats <- Xs %*% betahat
   muhatu <- Xu %*% betahat
   
-  data$muhat <- rep(NA, nrow(data))
-  data$muhat[ind.sa == TRUE] <- muhats
-  data$muhat[ind.sa == FALSE] <- muhatu
+  muhat <- rep(NA, nrow(data))
+  muhat[ind.sa == TRUE] <- muhats
+  muhat[ind.sa == FALSE] <- muhatu
   
   ## matrices used in the kriging equations
   ## notation follow Ver Hoef (2008)
-  Cmat <- Sigma.ss %*% as.matrix(Bs) + Sigma.su %*% as.matrix(Bu)
+  Cmat <- Sigma.ss %*% as.matrix(Bs) +
+    Sigma.su %*% as.matrix(Bu)
   Dmat <- t(X) %*% matrix(B) - t(Xs) %*% Sigma.ssi %*% Cmat
   Vmat <- solve(t(Xs) %*% Sigma.ssi %*% Xs)
 
   ## the predicted values for the sites that were not sampled
-  zhatu <- Sigma.us %*% Sigma.ssi %*% (z.sa -
+  zhatu <- Sigma.us %*% Sigma.ssi %*% (z.density -
       muhats) + muhatu
 
   ## creating a column in the outgoing data set for predicted counts as
   ## well as a column indicating whether or not the observation was sampled
   ## or predicted
-  data$preds <- yvar
-  data$preds[is.na(data$preds) == TRUE] <- zhatu
-  data$sampind <- 1
-  data$sampind[is.na(data$counts) == TRUE] <- 0
+  preddensity <- density
+  preddensity[is.na(preddensity) == TRUE] <- zhatu
+  
+  preds <- preddensity * area
+  
+  sampind <- 1
+  sampind[is.na(yvar) == TRUE] <- 0
 
   if (detectionest[1] <= 0 | detectionest[1] > 1) {
     stop("Detection Estimator in argument `detectionest` must
@@ -185,9 +213,9 @@ FPBKpred <- function(formula, data, xcoordcol, ycoordcol,
   }
   
   ## the FPBK predictor
-  FPBKpredictor <- (t(Bs) %*% z.sa + t(Bu) %*% zhatu) /
+  FPBKpredictor <- (t(B) %*% preddensity) /
     detectionest[1] ## divided by the estimator for sightability
-
+  
   ## the prediction variance for the FPBK predictor
   ## if detectionest is left as the default, we assume
   ## perfect detection with no variability in the detection estimate
@@ -210,9 +238,10 @@ FPBKpred <- function(formula, data, xcoordcol, ycoordcol,
   ## 2.) a matrix with x and y coordinates, kriged predctions, and
   ## indicators for whether sites were sampled or not
   ## 3.) a vector of the estimated spatial parameters
-  df_out <- data.frame(cbind(data$xcoordsUTM, data$ycoordsUTM,
-    data$preds, data$sampind, data$muhat))
-  colnames(df_out) <- c("xcoords", "ycoords", "preds", 
+  df_out <- data.frame(cbind(xcoordsUTM, ycoordsUTM,
+    preddensity, preds, sampind, muhat))
+  colnames(df_out) <- c("xcoords", "ycoords",
+    "preddensity", "preds", 
     "sampind", "muhat")
   obj <- list(FPBKpredictor, pred.var.obs,
     df_out,
@@ -233,9 +262,10 @@ xcoordinit <- 1:7; ycoordinit <- 1:7
 grids <- expand.grid(xcoordinit, ycoordinit)[1:40, ]
 xcoords <- grids$Var1; ycoords <- grids$Var2
 dummyvar <- runif(40, 0, 1)
-df <- as.data.frame(cbind(counts, pred1, pred2, xcoords, ycoords, dummyvar))
+areavar <- 1:40
+df <- as.data.frame(cbind(counts, pred1, pred2, xcoords, ycoords, dummyvar, areavar))
 data <- df
-FPBK.col <- NULL
+FPBKcol <- NULL
 xcoordcol <- "xcoords"; ycoordcol <- "ycoords"
 coordtype <- "UTM"
 formula <- counts ~ poly(pred1, 2) + pred2
@@ -244,4 +274,4 @@ formula <- counts ~ 1
 
 ##FPBKpred(formula = formula, data = data, xcoordcol = xcoordcol,
 ##  ycoordcol = ycoordcol, CorModel = "Gaussian",
-##  coordtype = "UTM", FPBK.col = NULL)[[1]]
+##  coordtype = "UTM", FPBKcol = NULL)[[1]]

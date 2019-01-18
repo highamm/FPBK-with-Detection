@@ -2,7 +2,6 @@
 % Please edit documentation in R/corModels.R
 \name{corModelExponential}
 \alias{corModelExponential}
-\alias{corModelExpRadon2}
 \alias{corModelGaussian}
 \alias{corModelCauchy}
 \alias{corModelSpherical}
@@ -11,11 +10,9 @@
 \usage{
 corModelExponential(distance.matrix, range)
 
-corModelExpRadon2(distance.matrix)
-
 corModelGaussian(distance.matrix, range)
 
-corModelCauchy(distance.matrix, extrap)
+corModelCauchy(distance.matrix, range, extrap)
 
 corModelSpherical(distance.matrix, range)
 
@@ -37,8 +34,6 @@ Spatial Correlation Models
 }
 \section{Functions}{
 \itemize{
-\item \code{corModelExpRadon2}: Exponential Radon 2 Correlation Structure
-
 \item \code{corModelGaussian}: Gaussian Correlation Structure
 
 \item \code{corModelCauchy}: Cauchy Correlation Structure

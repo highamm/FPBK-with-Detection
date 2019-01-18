@@ -17,8 +17,9 @@
 #' @export FPBKoutput
 
 ## next steps: write up delta method
-## look at adding an extra covariance parameter to est.cov
 ## consider scaling the nugget variance for the stratified sites
+## add option to input shapefile
+## make sure maps show counts, not densities
 
 FPBKoutput <- function(pred_info, conf_level = 0.95,
   get_krigmap = FALSE,
@@ -70,7 +71,12 @@ if (get_variogram == TRUE) {
     aes(x = dist, y = gamma)) +
     geom_point(aes(size = gstat::variogram(g_obj)$np)) +
     ylim(0, maxy * (15 / 14)) +
-    geom_line(data = df.plot, aes(x = x.dist.plot, y = v.modfit))
+    geom_line(data = df.plot, aes(x = x.dist.plot, y = v.modfit)) +
+    xlab("Distance (UTM)") +
+    ylab("Semi-Variogram") +
+    ggtitle(paste("Empirical Variogram with Fitted",
+      CorModel, "Model")) +
+    scale_size_continuous("Number of Pairs")
   
   print(plot_out)
 }
@@ -111,9 +117,9 @@ if (get_krigmap == TRUE) {
 
 }
 
-##pred_info <- FPBKpred(formula = formula, data = data, xcoordcol = xcoordcol,
-##   ycoordcol = ycoordcol, CorModel = "Gaussian",
-##  coordtype = "UTM", FPBK.col = NULL)
+pred_info <- FPBKpred(formula = formula, data = data, xcoordcol = xcoordcol,
+   ycoordcol = ycoordcol, CorModel = "Gaussian",
+  coordtype = "UTM", areacol = "areavar", FPBKcol = NULL)
 # pred_info$Pred_df[ ,5]
 # 
 # FPBKoutput(pred_info = pred_info, get_variogram = TRUE)

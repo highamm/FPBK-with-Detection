@@ -4,15 +4,15 @@
 \alias{estcovparm}
 \title{Estimate Covariance Parameters}
 \usage{
-estcovparm(formula, data, xcoordsvec, ycoordsvec, CorModel = "Exponential")
+estcovparm(response, designmatrix, xcoordsvec, ycoordsvec,
+  CorModel = "Exponential")
 }
 \arguments{
-\item{formula}{is  an R linear model formula specifying the counts as the
-response variable as well as covariates for predicting counts of animals or plants
-on the unsampled sites.}
+\item{response}{a vector of a response variable, possibly with
+missing values.}
 
-\item{data}{is the data set with the response column of counts, the covariates to
-be used for the block kriging, and the spatial coordinates for all of the sites.}
+\item{designmatrix}{is the matrix of covariates used to regress
+the response on.}
 
 \item{xcoordsvec}{is a vector of x coordinates}
 

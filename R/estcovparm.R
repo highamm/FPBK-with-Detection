@@ -5,11 +5,10 @@
 #'
 #' The parameters used in the function can be inherited from the FPBKpred function
 #'
-#' @param formula is  an R linear model formula specifying the counts as the
-#' response variable as well as covariates for predicting counts of animals or plants
-#' on the unsampled sites.
-#' @param data is the data set with the response column of counts, the covariates to
-#' be used for the block kriging, and the spatial coordinates for all of the sites.
+#' @param response a vector of a response variable, possibly with
+#' missing values.
+#' @param designmatrix is the matrix of covariates used to regress
+#' the response on.
 #' @param xcoordsvec is a vector of x coordinates
 #' @param ycoordsvec is a vector of y coordinates
 #' @param CorModel is the covariance structure. By default, `covstruct` is
@@ -18,16 +17,13 @@
 #' covariance matrix, and the inverse of the fitted covariance matrix.
 #' @export estcovparm
 
-estcovparm <- function(formula, data, xcoordsvec, ycoordsvec,
+estcovparm <- function(response, designmatrix, xcoordsvec, ycoordsvec,
   CorModel = "Exponential") {
 
   ## only estimate parameters using sampled sites only
-  fullmf <- stats::model.frame(formula, na.action = 
-      stats::na.pass, data = data)
-  yvar <- stats::model.response(fullmf, "numeric")
   
-  ind.sa <- !is.na(yvar)
-  data.sa <- data[ind.sa, ]
+  ind.sa <- !is.na(response)
+  designmatrixsa <- designmatrix[ind.sa, ]
 
 
   names.theta <- c("nugget", "parsil", "range")
@@ -39,12 +35,13 @@ estcovparm <- function(formula, data, xcoordsvec, ycoordsvec,
 
   nparm <- length(names.theta)
 
-  n <- length(yvar[ind.sa])
-  p <- length(attr(stats::terms(formula), "variables")) - 2
+  n <- length(response[ind.sa])
+  p <- ncol(designmatrix)
 
 
   ## distance matrix for all of the sites
-  distmatall <- matrix(0, nrow = nrow(data), ncol = nrow(data))
+  distmatall <- matrix(0, nrow = nrow(designmatrix),
+    ncol = nrow(designmatrix))
   distmatall[lower.tri(distmatall)] <- stats::dist(as.matrix(cbind(xcoordsvec, ycoordsvec)))
   distmatall <- distmatall + t(distmatall)
 
@@ -58,13 +55,13 @@ estcovparm <- function(formula, data, xcoordsvec, ycoordsvec,
   ## of nugget to partial sill ratios as well as a few different
   ## range parameters spanning the maximum distance of the distance matrix
 
-  possible.nugget <- c(stats::var(yvar[ind.sa]),
-    stats::var(yvar[ind.sa]) / 2,
-    stats::var(yvar[ind.sa]) / 4)
+  possible.nugget <- c(stats::var(response[ind.sa]),
+    stats::var(response[ind.sa]) / 2,
+    stats::var(response[ind.sa]) / 4)
   possible.theta1 <- log(possible.nugget)
-  possible.parsil <- c(stats::var(yvar[ind.sa]),
-    stats::var(yvar[ind.sa]) / 2,
-    stats::var(yvar[ind.sa]) / 4)
+  possible.parsil <- c(stats::var(response[ind.sa]),
+    stats::var(response[ind.sa]) / 2,
+    stats::var(response[ind.sa]) / 4)
   possible.theta2 <- log(possible.parsil)
   possible.range <- c(max(distmat), max(distmat) / 2, max(distmat) / 4)
   possible.theta3 <- log(possible.range)
@@ -72,14 +69,13 @@ estcovparm <- function(formula, data, xcoordsvec, ycoordsvec,
   theta <- expand.grid(possible.theta1, possible.theta2, possible.theta3)
 
 
-  ## construct the design matrix based on the formula input
-  XDesign <- stats::model.matrix(formula)
 
   m2loglik <- rep(NA, nrow(theta))
 
     for (i in 1:nrow(theta)) {
-      m2loglik[i] <- m2LL.FPBK.nodet(theta = theta[i, ], zcol = yvar[ind.sa],
-        XDesign = XDesign,
+      m2loglik[i] <- m2LL.FPBK.nodet(theta = theta[i, ],
+        zcol = response[ind.sa],
+        XDesign = as.matrix(designmatrixsa),
         xcoord = xcoordsvec[ind.sa], ycoord = ycoordsvec[ind.sa],
         CorModel = CorModel)
     }
@@ -88,8 +84,8 @@ estcovparm <- function(formula, data, xcoordsvec, ycoordsvec,
 
     ## optimize using Nelder-Mead
     parmest <- optim(theta[max.lik.obs, ], m2LL.FPBK.nodet,
-      zcol = yvar[ind.sa],
-      XDesign = XDesign,
+      zcol = response[ind.sa],
+      XDesign = as.matrix(designmatrixsa),
       xcoord = xcoordsvec[ind.sa], ycoord = ycoordsvec[ind.sa],
       method = "Nelder-Mead",
       CorModel = CorModel)
@@ -168,7 +164,9 @@ xcoordssamp <- xcoords[is.na(counts) == FALSE]
 ycoordssamp <- ycoords[is.na(counts) == FALSE]
 data <- as.data.frame(cbind(counts, pred1, pred2, xcoords, ycoords, dummyvar))
 
+Xdesigntest <- model.matrix(formula)
 formula <- counts ~ pred1 + pred2
 
-##estcovparm(formula = formula, data = data, xcoordsvec = xcoords,
+##estcovparm(response = counts, designmatrix = Xdesigntest,
+## xcoordsvec = xcoords,
 ##  ycoordsvec = ycoords, CorModel = "Gaussian")[[3]]
