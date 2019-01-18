@@ -28,7 +28,8 @@ prediction. The default setting predicts the population total}
 
 \item{areacol}{is the name of the column that has the area
 for each site of interest. If left blank, it is assumed
-that each site has an equal area.}
+that each site has an equal area and the kriging is done
+on the counts directly.}
 
 \item{detectionest}{is a vector of an overall sightability estimate (between `0` and `1`) with a standard error. If the user does not have a standard error, then putting `0` as the standard error will create a confidence interval that is too narrow but will give an accurate prediction for the total.}
 
