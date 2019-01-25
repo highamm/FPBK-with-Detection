@@ -155,17 +155,17 @@ estcovparm <- function(response, designmatrix, xcoordsvec, ycoordsvec,
   return(list(parms.est, Sigma, Sigmai))
 }
 
-counts <- c(1, NA, NA, NA, 3, 1:13, 21, 30)
-pred1 <- runif(20, 0, 1); pred2 <- rnorm(20, 0, 1)
-xcoords <- runif(20, 0, 1); ycoords <- runif(20, 0, 1)
-dummyvar <- runif(20, 0, 1)
-CorModel = "Gaussian"
-xcoordssamp <- xcoords[is.na(counts) == FALSE]
-ycoordssamp <- ycoords[is.na(counts) == FALSE]
-data <- as.data.frame(cbind(counts, pred1, pred2, xcoords, ycoords, dummyvar))
-
-Xdesigntest <- model.matrix(formula)
-formula <- counts ~ pred1 + pred2
+# counts <- c(1, NA, NA, NA, 3, 1:13, 21, 30)
+# pred1 <- runif(20, 0, 1); pred2 <- rnorm(20, 0, 1)
+# xcoords <- runif(20, 0, 1); ycoords <- runif(20, 0, 1)
+# dummyvar <- runif(20, 0, 1)
+# CorModel = "Gaussian"
+# xcoordssamp <- xcoords[is.na(counts) == FALSE]
+# ycoordssamp <- ycoords[is.na(counts) == FALSE]
+# data <- as.data.frame(cbind(counts, pred1, pred2, xcoords, ycoords, dummyvar))
+# 
+# Xdesigntest <- model.matrix(formula)
+# formula <- counts ~ pred1 + pred2
 
 ##estcovparm(response = counts, designmatrix = Xdesigntest,
 ## xcoordsvec = xcoords,

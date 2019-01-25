@@ -104,11 +104,11 @@ m2LL.FPBK.nodet.sph <- function(theta, zcol, XDesign, xcoord, ycoord) {
 }
 
 
-theta <- c(2, 1, 0.5)
-zcol <- runif(40, 0, 15);
-pred1 <- runif(40, 0, 1); pred2 <- rnorm(40, 0, 1)
-XDesign <- as.matrix(cbind(rep(1, 40), pred1, pred2))
-xcoord <- runif(40, 0, 1); ycoord <- runif(40, 0, 1)
+# theta <- c(2, 1, 0.5)
+# zcol <- runif(40, 0, 15);
+# pred1 <- runif(40, 0, 1); pred2 <- rnorm(40, 0, 1)
+# XDesign <- as.matrix(cbind(rep(1, 40), pred1, pred2))
+# xcoord <- runif(40, 0, 1); ycoord <- runif(40, 0, 1)
 
 ##m2LL.FPBK.nodet(theta = theta, zcol = zcol, XDesign = XDesign,
 ##  xcoord = xcoords, ycoord = ycoords)

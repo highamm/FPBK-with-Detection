@@ -37,9 +37,12 @@ confbounds <- matrix(round(as.numeric(pred.total) + c(1, -1) *
 labs <- c("Lower Bound", "Upper Bound")
 colnames(confbounds) <- labs
 
+print(confbounds)
+
 if (get_variogram == TRUE) {
-  sampled_df <- data.frame(subset(pred.vals, pred.vals[ ,4] == 1))
-  sampled_df$resids <- as.vector(sampled_df$preds - sampled_df$muhat)
+  sampled_df <- data.frame(subset(pred.vals, pred.vals[ ,"sampind"] == 1))
+  sampled_df$resids <- as.vector(sampled_df$preddensity -
+      sampled_df$muhat)
 
   ## code for empirical variogram
   g_obj <- gstat::gstat(formula = resids ~ 1,
@@ -67,11 +70,11 @@ if (get_variogram == TRUE) {
   tab2 <- cbind(x.dist.plot, v.modfit)
   df.plot <- as.data.frame(tab2)
 
-  plot_out <- ggplot2::ggplot(data = vario_out,
-    aes(x = dist, y = gamma)) +
-    geom_point(aes(size = gstat::variogram(g_obj)$np)) +
+  plot_out <- ggplot(data = vario_out,
+    aes_(x = ~dist, y = ~gamma)) +
+    geom_point(aes_(size = ~gstat::variogram(g_obj)$np)) +
     ylim(0, maxy * (15 / 14)) +
-    geom_line(data = df.plot, aes(x = x.dist.plot, y = v.modfit)) +
+    geom_line(data = df.plot, aes_(x = ~x.dist.plot, y = ~v.modfit)) +
     xlab("Distance (UTM)") +
     ylab("Semi-Variogram") +
     ggtitle(paste("Empirical Variogram with Fitted",
@@ -86,12 +89,12 @@ if (get_krigmap == TRUE) {
   ## map should be
   alldata <- data.frame(pred.vals)
   shapevals <- c(16, 15)
-  (p1 <- ggplot(data = alldata, aes_(x = ~xcoords, y = ~ycoords,
-    colour = ~preds, shape = ~as.factor(sampind))) + 
-    geom_point(size = 4) +
-    scale_colour_gradient2(low = "blue", mid = "yellow", high = "red",
-      midpoint = median(alldata$preds)) +
-      scale_shape_manual(values = shapevals))
+  # (p1 <- ggplot(data = alldata, aes_(x = ~xcoords, y = ~ycoords,
+  #   colour = ~preds, shape = ~as.factor(sampind))) + 
+  #   geom_point(size = 4) +
+  #   scale_colour_gradient2(low = "blue", mid = "yellow", high = "red",
+  #     midpoint = median(alldata$preds)) +
+  #     scale_shape_manual(values = shapevals))
 
   ## make rectangles based on minimum distance
   ## this will only work if data form a grid
@@ -99,7 +102,7 @@ if (get_krigmap == TRUE) {
   minxdist <- min(dist(alldata$xcoords)[dist(alldata$xcoords) != 0])
   minydist <- min(dist(alldata$ycoords)[dist(alldata$ycoords) != 0])
 
-  (p3 <- ggplot(data = alldata, aes_(x = ~xcoords, y = ~ycoords,
+  p3 <- ggplot2::ggplot(data = alldata, aes_(x = ~xcoords, y = ~ycoords,
     colour = ~preds, shape = ~as.factor(sampind))) + 
       geom_rect(aes_(xmin = ~ (xcoords - minxdist / 2),
         xmax = ~(xcoords + minxdist / 2),
@@ -108,7 +111,7 @@ if (get_krigmap == TRUE) {
         fill = ~preds)) +
       scale_fill_viridis_c() +
       scale_colour_viridis_c() +
-      scale_shape_manual(values = shapevals))
+      scale_shape_manual(values = shapevals)
   
   print(p3)
   

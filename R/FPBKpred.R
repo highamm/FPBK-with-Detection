@@ -112,7 +112,7 @@ FPBKpred <- function(formula, data, xcoordcol, ycoordcol,
   X <- stats::model.matrix(formula, fullmf)
 
   ## sampled response values and design matrix
-  m.sa <- stats::model.frame(formula, na.action = 
+  m.sa <- stats::model.frame(formula, data.sa, na.action = 
       stats::na.omit)
   z.sa <- stats::model.response(m.sa)
   Xs <- stats::model.matrix(formula, m.sa)
@@ -192,7 +192,7 @@ FPBKpred <- function(formula, data, xcoordcol, ycoordcol,
   
   preds <- preddensity * area
   
-  sampind <- 1
+  sampind <- rep(1, length(yvar))
   sampind[is.na(yvar) == TRUE] <- 0
 
   if (detectionest[1] <= 0 | detectionest[1] > 1) {
@@ -255,23 +255,32 @@ FPBKpred <- function(formula, data, xcoordcol, ycoordcol,
 }
 
 
-counts <- rpois(40, 20)
-counts[c(2, 7, 19, 20, 24)] <- NA
-pred1 <- runif(40, 0, 1); pred2 <- rnorm(40, 0, 1)
-xcoordinit <- 1:7; ycoordinit <- 1:7
-grids <- expand.grid(xcoordinit, ycoordinit)[1:40, ]
-xcoords <- grids$Var1; ycoords <- grids$Var2
-dummyvar <- runif(40, 0, 1)
-areavar <- 1:40
-df <- as.data.frame(cbind(counts, pred1, pred2, xcoords, ycoords, dummyvar, areavar))
-data <- df
-FPBKcol <- NULL
-xcoordcol <- "xcoords"; ycoordcol <- "ycoords"
-coordtype <- "UTM"
-formula <- counts ~ poly(pred1, 2) + pred2
-formula <- counts ~ pred1 + pred2
-formula <- counts ~ 1
+# # code used to generate the example data set
+#  counts <- rpois(40, 20)
+#  counts[c(2, 7, 19, 20, 24)] <- NA
+#  pred1 <- runif(40, 0, 1); pred2 <- rnorm(40, 0, 1)
+#  xcoordinit <- 1:7; ycoordinit <- 1:7
+#  grids <- expand.grid(xcoordinit, ycoordinit)[1:40, ]
+#  xcoords <- grids$Var1; ycoords <- grids$Var2
+#  dummyvar <- runif(40, 0, 1)
+#  areavar <- sample(c(0.5, 1), size = 40, replace = TRUE)
+# exampledataset <- as.data.frame(cbind(counts, pred1, pred2, xcoords, ycoords, dummyvar, areavar))
+# #devtools::use_data(exampledataset, overwrite = TRUE)
+# 
+# data <- exampledataset
+# FPBKcol <- NULL
+# xcoordcol <- "xcoords"; ycoordcol <- "ycoords"
+# coordtype <- "UTM"
+# formula <- counts ~ poly(pred1, 2) + pred2
+# formula <- counts ~ pred1 + pred2
+# formula <- counts ~ 1
 
 ##FPBKpred(formula = formula, data = data, xcoordcol = xcoordcol,
 ##  ycoordcol = ycoordcol, CorModel = "Gaussian",
 ##  coordtype = "UTM", FPBKcol = NULL)[[1]]
+
+#pred_info <- FPBKpred(counts ~ pred1 + pred2, data = exampledataset,
+#  xcoordcol = "xcoords", ycoordcol = "ycoords",
+#  coordtype = "UTM", areacol = "areavar")
+#FPBKoutput(pred_info = pred_info, get_variogram = TRUE,
+#  get_krigmap = TRUE, conf_level = 0.90)

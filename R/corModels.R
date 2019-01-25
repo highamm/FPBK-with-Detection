@@ -4,6 +4,9 @@
 #' @param range The range that determines how quickly covariance
 #' among sites tapers
 #' @return Correlation Matrix
+#' @export corModelExponential 
+#' @export corModelGaussian
+#' @export corModelSpherical
 
 
 corModelExponential <- function(distance.matrix, range)
