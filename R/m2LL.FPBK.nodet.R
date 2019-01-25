@@ -1,4 +1,4 @@
-#' Estimation Function
+#' Covariance Parameter Estimation Function.
 #'
 #' The primary purpose of \code{m2LL.FPBK.nodet} is to estimate the spatial
 #' covariance parameters using REML.

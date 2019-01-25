@@ -22,10 +22,13 @@ a variogram of the residuals should be returned}
 the appropriate fitted model semi-variogram.}
 }
 \value{
-maps of the kriged and observed counts, the fitted model variogram,
-and any requested normal-based confidence intervals.
+\itemize{
+  \item prediction interval
+  \item a map of the kriged counts (optional)
+  \item an empirical variogram from \code{gstat} with the fitted variogram model.
+}
 }
 \description{
 The main purpose of this function is to take the results from FPBK and make
-readable maps, the fitted variogram model, and brief summaries.
+readable maps, a fitted variogram plot, and normal-based prediction intervals. The main input for this function is the output from the \code{FPBK.pred} function.
 }

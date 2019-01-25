@@ -2,7 +2,7 @@
 % Please edit documentation in R/m2LL.FPBK.nodet.R
 \name{m2LL.FPBK.nodet}
 \alias{m2LL.FPBK.nodet}
-\title{Estimation Function}
+\title{Covariance Parameter Estimation Function.}
 \usage{
 m2LL.FPBK.nodet(theta, zcol, XDesign, xcoord, ycoord, CorModel)
 }

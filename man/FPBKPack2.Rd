@@ -16,7 +16,7 @@ the estimated mean detection probability with a standard error
 of that estimator.
 }
 \details{
-\code{FPBKPack2} functions:
+\code{FPBKPack2} Main Functions:
 
 \code{FPBKpred} is the function used to generate the kriged predictions
 on the unsampled sites.

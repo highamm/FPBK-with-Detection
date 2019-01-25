@@ -20,8 +20,8 @@ be used for the block kriging, and the spatial coordinates for all of the sites.
 
 \item{ycoordcol}{is the name of the column in the data frame with y coordinates or latitudinal coordinates}
 
-\item{CorModel}{is the covariance structure. By default, `CorModel` is
-Exponential but other options include the Matern, Spherical, and Gaussian.}
+\item{CorModel}{is the covariance structure. By default, \code{CorModel} is
+Exponential but other options include the Spherical and Gaussian.}
 
 \item{FPBKcol}{is a vector in the data set that contains the weights for
 prediction. The default setting predicts the population total}
@@ -31,13 +31,24 @@ for each site of interest. If left blank, it is assumed
 that each site has an equal area and the kriging is done
 on the counts directly.}
 
-\item{detectionest}{is a vector of an overall sightability estimate (between `0` and `1`) with a standard error. If the user does not have a standard error, then putting `0` as the standard error will create a confidence interval that is too narrow but will give an accurate prediction for the total.}
+\item{detectionest}{(optional) is a vector of an overall sightability estimate (between `0` and `1`) with a standard error. If the user does not have a standard error, then putting `0` as the standard error will create a confidence interval that is too narrow but will give an accurate prediction for the total.}
 
 \item{coordtype}{specifies whether spatial coordinates are in latitude, longitude (\code{LatLon}) form or UTM (\code{UTM}) form.}
 }
 \value{
-a list with the estimated population total, the estimated prediction
-variance, and the vector of predicted counts for all of the sites.
+a list with \itemize{
+  \item the estimated population total
+  \item the estimated prediction variance
+  \item a data frame containing \enumerate{
+       \item x-coordinates
+       \item y-coordinates
+       \item density predictions
+       \item count predictions
+       \item indicator variable for whether or not the each site was sampled
+       \item estimated mean for each site
+       }
+   \item vector with estimated covariance parameters
+}
 }
 \description{
 Takes sample data and uses FPBK to predict the counts on the unsampled sites.

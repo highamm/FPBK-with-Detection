@@ -18,17 +18,19 @@ the response on.}
 
 \item{ycoordsvec}{is a vector of y coordinates}
 
-\item{CorModel}{is the covariance structure. By default, `covstruct` is
-Exponential but other options include the Matern, Spherical, and Gaussian.}
+\item{CorModel}{is the covariance structure. By default, \code{covstruct} is
+Exponential but other options include the Spherical and the Gaussian.}
 }
 \value{
-a list with a vector of estimated covariance parameters, the fitted
-covariance matrix, and the inverse of the fitted covariance matrix.
+a list with \itemize{
+   \item a vector of estimated covariance parameters
+   \item the fitted covariance matrix for all of the sites
+}
 }
 \description{
 Used to estimate spatial covariance parameters for a few different spatial models.
-Estimated parameters can then be used in `FPBKpred` to predict unobserved values.
+Estimated parameters can then be used in \code{FPBKpred} to predict unobserved values.
 }
 \details{
-The parameters used in the function can be inherited from the FPBKpred function
+The function is used internally in \code{FPBKpred}.
 }

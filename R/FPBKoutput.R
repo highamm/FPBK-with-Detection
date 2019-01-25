@@ -1,7 +1,7 @@
 #' Create maps and summaries from FPBK results.
 #'
 #' The main purpose of this function is to take the results from FPBK and make
-#' readable maps, the fitted variogram model, and brief summaries.
+#' readable maps, a fitted variogram plot, and normal-based prediction intervals. The main input for this function is the output from the \code{FPBK.pred} function.
 #'
 #' @param pred_info is the output from \code{FPBK.pred} in this package.
 #' @param conf_level is the desired confidence level for the prediction
@@ -11,8 +11,11 @@
 #' a variogram of the residuals should be returned
 #' @param CorModel Covariance model used, which is required to obtain 
 #' the appropriate fitted model semi-variogram.
-#' @return maps of the kriged and observed counts, the fitted model variogram,
-#' and any requested normal-based confidence intervals.
+#' @return \itemize{
+#'   \item prediction interval
+#'   \item a map of the kriged counts (optional)
+#'   \item an empirical variogram from \code{gstat} with the fitted variogram model.
+#' }
 #' @import ggplot2
 #' @export FPBKoutput
 

@@ -1,9 +1,9 @@
 #' Estimate Covariance Parameters
 #'
 #' Used to estimate spatial covariance parameters for a few different spatial models.
-#' Estimated parameters can then be used in `FPBKpred` to predict unobserved values.
+#' Estimated parameters can then be used in \code{FPBKpred} to predict unobserved values.
 #'
-#' The parameters used in the function can be inherited from the FPBKpred function
+#' The function is used internally in \code{FPBKpred}.
 #'
 #' @param response a vector of a response variable, possibly with
 #' missing values.
@@ -11,10 +11,12 @@
 #' the response on.
 #' @param xcoordsvec is a vector of x coordinates
 #' @param ycoordsvec is a vector of y coordinates
-#' @param CorModel is the covariance structure. By default, `covstruct` is
-#' Exponential but other options include the Matern, Spherical, and Gaussian.
-#' @return a list with a vector of estimated covariance parameters, the fitted
-#' covariance matrix, and the inverse of the fitted covariance matrix.
+#' @param CorModel is the covariance structure. By default, \code{covstruct} is
+#' Exponential but other options include the Spherical and the Gaussian.
+#' @return a list with \itemize{
+#'    \item a vector of estimated covariance parameters
+#'    \item the fitted covariance matrix for all of the sites
+#' }
 #' @export estcovparm
 
 estcovparm <- function(response, designmatrix, xcoordsvec, ycoordsvec,
@@ -118,7 +120,7 @@ estcovparm <- function(response, designmatrix, xcoordsvec, ycoordsvec,
       Sigma <- Sigma + diag(0.1, nrow = nrow(Sigma))
     }
     
-    Sigmai <- solve(Sigma)
+   # Sigmai <- solve(Sigma)
     ## spherical code
 
   # for (i in 1:nrow(theta)) {
@@ -152,7 +154,7 @@ estcovparm <- function(response, designmatrix, xcoordsvec, ycoordsvec,
   # Sigmai <- solve(Sigma)
 
 
-  return(list(parms.est, Sigma, Sigmai))
+  return(list(parms.est, Sigma))
 }
 
 # counts <- c(1, NA, NA, NA, 3, 1:13, 21, 30)
