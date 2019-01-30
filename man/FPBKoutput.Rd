@@ -5,7 +5,8 @@
 \title{Create maps and summaries from FPBK results.}
 \usage{
 FPBKoutput(pred_info, conf_level = 0.95, get_krigmap = FALSE,
-  get_variogram = FALSE, CorModel = "Exponential")
+  get_sampdetails = FALSE, get_variogram = FALSE,
+  CorModel = "Exponential")
 }
 \arguments{
 \item{pred_info}{is the output from \code{FPBK.pred} in this package.}
@@ -14,6 +15,12 @@ FPBKoutput(pred_info, conf_level = 0.95, get_krigmap = FALSE,
 
 \item{get_krigmap}{is an indicator for whether or not a grid of
 the kriged responses is returned}
+
+\item{get_sampdetails}{is an indicator for whether or not a summary
+of the sampled counts should be output. This summary includes 
+the total number of animals or plants sited, the total area 
+surveyed, the number of sampled sites, the total number of sites,
+etc.}
 
 \item{get_variogram}{is an indicator for whether or not
 a variogram of the residuals should be returned}
@@ -25,7 +32,8 @@ the appropriate fitted model semi-variogram.}
 \itemize{
   \item prediction interval
   \item a map of the kriged counts (optional)
-  \item an empirical variogram from \code{gstat} with the fitted variogram model.
+  \item a summary of the sample data (optional)
+  \item an empirical variogram from \code{gstat} with the fitted variogram model with details of the empirical variogram and spatial parameter estimates (optional)
 }
 }
 \description{

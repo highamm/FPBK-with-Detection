@@ -7,6 +7,11 @@
 #' @param conf_level is the desired confidence level for the prediction
 #' @param get_krigmap is an indicator for whether or not a grid of
 #' the kriged responses is returned
+#' @param get_sampdetails is an indicator for whether or not a summary
+#' of the sampled counts should be output. This summary includes 
+#' the total number of animals or plants sited, the total area 
+#' surveyed, the number of sampled sites, the total number of sites,
+#' etc.
 #' @param get_variogram is an indicator for whether or not
 #' a variogram of the residuals should be returned
 #' @param CorModel Covariance model used, which is required to obtain 
@@ -14,7 +19,8 @@
 #' @return \itemize{
 #'   \item prediction interval
 #'   \item a map of the kriged counts (optional)
-#'   \item an empirical variogram from \code{gstat} with the fitted variogram model.
+#'   \item a summary of the sample data (optional)
+#'   \item an empirical variogram from \code{gstat} with the fitted variogram model with details of the empirical variogram and spatial parameter estimates (optional)
 #' }
 #' @import ggplot2
 #' @export FPBKoutput
@@ -25,7 +31,7 @@
 ## make sure maps show counts, not densities
 
 FPBKoutput <- function(pred_info, conf_level = 0.95,
-  get_krigmap = FALSE,
+  get_krigmap = FALSE, get_sampdetails = FALSE,
   get_variogram = FALSE, CorModel = "Exponential") {
 
 pred.total <- pred_info[[1]]
@@ -42,6 +48,15 @@ colnames(confbounds) <- labs
 
 print(confbounds)
 
+if (get_sampdetails == TRUE) {
+  nsitessampled <- sum(pred.vals$sampind)
+  nsitestotal <- nrow(pred.vals)
+  animalscounted <- sum(pred.vals$preds[pred.vals$sampind == 1])
+  totalareacol <- pred.vals$preds / pred.vals$preddensity
+  totalarea <- sum(totalareacol)
+  areasampled <- sum(totalareacol[pred.vals$sampind == 1])
+}
+
 if (get_variogram == TRUE) {
   sampled_df <- data.frame(subset(pred.vals, pred.vals[ ,"sampind"] == 1))
   sampled_df$resids <- as.vector(sampled_df$preddensity -
@@ -54,6 +69,12 @@ if (get_variogram == TRUE) {
   vario_out <- gstat::variogram(g_obj)
   maxy <- max(vario_out$gamma)
   
+  vartab <- cbind(vario_out$dist, vario_out$gamma, 
+    vario_out$np)
+  colnames(vartab) <- c("Distance", "Gamma", "Number of Pairs")
+  covparmmat <- t(matrix(covparmests))
+  colnames(covparmmat) <- c("Nugget", "Partial Sill", "Range")
+  vartab; covparmmat
   ## code for fitted variogram
   
   maxdist <- max(vario_out$dist)
@@ -83,6 +104,7 @@ if (get_variogram == TRUE) {
     ggtitle(paste("Empirical Variogram with Fitted",
       CorModel, "Model")) +
     scale_size_continuous("Number of Pairs")
+  
   
   print(plot_out)
 }
