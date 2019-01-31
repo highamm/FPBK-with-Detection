@@ -16,6 +16,9 @@
 #' a variogram of the residuals should be returned
 #' @param CorModel Covariance model used, which is required to obtain 
 #' the appropriate fitted model semi-variogram.
+#' @param get_report is an indicator for whether a PDF report of some
+#' of the output from \code{get_krigmap}, \code{get_sampdetails},
+#' and \code{get_sampdetails} should be produced.
 #' @return \itemize{
 #'   \item prediction interval
 #'   \item a map of the kriged counts (optional)
@@ -32,18 +35,22 @@
 
 FPBKoutput <- function(pred_info, conf_level = 0.95,
   get_krigmap = FALSE, get_sampdetails = FALSE,
-  get_variogram = FALSE, CorModel = "Exponential") {
+  get_variogram = FALSE, get_report = FALSE,
+  CorModel = "Exponential") {
 
 pred.total <- pred_info[[1]]
 pred.total.var <- pred_info[[2]]
 pred.vals <- data.frame(pred_info[[3]])
 covparmests <- pred_info[[4]]
 
-confbounds <- matrix(round(as.numeric(pred.total) + c(1, -1) *
+confbounds <- matrix(round(c(pred.total, sqrt(pred.total.var), 
+  as.numeric(pred.total) + c(1, -1) *
     stats::qnorm((1 - conf_level) / 2) *
-    sqrt(as.numeric(pred.total.var))), nrow = 1)
+    sqrt(as.numeric(pred.total.var)))), nrow = 1)
 
-labs <- c("Lower Bound", "Upper Bound")
+labs <- c("Predicted Total", "SE(Total)",
+  paste(conf_level * 100, "% Lower Bound"), 
+  paste(conf_level * 100, "% Upper Bound"))
 colnames(confbounds) <- labs
 
 print(confbounds)
@@ -55,7 +62,13 @@ if (get_sampdetails == TRUE) {
   totalareacol <- pred.vals$preds / pred.vals$preddensity
   totalarea <- sum(totalareacol)
   areasampled <- sum(totalareacol[pred.vals$sampind == 1])
-}
+  outptmat <- t(matrix(c(nsitessampled, nsitestotal, animalscounted,
+    totalarea, areasampled)))
+  colnames(outptmat) <- c("Numb. Sites Sampled", "Total Numb. Sites",
+    "Numb. Units Counted", "Total Area", "Area Sampled")
+  print(outptmat)
+  
+  }
 
 if (get_variogram == TRUE) {
   sampled_df <- data.frame(subset(pred.vals, pred.vals[ ,"sampind"] == 1))
@@ -74,7 +87,6 @@ if (get_variogram == TRUE) {
   colnames(vartab) <- c("Distance", "Gamma", "Number of Pairs")
   covparmmat <- t(matrix(covparmests))
   colnames(covparmmat) <- c("Nugget", "Partial Sill", "Range")
-  vartab; covparmmat
   ## code for fitted variogram
   
   maxdist <- max(vario_out$dist)
@@ -105,8 +117,11 @@ if (get_variogram == TRUE) {
       CorModel, "Model")) +
     scale_size_continuous("Number of Pairs")
   
-  
   print(plot_out)
+} else if (get_variogram == FALSE) {
+  plot_out <- NULL
+  
+  vartab <- NULL
 }
 
 if (get_krigmap == TRUE) {
@@ -141,6 +156,23 @@ if (get_krigmap == TRUE) {
   print(p3)
   
 }
+
+  if(get_report == TRUE) {
+    
+    file <- system.file("ReportTest.Rmd", package = "FPBKPack2")
+    
+    ## need to think more carefully about where this report
+    ## should go.
+    dout <- "~/Desktop/"
+    if (missing(dout)) {
+      dout <- getwd()
+    }
+    
+    rmarkdown::render(file, envir = list(varplot = plot_out, 
+      varinfo = vartab, conftable = confbounds,
+      sumtable = outptmat, covparmests = covparmmat),
+      output_dir = dout)
+  }
 
 
 }

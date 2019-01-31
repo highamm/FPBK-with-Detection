@@ -19,4 +19,6 @@ Imports: matrixcalc,
     mvtnorm,
     ggplot2,
     stats
-Suggests: gstat
+Suggests: gstat,
+    rmarkdown,
+    knitr

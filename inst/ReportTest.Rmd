@@ -1,0 +1,36 @@
+---
+title: "GSPE Report"
+author: ""
+date: "1/30/2019"
+output: html_document
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Predictions and Prediction Intervals
+
+```{r predictions, echo = FALSE}
+knitr::kable(conftable)
+```
+
+## Summary Information
+
+```{r summaryout, echo = FALSE}
+knitr::kable(sumtable)
+```
+
+## Variogram Plot
+
+```{r variogram, echo = FALSE}
+print(varplot)
+```
+
+## Variogram Information
+
+```{r variosum, echo = FALSE}
+knitr::kable(varinfo)
+
+knitr::kable(covparmests)
+```

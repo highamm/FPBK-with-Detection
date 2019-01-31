@@ -290,7 +290,6 @@ FPBKpred <- function(formula, data, xcoordcol, ycoordcol,
 ##  coordtype = "UTM", FPBKcol = NULL)[[1]]
 
 #pred_info <- FPBKpred(counts ~ pred1 + pred2, data = exampledataset,
-#  xcoordcol = "xcoords", ycoordcol = "ycoords",
-#  coordtype = "UTM", areacol = "areavar")
+#  xcoordcol = "xcoords", ycoordcol = "ycoords",  coordtype = "UTM", areacol = "areavar")
 #FPBKoutput(pred_info = pred_info, get_variogram = TRUE,
-#  get_krigmap = TRUE, conf_level = 0.90)
+#  get_krigmap = FALSE, get_report = TRUE, conf_level = 0.90)

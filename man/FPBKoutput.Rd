@@ -5,7 +5,7 @@
 \title{Create maps and summaries from FPBK results.}
 \usage{
 FPBKoutput(pred_info, conf_level = 0.95, get_krigmap = FALSE,
-  get_sampdetails = FALSE, get_variogram = FALSE,
+  get_sampdetails = FALSE, get_variogram = FALSE, get_report = FALSE,
   CorModel = "Exponential")
 }
 \arguments{
@@ -24,6 +24,10 @@ etc.}
 
 \item{get_variogram}{is an indicator for whether or not
 a variogram of the residuals should be returned}
+
+\item{get_report}{is an indicator for whether a PDF report of some
+of the output from \code{get_krigmap}, \code{get_sampdetails},
+and \code{get_sampdetails} should be produced.}
 
 \item{CorModel}{Covariance model used, which is required to obtain 
 the appropriate fitted model semi-variogram.}
