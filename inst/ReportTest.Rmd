@@ -9,9 +9,15 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Predictions and Prediction Intervals
+## Predictions 
 
 ```{r predictions, echo = FALSE}
+knitr::kable(predtable)
+```
+
+## Prediction Intervals
+
+```{r predictionints, echo = FALSE}
 knitr::kable(conftable)
 ```
 

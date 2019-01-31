@@ -4,7 +4,8 @@
 #' readable maps, a fitted variogram plot, and normal-based prediction intervals. The main input for this function is the output from the \code{FPBK.pred} function.
 #'
 #' @param pred_info is the output from \code{FPBK.pred} in this package.
-#' @param conf_level is the desired confidence level for the prediction
+#' @param conf_level is the desired confidence level for the prediction. If \code{conf_level} is a vector, then confidence intervals for 
+#' each element of the vector will be produced.
 #' @param get_krigmap is an indicator for whether or not a grid of
 #' the kriged responses is returned
 #' @param get_sampdetails is an indicator for whether or not a summary
@@ -33,7 +34,8 @@
 ## add option to input shapefile
 ## make sure maps show counts, not densities
 
-FPBKoutput <- function(pred_info, conf_level = 0.95,
+FPBKoutput <- function(pred_info, conf_level = c(0.80, 
+  0.90, 0.95),
   get_krigmap = FALSE, get_sampdetails = FALSE,
   get_variogram = FALSE, get_report = FALSE,
   CorModel = "Exponential") {
@@ -43,17 +45,29 @@ pred.total.var <- pred_info[[2]]
 pred.vals <- data.frame(pred_info[[3]])
 covparmests <- pred_info[[4]]
 
-confbounds <- matrix(round(c(pred.total, sqrt(pred.total.var), 
-  as.numeric(pred.total) + c(1, -1) *
-    stats::qnorm((1 - conf_level) / 2) *
-    sqrt(as.numeric(pred.total.var)))), nrow = 1)
+confbounds <- matrix(NA, nrow = length(conf_level), ncol = 3)
 
-labs <- c("Predicted Total", "SE(Total)",
-  paste(conf_level * 100, "% Lower Bound"), 
-  paste(conf_level * 100, "% Upper Bound"))
+for (k in 1:length(conf_level)){
+confbounds[k, ] <- matrix(c(round(as.numeric(pred.total) + c(1, -1) *
+    stats::qnorm((1 - conf_level[k]) / 2) *
+    sqrt(as.numeric(pred.total.var))), 
+  as.vector(round(stats::qnorm((1 - conf_level[k]) / 2) * -1 * 
+      sqrt(as.numeric(pred.total.var)) / pred.total, 2))), nrow = 1)
+}
+
+labs <- c("Lower Bound", "Upper Bound", "Proportion of Mean")
+
+rowlabs <- rep(NA, length(conf_level))
+for (j in 1:length(conf_level)) {
+  rowlabs[j] <- paste(conf_level[j] * 100, "%")
+}
+
 colnames(confbounds) <- labs
-
+rownames(confbounds) <- rowlabs
 print(confbounds)
+
+basicpred <- t(matrix(round(c(pred.total, sqrt(pred.total.var)))))
+colnames(basicpred) <- c("Predicted Total", "SE(Total)")
 
 if (get_sampdetails == TRUE) {
   nsitessampled <- sum(pred.vals$sampind)
@@ -169,7 +183,8 @@ if (get_krigmap == TRUE) {
     }
     
     rmarkdown::render(file, envir = list(varplot = plot_out, 
-      varinfo = vartab, conftable = confbounds,
+      varinfo = vartab, 
+      predtable = basicpred, conftable = confbounds,
       sumtable = outptmat, covparmests = covparmmat),
       output_dir = dout)
   }
