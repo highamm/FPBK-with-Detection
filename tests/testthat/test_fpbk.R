@@ -3,6 +3,6 @@ library(testthat)
 library(FPBKPack2)
 
 test_that("Sample test data loads", {
-  load(system.file("data/exampledataset.rda", package="FPBKPack2"))
+  #load(system.file("data/exampledataset.rda", package="FPBKPack2"))
   expect_type(exampledataset, "list")
 })
