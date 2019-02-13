@@ -19,7 +19,15 @@
 #' for each site of interest. If left blank, it is assumed
 #' that each site has an equal area and the kriging is done
 #' on the counts directly.
-#' @param detectionest (optional) is a vector of an overall sightability estimate (between `0` and `1`) with a standard error. If the user does not have a standard error, then putting `0` as the standard error will create a confidence interval that is too narrow but will give an accurate prediction for the total.
+#' @param detectionest (optional) is a vector of an overall sightability estimate (between `0` and `1`) with a standard error. If the user does not have a standard error, then putting `0` as the standard error will create a confidence interval that is too narrow but will give an appropriate prediction for the total.
+#' @param sightresp (optional) is a vector of 0's and 1's from
+#' sightability trials on radiocollared animals, where a 1 denotes 
+#' an animal that was sighted and a 0 denotes an animal that
+#' was missed.
+#' @param sightpreds (optional) is a matrix or data frame with 
+#' predictors thought to be useful for predicting sightability. 
+#' \code{sightpreds} must have the same number of rows as the 
+#' length of \code{sightresp}.
 #' @param coordtype specifies whether spatial coordinates are in latitude, longitude (\code{LatLon}) form or UTM (\code{UTM}) form.
 #' @return a list with \itemize{
 #'   \item the estimated population total
@@ -41,7 +49,8 @@
 FPBKpred <- function(formula, data, xcoordcol, ycoordcol,
   CorModel = "Exponential", FPBKcol = NULL,
   areacol = NULL,
-  detectionest = c(1, 0), coordtype = "LatLon") {
+  detectionest = c(1, 0), coordtype = "LatLon",
+  sightresp = NULL, sightpreds = NULL) {
 
   ## if FPBKcol is left out, we are predicting the population total.
   ## Otherwise, FPBKcol is the name of the column in the data set
@@ -259,6 +268,29 @@ FPBKpred <- function(formula, data, xcoordcol, ycoordcol,
   
   names(obj) <- c("FPBK_Prediction", "PredVar",
     "Pred_df", "SpatialParms")
+  
+  
+  ## do adjusted FPBK method if we have a column of sightability data.
+   if (is.null(sightresp) == FALSE) {
+     
+     ## check to make sure dimension of prediction matrix is the same
+     ## as the number of sightability observations
+     
+     if (is.null(sightpreds) == FALSE) {
+       
+       if(nrow(sightpreds) != length(sightresp)) {
+         stop("The number of rows in the sightpreds prediction
+           matrix must be the same as the number of sightability
+           trial observations")
+       }
+     }
+     ## for now, just return an dummy object
+     obj <- cbind(sightresp, sightpreds)
+     
+   }
+  
+  
+  
   
   return(obj)
 

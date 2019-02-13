@@ -6,7 +6,7 @@
 \usage{
 FPBKpred(formula, data, xcoordcol, ycoordcol, CorModel = "Exponential",
   FPBKcol = NULL, areacol = NULL, detectionest = c(1, 0),
-  coordtype = "LatLon")
+  coordtype = "LatLon", sightresp = NULL, sightpreds = NULL)
 }
 \arguments{
 \item{formula}{is an R linear model formula specifying the counts as the
@@ -31,9 +31,19 @@ for each site of interest. If left blank, it is assumed
 that each site has an equal area and the kriging is done
 on the counts directly.}
 
-\item{detectionest}{(optional) is a vector of an overall sightability estimate (between `0` and `1`) with a standard error. If the user does not have a standard error, then putting `0` as the standard error will create a confidence interval that is too narrow but will give an accurate prediction for the total.}
+\item{detectionest}{(optional) is a vector of an overall sightability estimate (between `0` and `1`) with a standard error. If the user does not have a standard error, then putting `0` as the standard error will create a confidence interval that is too narrow but will give an appropriate prediction for the total.}
 
 \item{coordtype}{specifies whether spatial coordinates are in latitude, longitude (\code{LatLon}) form or UTM (\code{UTM}) form.}
+
+\item{sightresp}{(optional) is a vector of 0's and 1's from
+sightability trials on radiocollared animals, where a 1 denotes 
+an animal that was sighted and a 0 denotes an animal that
+was missed.}
+
+\item{sightpreds}{(optional) is a matrix or data frame with 
+predictors thought to be useful for predicting sightability. 
+\code{sightpreds} must have the same number of rows as the 
+length of \code{sightresp}.}
 }
 \value{
 a list with \itemize{
