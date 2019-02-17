@@ -321,8 +321,8 @@ FPBKpred <- function(formula, data, xcoordcol, ycoordcol,
 ##  ycoordcol = ycoordcol, CorModel = "Gaussian",
 ##  coordtype = "UTM", FPBKcol = NULL)[[1]]
 
-#pred_info <- FPBKpred(counts ~ pred1 + pred2, data = exampledataset,
-#  xcoordcol = "xcoords", ycoordcol = "ycoords",  coordtype = "UTM", areacol = "areavar")
-#FPBKoutput(pred_info = pred_info, get_variogram = TRUE,
-#  get_krigmap = FALSE, get_report = TRUE, conf_level = c(0.80, 0.90,
-#    0.95))
+##pred_info <- FPBKpred(counts ~ pred1 + pred2, data = exampledataset,
+##  xcoordcol = "xcoords", ycoordcol = "ycoords",  coordtype = "UTM", areacol = "areavar")
+##FPBKoutput(pred_info = pred_info, get_variogram = TRUE,
+##  get_krigmap = FALSE, get_report = TRUE, conf_level = c(0.80, 0.90,
+##    0.95))
