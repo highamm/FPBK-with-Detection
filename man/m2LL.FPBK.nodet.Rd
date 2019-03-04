@@ -4,12 +4,12 @@
 \alias{m2LL.FPBK.nodet}
 \title{Covariance Parameter Estimation Function.}
 \usage{
-m2LL.FPBK.nodet(theta, zcol, XDesign, xcoord, ycoord, CorModel)
+m2LL.FPBK.nodet(theta, zcol, XDesign, xcoord, ycoord, CorModel, estmethod)
 }
 \arguments{
 \item{theta}{is the parameter vector of (nugget, partialsill, range)}
 
-\item{zcol}{is the response vector of counts}
+\item{zcol}{is the response vector of densities}
 
 \item{XDesign}{is the design matrix containing the covariates used to predict animal or plant abundance (including a column of 1's for the intercept).}
 
@@ -18,6 +18,8 @@ m2LL.FPBK.nodet(theta, zcol, XDesign, xcoord, ycoord, CorModel)
 \item{ycoord}{is a vector of the y spatial coordinates (in UTM)}
 
 \item{CorModel}{is the geostatistical spatial correlation model to be used. See the \code{corModels} documentation for possible models to use.}
+
+\item{estmethod}{is either "REML" for restricted maximum likelihood or "ML" for maximum likelihood.}
 }
 \value{
 A numeric output of minus 2 times the restricted log likelihood to be minimized by `optim` to obtain spatial parameter estimates.

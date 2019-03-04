@@ -1,6 +1,6 @@
 Package: FPBKPack2
 Type: Package
-Title: Finite Population Block Kriging Calculation
+Title: Finite Population Block Kriging with Detection
 Version: 0.1.0
 Authors@R: c(
     person("Higham", "Matt", email = "highamm@oregonstate.edu", role = "cre"),
