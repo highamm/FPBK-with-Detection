@@ -18,6 +18,10 @@
 #' parameters and regression coefficients.
 #' Exponential but other options include the Spherical and the Gaussian.
 #' @param covestimates is an optional vector of covariance parameter estimates (nugget, partial sill, range). If these are given and \code{estmethod = "None"}, the the provided vector are treated as the estimators to create the covariance structure.
+#' @param pivec is a vector of estimated detection probabilities
+#' on each of the sites
+#' @param Vnn is the covariance matrix for the estimated detection
+#' probabilities
 #' @return a list with \itemize{
 #'    \item a vector of estimated covariance parameters
 #'    \item the fitted covariance matrix for all of the sites
@@ -312,6 +316,8 @@ estcovparm <- function(response, designmatrix, xcoordsvec, ycoordsvec,
 #
 # Xdesigntest <- model.matrix(~ pred1 + pred2, data = data, na.rm = FALSE)
 # formula <- counts ~ pred1 + pred2
+# formula <- counts ~ 1 
+# Xdesigntest <- model.matrix(~ 1, data = data, na.rm = FALSE)
 
 ##estcovparm(response = counts, designmatrix = Xdesigntest,
 ## xcoordsvec = xcoords,

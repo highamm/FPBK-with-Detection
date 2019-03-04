@@ -97,6 +97,8 @@ slmfit <- function(formula, data, xcoordcol, ycoordcol,
     ycoordsUTM <- datanomiss[ ,ycoordcol]
   }
   
+  detind <- is.null(detectionobj)
+  
   if (is.null(detectionobj) == TRUE) {
   ## create the design matrix for unsampled sites, for all of the sites, and for the sampled sites, respectively.
   
@@ -206,12 +208,12 @@ slmfit <- function(formula, data, xcoordcol, ycoordcol,
     "ycoordsUTM",
     "estmethod","correlationmod", "covmat", "covmatsampi")
   obj <- list(covparms, betahatest, covest, min2loglik, prednames,
-    n, CorModel, resids, Xs, z.sa, FPBKpredobj)
+    n, CorModel, resids, Xs, z.sa, detind, FPBKpredobj)
   
   names(obj) <- c("SpatialParmEsts", "CoefficientEsts",
     "BetaCov", "minus2loglike", "PredictorNames", "SampSize",
     "CovarianceMod",
-    "resids", "DesignMat", "Density",
+    "resids", "DesignMat", "Density", "DetectionInd",
     "FPBKpredobj")
   
   } else {
@@ -227,6 +229,7 @@ slmfit <- function(formula, data, xcoordcol, ycoordcol,
       warning("If using detection, the estimation method must
         be Maximum Likelihood")
     }
+    
     detectionform <- detectionobj$formula
     coefs <- detectionobj$coefs
     varmethod <- detectionobj$varmethod
@@ -243,14 +246,15 @@ slmfit <- function(formula, data, xcoordcol, ycoordcol,
     ## predictors
     datanomissboth <- datanomiss[missingind == 0, ]
     
-    Xndet <- model.matrix(detectionform,
-      model.frame(detectionform, datanomissboth,
+    
+    Xndet <- model.matrix(detectionform[-2],
+      model.frame(detectionform[-2], datanomissboth,
         na.action = stats::na.pass))
     
     logitpi <- Xndet %*% coefs
     piest <- exp(logitpi) / (1 + exp(logitpi))
     
-    if (varmethod == "Delta") {
+    if (detectionobj$varmethod == "Delta") {
       F <- detectionobj$covmat
     covmu <- Xndet %*% F %*% t(Xndet)
     
@@ -261,7 +265,7 @@ slmfit <- function(formula, data, xcoordcol, ycoordcol,
     
     Vnn <- vtv * covmu
     
-    } else if (varmethod == "Bootstrap") {
+    } else if (detectionobj$varmethod == "Bootstrap") {
       
     boot.coefs <- detectionobj$boot.coefs
     logitboot <- Xndet %*% t(boot.coefs)
@@ -338,6 +342,7 @@ slmfit <- function(formula, data, xcoordcol, ycoordcol,
     parms.est <- spat.est$parms.est
     Sigma <- spat.est$Sigma
     min2loglik <- spat.est$min2loglik
+    Sigma.ss <- Sigma[ind.sa, ind.sa]
     
     nugget.effect <- parms.est[1]; parsil.effect <- parms.est[2]
     range.effect <- parms.est[3]
@@ -353,12 +358,33 @@ slmfit <- function(formula, data, xcoordcol, ycoordcol,
     muhats <- as.matrix(Xs) %*% betahat
     muhatu <- as.matrix(Xu) %*% betahat
     
-    resids <- z.sa - muhats * pivecsa
+    resids <- z.sa - muhats * piest[ind.sa]
     
     muhat <- rep(NA, nrow(datanomissboth))
     muhat[ind.sa == TRUE] <- muhats
     muhat[ind.sa == FALSE] <- muhatu
     
+    ## construct matrices necessary for FPBK estimator using
+    ## detection.
+    
+    Sigma.su <- Sigma[ind.sa, ]
+    D <- Sigma
+    R <- piest[ind.sa] * Sigma.su
+    
+    C <- matrixcalc::hadamard.prod(as.matrix(piest[ind.sa]) %*%
+        t(as.matrix(piest[ind.sa])),
+      Sigma.ss) +
+      matrixcalc::hadamard.prod(as.matrix(muhats) %*%
+          t(as.matrix(muhats)), Vnn[ind.sa, ind.sa]) +
+      matrixcalc::hadamard.prod(Sigma.ss, Vnn[ind.sa, ind.sa]) +
+      diag(as.vector(muhats) *
+          (as.vector(piest[ind.sa])) *
+          (1 - as.vector(piest[ind.sa])),
+        nrow = nrow(Sigma.ss))
+
+    Cinv <- solve(C)
+
+    Xnstar <- piest[ind.sa] * Xs
     
     ## returns a list with the following components:
     ## 1.) A vector of the estimated regression coefficients
@@ -375,17 +401,19 @@ slmfit <- function(formula, data, xcoordcol, ycoordcol,
     
     FPBKpredobj <- list(formula, datanomissboth, xcoordsUTM,
       ycoordsUTM,
-      estmethod, CorModel, Sigma, Sigma.ssi)
+      estmethod, CorModel, Sigma, Sigma.ssi, C,
+      Cinv, Xnstar, R, piest)
     names(FPBKpredobj) <- c("formula", "data", "xcoordsUTM",
       "ycoordsUTM",
-      "estmethod","correlationmod", "covmat", "covmatsampi")
+      "estmethod","correlationmod", "covmat", "covmatsampi", "C",
+      "Cssi", "Xnstar", "R", "piest")
     obj <- list(covparms, betahatest, covest, min2loglik, prednames,
-      n, CorModel, resids, Xs, w.sa, FPBKpredobj)
+      n, CorModel, resids, Xs, w.sa, detind, FPBKpredobj)
     
     names(obj) <- c("SpatialParmEsts", "CoefficientEsts",
       "BetaCov", "minus2loglike", "PredictorNames", "SampSize",
       "CovarianceMod",
-      "resids", "DesignMat", "Density",
+      "resids", "DesignMat", "Density", "DetectionInd",
       "FPBKpredobj")
     
   }
@@ -400,20 +428,12 @@ slmfit <- function(formula, data, xcoordcol, ycoordcol,
 ##data <- data.frame(cbind(counts, pred1, pred2))
 ##formula <- counts ~ pred1 + pred2
 #
-##slm_info <- slmfit(formula = counts ~ 1,
-##  data = exampledataset,
-##  xcoordcol = "xcoords", ycoordcol = "ycoords",  coordtype = "UTM",
-##   estmethod = "ML", detectionobj = detectionobj)
-
-## next step: add in the column for area to transform
-## counts to densities
 
 #  summary(object = slm_info)
 # print(x = summary(object = slm_info))
 # print(slm_info)
 # summary(slm_info)
-##exampledataset$detpred1 <- runif(40, 0, 1)
-##exampledataset$detpred2 <- runif(40, 0, 1)
+
 
 # missingind <- sample(1:length(simdata$X5), size = 40)
 #

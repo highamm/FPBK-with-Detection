@@ -18,6 +18,12 @@ m2LL.FPBK.det(theta, zcol, XDesign, xcoord, ycoord, CorModel, pivec, Vnn)
 \item{ycoord}{is a vector of the y spatial coordinates (in UTM)}
 
 \item{CorModel}{is the geostatistical spatial correlation model to be used. See the \code{corModels} documentation for possible models to use.}
+
+\item{pivec}{is a vector of estimated detection probabilities
+on each of the sites}
+
+\item{Vnn}{is the covariance matrix for the estimated detection
+probabilities}
 }
 \value{
 A numeric output of minus 2 times the restricted log likelihood to be minimized by `optim` to obtain spatial parameter estimates.

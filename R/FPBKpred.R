@@ -1,34 +1,17 @@
 #' Perform Finite Population Block Kriging
 #'
-#' Takes sample data and uses FPBK to predict the counts on the unsampled sites.
+#' Takes the output of \code{slmfit} and uses FPBK to predict the counts on the unsampled sites.
 #' The column with the counts should have numeric values for the observed counts
 #' on the sampled sites and `NA` for any site that was not sampled.
 #'
-#' @param formula is an R linear model formula specifying the counts as the
-#' response variable as well as covariates for predicting counts of animals or plants
-#' on the unsampled sites.
-#' @param data is the data set with the response column of counts, the covariates to
-#' be used for the block kriging, and the spatial coordinates for all of the sites.
-#' @param xcoordcol is the name of the column in the data frame with x coordinates or longitudinal coordinates
-#' @param ycoordcol is the name of the column in the data frame with y coordinates or latitudinal coordinates
-#' @param CorModel is the covariance structure. By default, \code{CorModel} is
-#' Exponential but other options include the Spherical and Gaussian.
-#' @param FPBKcol is a vector in the data set that contains the weights for
-#' prediction. The default setting predicts the population total
-#' @param areacol is the name of the column that has the area
-#' for each site of interest. If left blank, it is assumed
-#' that each site has an equal area and the kriging is done
-#' on the counts directly.
-#' @param detectionest (optional) is a vector of an overall sightability estimate (between `0` and `1`) with a standard error. If the user does not have a standard error, then putting `0` as the standard error will create a confidence interval that is too narrow but will give an appropriate prediction for the total.
-#' @param sightresp (optional) is a vector of 0's and 1's from
-#' sightability trials on radiocollared animals, where a 1 denotes 
-#' an animal that was sighted and a 0 denotes an animal that
-#' was missed.
-#' @param sightpreds (optional) is a matrix or data frame with 
-#' predictors thought to be useful for predicting sightability. 
-#' \code{sightpreds} must have the same number of rows as the 
-#' length of \code{sightresp}.
-#' @param coordtype specifies whether spatial coordinates are in latitude, longitude (\code{LatLon}) form or UTM (\code{UTM}) form.
+#'
+#' @param object is an object generated from \code{slmfit}
+#' @param FPBKcol is the name of the column that contains the weights for prediction. The default setting predicts the population total.
+#' @param detinfo is a vector consisting of the mean detection
+#' probability and its standard error. By default, it is set to
+#' \code{c(1, 0)}, indicating perfect detection (1) with no
+#' variance (0). Using the default assumes perfect detection.
+#' @param ... Additional arguments
 #' @return a list with \itemize{
 #'   \item the estimated population total
 #'   \item the estimated prediction variance
@@ -36,52 +19,31 @@
 #'        \item x-coordinates
 #'        \item y-coordinates
 #'        \item density predictions
-#'        \item count predictions
 #'        \item indicator variable for whether or not the each site was sampled
 #'        \item estimated mean for each site
 #'        }
 #'    \item vector with estimated covariance parameters
 #' }
 #' @import stats
-#' @export FPBKpred
+#' @export
 
 
-FPBKpred <- function(formula, data, xcoordcol, ycoordcol,
-  CorModel = "Exponential", FPBKcol = NULL,
-  areacol = NULL,
-  detectionest = c(1, 0), coordtype = "LatLon",
-  sightresp = NULL, sightpreds = NULL) {
-
+predict.slmfit <- function(object, FPBKcol = NULL,
+  detinfo = c(1, 0), ...) {
+  
   ## if FPBKcol is left out, we are predicting the population total.
   ## Otherwise, FPBKcol is the name of the column in the data set
   ## with the weights for the sites that we are predicting (eg. a vector
   ## of 1's and 0's for predicting the total of the sites marked with 1's)
   
-  if(is.null(areacol) == TRUE) {
-    area <- rep(1, nrow(data))
-  } else if (is.character(areacol) == TRUE) {
-    area <- data[ ,areacol]
-  } else{
-    stop("areacol must be a character specifying the name of the
-      column of areas in the data set")
-  }
-
   
-  ## ASSUME that coordinates are lat/lon. Convert these to UTM
-  if (coordtype != "LatLon" & coordtype != "UTM") {
-    stop("coordtype must be a character string LatLon or UTM")
-  } else if (coordtype == "LatLon") {
-   xcoordsUTM <- LLtoUTM(cm = base::mean(data[ ,xcoordcol]),
-      lat = data[ ,ycoordcol], lon = data[ ,xcoordcol])$xy[ ,1]
-   ycoordsUTM <- LLtoUTM(cm = base::mean(data[ ,xcoordcol]),
-     lat = data[ ,ycoordcol], lon = data[ ,xcoordcol])$xy[ ,2]
-  } else if (coordtype == "UTM") {
-    xcoordsUTM <- data[ ,xcoordcol]
-    ycoordsUTM <- data[ ,ycoordcol]
-  }
-   
-   
-   if (is.null(FPBKcol) == TRUE) {
+  formula <- object$FPBKpredobj$formula
+  data <- object$FPBKpredobj$data
+  xcoordsUTM <- object$FPBKpredobj$xcoordsUTM
+  ycoordsUTM <- object$FPBKpredobj$ycoordsUTM
+  covparmests <- object$SpatialParmEsts
+  
+  if (is.null(FPBKcol) == TRUE) {
     predwts <- rep(1, nrow(data))
   } else if (is.character(FPBKcol) == TRUE) {
     predwts <- data[ ,FPBKcol]
@@ -90,107 +52,68 @@ FPBKpred <- function(formula, data, xcoordcol, ycoordcol,
       column of
       prediction weights in the data set")
   }
-
-  ## divide data set into sampled sites and unsampled sites based
-  ## on whether the response variable has a number (for sampled sites)
-  ## or NA (for unsampled sites)
   
-  ## want to krig the density now, not the count
   
-
-  fullmf <- stats::model.frame(formula, na.action = 
+  
+  
+  
+  
+  fullmf <- stats::model.frame(formula, na.action =
       stats::na.pass, data = data)
   yvar <- stats::model.response(fullmf, "numeric")
-  density <- yvar / area
-
-##response.col <- as.character(attr(stats::terms(formula, data = data), "variables"))[2]
+  density <- yvar
+  
   ind.sa <- !is.na(yvar)
   ind.un <- is.na(yvar)
   data.sa <- data[ind.sa, ]
   data.un <- data[ind.un, ]
-
-
-  ## display some warnings if the user, for example tries to input the
-  ## vector of xcoordinates as the input instead of the name of the column
-  if(is.character(xcoordcol) == FALSE) {
-    stop("xcoords must be a string giving the
-      name of the column in the data set
-      with the x coordinates")
-  }
-  if(is.character(ycoordcol) == FALSE) {
-    stop("ycoords must be a string giving the
-      name of the column in the data set
-      with the y coordinates")
-  }
-
-
-  ## create the design matrix for unsampled sites, for all of the sites,
-  ## and for the sampled sites, respectively.
-  m.un <- stats::model.frame(formula, data.un, na.action = 
+  
+  B <- predwts
+  Bs <- B[ind.sa]
+  Bu <- B[ind.un]
+  
+  m.un <- stats::model.frame(formula, data.un, na.action =
       stats::na.pass)
   Xu <- stats::model.matrix(formula, m.un)
   X <- stats::model.matrix(formula, fullmf)
-
+  
   ## sampled response values and design matrix
-  m.sa <- stats::model.frame(formula, data.sa, na.action = 
+  m.sa <- stats::model.frame(formula, data.sa, na.action =
       stats::na.omit)
   z.sa <- stats::model.response(m.sa)
   Xs <- stats::model.matrix(formula, m.sa)
-  z.density <- z.sa / area[ind.sa]
+  z.density <- z.sa
   
-  ## x and y coordinates for sampled and unsampled sites
-  x.sa <- xcoordsUTM[ind.sa]
-  y.sa <- ycoordsUTM[ind.sa]
-  x.un <- xcoordsUTM[ind.un]
-  y.un <- ycoordsUTM[ind.un]
-
-  ## number of sites that were sampled
-  n.sa <- nrow(Xs)
-  ## number of sites that were not sampled
-  n.un <- nrow(Xu)
-
-  ## double check that this is what we would want when areas
-  ## are not equal to 1
-  B <- predwts * area
-  Bs <- B[ind.sa]
-  Bu <- B[ind.un]
-
+  if (object$DetectionInd == TRUE) {
   
-  ## estimate the spatial parameters, the covariance matrix, and
-  ## the inverse of the covariance matrix
-  spat.est <- estcovparm(response = density,
-    designmatrix = as.matrix(X),
-    xcoordsvec = xcoordsUTM,
-    ycoordsvec = ycoordsUTM, CorModel = CorModel)
-  parms.est <- spat.est[[1]]
-  Sigma <- spat.est[[2]]
-  nugget.effect <- parms.est[1]; parsil.effect <- parms.est[2]
-  range.effect <- parms.est[3]
-
+  
+  Sigma <- object$FPBKpredobj$covmat
+  
   ## used in the Kriging formulas
   Sigma.us <- Sigma[ind.un, ind.sa]
   Sigma.su <- t(Sigma.us)
   Sigma.ss <- Sigma[ind.sa, ind.sa]
-      
-       ## give warning if covariance matrix cannot be inverted
-      if(abs(det(Sigma.ss)) <= .Machine$double.eps) {
-        warning("Covariance matrix is compulationally singular and
-          cannot be inverted")
-      }
-        
-  Sigma.ssi <- solve(Sigma.ss, tol = .Machine$double.eps)
-
+  Sigma.uu <- Sigma[ind.un, ind.un]
+  
+  ## give warning if covariance matrix cannot be inverted
+  # if(abs(det(Sigma.ss)) <= 1e-21) {
+  #   warning("Covariance matrix is compulationally singular and
+  #     cannot be inverted")
+  # }
+  
+  Sigma.ssi <- object$FPBKpredobj$covmatsampi
+  
   ## the generalized least squares regression coefficient estimates
-  betahat <- solve((t(Xs) %*% Sigma.ssi %*% Xs)) %*%
-     (t(Xs) %*% Sigma.ssi %*% as.matrix(z.density))
-
+  betahat <- object$CoefficientEsts
+  
   ## estimator for the mean vector
-  muhats <- Xs %*% betahat
-  muhatu <- Xu %*% betahat
+  muhats <- (Xs %*% betahat) 
+  muhatu <- (Xu %*% betahat) 
   
   muhat <- rep(NA, nrow(data))
-  muhat[ind.sa == TRUE] <- muhats
-  muhat[ind.sa == FALSE] <- muhatu
+  muhat[ind.sa == TRUE] <- muhats / detinfo[1]
+  muhat[ind.sa == FALSE] <- muhatu / detinfo[1]
+  
   
   ## matrices used in the kriging equations
   ## notation follow Ver Hoef (2008)
@@ -198,131 +121,161 @@ FPBKpred <- function(formula, data, xcoordcol, ycoordcol,
     Sigma.su %*% as.matrix(Bu)
   Dmat <- t(X) %*% matrix(B) - t(Xs) %*% Sigma.ssi %*% Cmat
   Vmat <- solve(t(Xs) %*% Sigma.ssi %*% Xs)
-
+  
   ## the predicted values for the sites that were not sampled
-  zhatu <- Sigma.us %*% Sigma.ssi %*% (z.density -
-      muhats) + muhatu
-
+  zhatu <- (Sigma.us %*% Sigma.ssi %*% (z.density -
+      muhats) + muhatu) / detinfo[1]
+  
   ## creating a column in the outgoing data set for predicted counts as
   ## well as a column indicating whether or not the observation was sampled
   ## or predicted
   preddensity <- density
   preddensity[is.na(preddensity) == TRUE] <- zhatu
   
-  preds <- preddensity * area
-  
   sampind <- rep(1, length(yvar))
   sampind[is.na(yvar) == TRUE] <- 0
-
-  if (detectionest[1] <= 0 | detectionest[1] > 1) {
-    stop("Detection Estimator in argument `detectionest` must
-      be between 0 and 1 (0, 1]")
-  }
   
-  if (detectionest[2] < 0) {
-    stop("Detection standard error in argument `detectionest` must be
-      greater than 0")
-  }
+  ## adding the site-by-site predictions
   
-  if (length(detectionest) != 2 | is.numeric(detectionest) == FALSE) {
-    stop("`detectionest` argument must be a vector with exactly two 
-      numeric components: an estimate for detection and the 
-      standard error of that estimate. See documentation if
-      the user does not have a standard error for detection.")
-  }
+  W <- (t(Xu) - t(Xs) %*% Sigma.ssi %*% Sigma.su) / detinfo[1]
   
-  ## the FPBK predictor
-  FPBKpredictor <- (t(B) %*% preddensity) /
-    detectionest[1] ## divided by the estimator for sightability
+  ## NEED TO CHANGE THIS FOR THE DETECTION CASE
+  sitecov <- Sigma.uu - Sigma.us %*% Sigma.ssi %*% Sigma.su +
+    t(W) %*% Vmat %*% W
+  sitevarnodet <- diag(sitecov)
+  
+  
+  densvar <- rep(NA, nrow(data))
+  densvar[sampind == 1] <- 0
+  densvar[sampind == 0] <- sitevarnodet
+  
+  sitevar <- (preddensity ^ 2) * varinvdelta +
+    ((1 / detinfo[1]) ^ 2) * densvar +
+    densvar * varinvdelta
+  
+  ## the FPBK predictor: already adjusted for detection
+  FPBKpredictor <- (t(B) %*% preddensity)
   
   ## the prediction variance for the FPBK predictor
   ## if detectionest is left as the default, we assume
   ## perfect detection with no variability in the detection estimate
+  
+  pred.var <- (t(as.matrix(B)) %*% Sigma %*%
+      as.matrix(B) -
+      t(Cmat) %*% Sigma.ssi %*% Cmat +
+      t(Dmat) %*% Vmat %*% Dmat)
+  
 
-  pred.var.obs <- (t(as.matrix(B)) %*% Sigma %*%
-    as.matrix(B) -
-    t(Cmat) %*% Sigma.ssi %*% Cmat +
-    t(Dmat) %*% Vmat %*% Dmat) / detectionest[1]^2 + 
-    (FPBKpredictor * detectionest[1]) ^ 2 * ((detectionest[2] / 
-        detectionest[1] ^ 2) ^ 2) +
-    (t(as.matrix(B)) %*% Sigma %*%
-        as.matrix(B) -
-        t(Cmat) %*% Sigma.ssi %*% Cmat +
-        t(Dmat) %*% Vmat %*% Dmat) * ((detectionest[2] / 
-            detectionest[1] ^ 2) ^ 2)
-    
+  varpibar <- detinfo[2] ^ 2
+  varinvdelta <- varpibar * (1 / detinfo[1]) ^ 4
+  
+  ## now adjusted for mean detection
+  
+  pred.var.obs <- (FPBKpredictor ^ 2) * varinvdelta +
+    ((1 / detinfo[1]) ^ 2) * pred.var +
+    pred.var * varinvdelta
   
   ## returns a list with 3 components:
   ## 1.) the kriging predictor and prediction variance
   ## 2.) a matrix with x and y coordinates, kriged predctions, and
   ## indicators for whether sites were sampled or not
   ## 3.) a vector of the estimated spatial parameters
-  df_out <- data.frame(cbind(xcoordsUTM, ycoordsUTM,
-    preddensity, preds, sampind, muhat))
-  colnames(df_out) <- c("xcoords", "ycoords",
-    "preddensity", "preds", 
-    "sampind", "muhat")
+  
+  } else if (object$DetectionInd == FALSE) {
+    
+    R <- object$FPBKpredobj$R
+    Xnstar <- object$FPBKpredobj$Xnstar
+    Cssi <- object$FPBKpredobj$Cssi
+    C <- object$FPBKpredobj$C
+    D <- object$FPBKpredobj$covmat
+    piest <- object$FPBKpredobj$piest
+    
+    ## breaking up calculation into a few different parts
+    p10 <- t(B) %*% t(R) %*% Cssi %*% z.density
+
+    p11 <- t(B) %*% X - t(B) %*% t(R) %*% Cssi %*% Xnstar
+    
+    p12 <- solve(t(Xnstar) %*% Cssi %*% Xnstar) %*%
+      t(Xnstar) %*% Cssi %*% z.density
+    
+    FPBKpredictor <- p10 + p11 %*% p12
+    tlambda <- t(B) %*% t(R) %*% Cssi + (t(B) %*% X
+      - t(B) %*% t(R) %*% Cssi %*% Xnstar) %*%
+      solve(t(Xnstar) %*% Cssi %*% Xnstar) %*% t(Xnstar) %*% Cssi
+    
+    pred.check <- tlambda %*% z.density
+
+    p13 <- tlambda %*% C %*% t(tlambda)
+    p14 <- t(tlambda %*% R %*% B)
+    p15 <- tlambda %*% R %*% B
+    p16 <- t(B) %*% D %*% B
+    pred.var.obs <- p13 - p14 - p15 + p16
+   ## se <- sqrt(varhat)
+    
+    ## stuff to be appended to the data frame
+    ## estimator for the mean vector
+    
+    betahat <- object$CoefficientEsts
+    
+    muhatsz <- Xs %*% betahat
+    muhatuz <- Xu %*% betahat
+    
+    muhats <- muhatsz * piest[ind.sa]
+    muhatu <- muhatuz * piest[ind.un]
+    muhat <- rep(NA, nrow(data))
+    muhat[ind.sa == TRUE] <- muhats
+    muhat[ind.sa == FALSE] <- muhatu
+    
+    sampind <- rep(1, length(yvar))
+    sampind[is.na(yvar) == TRUE] <- 0
+    
+    
+    weights <- t(R) %*% Cssi + (X - t(R) %*% Cssi %*% Xnstar) %*%
+      solve(t(Xnstar) %*% Cssi %*% Xnstar) %*% t(Xnstar) %*% Cssi
+    
+    varweights <- weights %*% C %*% t(weights) -
+      t(R) %*% t(weights) - weights %*% R + D
+    ##varweightsarea <- varweights * (as.matrix(area.all) %*% t(as.matrix(area.all)))
+    ##varhat.ML.bin.area <- t(B) %*% varweights %*% B
+    
+    
+    pred.persite <- (weights %*% z.density)
+    varweightsdiag <- diag(varweights)
+    
+
+    preddensity <- pred.persite
+    densvar <- varweightsdiag
+
+  } 
+  
+  
+  df_out <- data.frame(cbind(data, xcoordsUTM, ycoordsUTM,
+    preddensity, densvar, sampind, muhat))
+  
+  # data <- data.frame(y = 1:10, x = 2:11)
+  #
+  # fullmf <- stats::model.frame(formula, na.action =
+  #   stats::na.pass, data = data)
+  
+  colnames(df_out) <- c(colnames(data), "_xcoordsUTM_", "_ycoordsUTM_",
+    paste(base::all.vars(formula)[1], "_pred",
+      sep = ""),
+    paste(base::all.vars(formula)[1], "_predvar",
+      sep = ""),
+    paste(base::all.vars(formula)[1], "_sampind",
+      sep = ""),
+    paste(base::all.vars(formula)[1], "_muhat",
+      sep = ""))
   obj <- list(FPBKpredictor, pred.var.obs,
     df_out,
-    as.vector(c(nugget.effect, parsil.effect, range.effect)))
+    as.vector(covparmests),
+    formula = formula)
   
   names(obj) <- c("FPBK_Prediction", "PredVar",
-    "Pred_df", "SpatialParms")
+    "Pred_df", "SpatialParms", "formula")
   
-  
-  ## do adjusted FPBK method if we have a column of sightability data.
-   if (is.null(sightresp) == FALSE) {
-     
-     ## check to make sure dimension of prediction matrix is the same
-     ## as the number of sightability observations
-     
-     if (is.null(sightpreds) == FALSE) {
-       
-       if(nrow(sightpreds) != length(sightresp)) {
-         stop("The number of rows in the sightpreds prediction
-           matrix must be the same as the number of sightability
-           trial observations")
-       }
-     }
-     ## for now, just return an dummy object
-     obj <- cbind(sightresp, sightpreds)
-     
-   }
-  
-  
-  
+  class(obj) <- "sptotalPredOut"
   
   return(obj)
-
-}
-
-
-# # code used to generate the example data set
-#  counts <- rpois(40, 20)
-#  counts[c(2, 7, 19, 20, 24)] <- NA
-#  pred1 <- runif(40, 0, 1); pred2 <- rnorm(40, 0, 1)
-#  xcoordinit <- 1:7; ycoordinit <- 1:7
-#  grids <- expand.grid(xcoordinit, ycoordinit)[1:40, ]
-#  xcoords <- grids$Var1; ycoords <- grids$Var2
-#  dummyvar <- runif(40, 0, 1)
-#  areavar <- sample(c(0.5, 1), size = 40, replace = TRUE)
-# exampledataset <- as.data.frame(cbind(counts, pred1, pred2, xcoords, ycoords, dummyvar, areavar))
-# #devtools::use_data(exampledataset, overwrite = TRUE)
-# 
-# data <- exampledataset
-# FPBKcol <- NULL
-# xcoordcol <- "xcoords"; ycoordcol <- "ycoords"
-# coordtype <- "UTM"
-# formula <- counts ~ poly(pred1, 2) + pred2
-# formula <- counts ~ pred1 + pred2
-# formula <- counts ~ 1
-
-##FPBKpred(formula = formula, data = data, xcoordcol = xcoordcol,
-##  ycoordcol = ycoordcol, CorModel = "Gaussian",
-##  coordtype = "UTM", FPBKcol = NULL)[[1]]
-
-##pred_info <- FPBKpred(counts ~ pred1 + pred2, data = exampledataset,
-##  xcoordcol = "xcoords", ycoordcol = "ycoords",  coordtype = "UTM", areacol = "areavar")
-##FPBKoutput(pred_info = pred_info, get_variogram = TRUE,
-##  get_krigmap = FALSE, get_report = TRUE, conf_level = c(0.80, 0.90,
-##    0.95))
+  
+  }

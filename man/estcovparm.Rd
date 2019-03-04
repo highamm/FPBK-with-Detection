@@ -28,6 +28,12 @@ parameters and regression coefficients.
 Exponential but other options include the Spherical and the Gaussian.}
 
 \item{covestimates}{is an optional vector of covariance parameter estimates (nugget, partial sill, range). If these are given and \code{estmethod = "None"}, the the provided vector are treated as the estimators to create the covariance structure.}
+
+\item{pivec}{is a vector of estimated detection probabilities
+on each of the sites}
+
+\item{Vnn}{is the covariance matrix for the estimated detection
+probabilities}
 }
 \value{
 a list with \itemize{

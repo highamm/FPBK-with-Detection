@@ -105,12 +105,5 @@ get_detection <- function(formula, data,
 }
 
 
-resp <- rbinom(40, size = 1, prob = 0.5)
-cov1 <- runif(40, 0, 1)
-cov2 <- runif(40, 0, 10)
-formula <- resp ~ cov1 + cov2
-data <- data.frame(resp, cov1, cov2)
-varmethod <- "Bootstrap"
 
-Xndet <- cbind(rep(1, 60), runif(60, 0, 2), runif(60, 0, 3))
 
