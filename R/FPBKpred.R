@@ -129,7 +129,7 @@ predict.slmfit <- function(object, FPBKcol = NULL,
   ## creating a column in the outgoing data set for predicted counts as
   ## well as a column indicating whether or not the observation was sampled
   ## or predicted
-  preddensity <- density
+  preddensity <- density / detinfo[1]
   preddensity[is.na(preddensity) == TRUE] <- zhatu
   
   sampind <- rep(1, length(yvar))
@@ -149,6 +149,9 @@ predict.slmfit <- function(object, FPBKcol = NULL,
   densvar[sampind == 1] <- 0
   densvar[sampind == 0] <- sitevarnodet
   
+  varpibar <- detinfo[2] ^ 2
+  varinvdelta <- varpibar * (1 / detinfo[1]) ^ 4
+  
   sitevar <- (preddensity ^ 2) * varinvdelta +
     ((1 / detinfo[1]) ^ 2) * densvar +
     densvar * varinvdelta
@@ -166,8 +169,7 @@ predict.slmfit <- function(object, FPBKcol = NULL,
       t(Dmat) %*% Vmat %*% Dmat)
   
 
-  varpibar <- detinfo[2] ^ 2
-  varinvdelta <- varpibar * (1 / detinfo[1]) ^ 4
+
   
   ## now adjusted for mean detection
   

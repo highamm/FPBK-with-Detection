@@ -14,15 +14,19 @@ exampledataset$detpred2 <- runif(40, 0, 1)
 slm_info <- slmfit(formula = counts ~ 1,
   data = exampledataset,
   xcoordcol = "xcoords", ycoordcol = "ycoords",  coordtype = "UTM",
-   estmethod = "ML", detectionobj = detectionobj)
+   estmethod = "ML", detectionobj = detectionobj,
+  CorModel = "Gaussian")
 
 
-predict.slmfit(object = slm_info, FPBKcol = NULL) 
+
+predict(object = slm_info, FPBKcol = NULL)$FPBK_Prediction
 
 
-slm_info <- slmfit(formula = counts ~ 1,
+slm_info <- slmfit(formula = counts ~ pred1 + pred2,
   data = exampledataset,
   xcoordcol = "xcoords", ycoordcol = "ycoords",  coordtype = "UTM",
   estmethod = "ML", detectionobj = NULL)
-predict.slmfit(object = slm_info, FPBKcol = NULL,
-  detinfo = c(1, 0)) 
+
+predict(object = slm_info, FPBKcol = NULL,
+  detinfo = c(1, 0))$FPBK_Prediction
+

@@ -30,25 +30,38 @@ m2LL.FPBK.det <- function(theta, zcol, XDesign, xcoord, ycoord,
   nugget <- as.numeric(exp(theta[1]))
   parsil <- as.numeric(exp(theta[2]))
   range <- as.numeric(exp(theta[3]))
-  mu <- as.numeric(exp(theta[4]))
+  mu <- XDesign %*% as.matrix(theta[4:length(theta)])
+  
   ##nugget.z <- as.numeric(exp(theta[5]))
   DM <- matrix(0, n, n)
   DM[lower.tri(DM)] <- stats::dist(as.matrix(cbind(xcoord, ycoord)))
   Dismat <- DM + t(DM)
-  Sigmat <- parsil * exp(-Dismat / range)
+  
+  if (CorModel == "Exponential") {
+    Sigmat <- parsil * exp(-Dismat / range)
+  } else if (CorModel == "Gaussian") {
+    Sigmat <- parsil * exp(-Dismat ^ 2 / range)
+    } else if (CorModel == "Spherical") {
+      ## CHANGE THIS
+      Sigmat <- (1 - 1.5 * (Dismat / range) +
+          0.5 * (Dismat / range) ^ 3)
+      Sigmat[Dismat / range > 1] <- 0  
+      Sigmat <- parsil * Sigmat
+      }
+  
   Cmat <- diag(as.vector(mu) *
       ##(as.vector(pivec) - diag(Vnn) - as.vector(pivec^2)),
       (as.vector(pivec) * (1 - as.vector(pivec))),
     nrow = nrow(Sigmat)) + 
     (pivec %*% t(pivec)) * (diag(nugget, nrow = nrow(Sigmat)) + Sigmat) +
-    (as.matrix(rep(mu, n)) %*% t(as.matrix(rep(mu, n)))) * Vnn  +
+    (as.matrix(mu) %*% t(as.matrix(mu))) * Vnn  +
     (diag(nugget, nrow = nrow(Sigmat)) + Sigmat) * Vnn
   
   Ci <- solve(Cmat, tol = 1e-27)
   minusloglik <- (1 / 2) * determinant(Cmat, logarithm = TRUE)$modulus +
     (1 / 2) * (t(as.matrix(zcol) -
-        as.matrix(rep(mu, n) * as.vector(pivec)))) %*% Ci %*%
-    (as.matrix(zcol) - as.matrix(rep(mu, n) * as.vector(pivec)))
+        as.matrix(mu * as.vector(pivec)))) %*% Ci %*%
+    (as.matrix(zcol) - as.matrix(mu * as.vector(pivec)))
   ##covbi <- t(XDesign) %*% Ci %*% XDesign
   ##covb <- solve(covbi, tol = 1e-21)
   ##b.hat <- covb %*% t(XDesign) %*% Ci %*% zcol

@@ -358,7 +358,7 @@ slmfit <- function(formula, data, xcoordcol, ycoordcol,
     muhats <- as.matrix(Xs) %*% betahat
     muhatu <- as.matrix(Xu) %*% betahat
     
-    resids <- z.sa - muhats * piest[ind.sa]
+    resids <- w.sa - muhats * piest[ind.sa]
     
     muhat <- rep(NA, nrow(datanomissboth))
     muhat[ind.sa == TRUE] <- muhats

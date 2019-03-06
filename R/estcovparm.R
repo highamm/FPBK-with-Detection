@@ -213,11 +213,19 @@ estcovparm <- function(response, designmatrix, xcoordsvec, ycoordsvec,
       max(distmat))
     possible.theta3 <- log(possible.range)
     
-    possible.mu <- c(mean(zhat), 1.5 * mean(zhat), 0.75 * mean(zhat))
-    possible.theta4 <- log(possible.mu)
-    
     theta <- expand.grid(possible.theta1, possible.theta2,
-      possible.theta3, possible.theta4)
+     possible.theta3)
+    
+ 
+    
+      betaordinary <- as.vector(solve(t(as.matrix(designmatrixsa)) %*%
+          as.matrix(designmatrixsa)) %*%
+        t(as.matrix(designmatrixsa)) %*% zhat)
+      thetarest <- matrix(betaordinary, nrow = nrow(theta),
+        ncol = length(betaordinary), byrow = TRUE)
+      
+      theta <- as.matrix(cbind(theta, thetarest))
+  
     
     m2loglik <- rep(NA, nrow(theta))
     val.ML.bin <- NULL; lik.val.ML.bin <- NULL
@@ -233,7 +241,8 @@ estcovparm <- function(response, designmatrix, xcoordsvec, ycoordsvec,
         Vnn = Vnnsa)
     }
     
-    max.lik.obs <- which(m2loglik == min(m2loglik))
+    max.lik.obs <- sample(which(m2loglik == min(m2loglik)),
+      size = 1)
     
     ## optimize using Nelder-Mead
     parmest <- optim(theta[max.lik.obs, ], m2LL.FPBK.det,
@@ -290,7 +299,7 @@ estcovparm <- function(response, designmatrix, xcoordsvec, ycoordsvec,
   ##covb <- mginv(covbi, tol = 1e-21)
   ##b.hat <- covb %*% t(as.matrix(designmatrixsa)) %*%
     ##solve(qrV, response[ind.sa])
-  b.hat <- exp(parmest$par[4])
+  b.hat <- as.vector(parmest$par[4:ncol(theta)])
   r <- response[ind.sa] - (as.matrix(designmatrixsa) %*% b.hat) *
     pivecsa
   
