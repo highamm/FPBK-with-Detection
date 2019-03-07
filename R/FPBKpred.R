@@ -252,14 +252,14 @@ predict.slmfit <- function(object, FPBKcol = NULL,
   
   
   df_out <- data.frame(cbind(data, xcoordsUTM, ycoordsUTM,
-    preddensity, densvar, sampind, muhat))
+    preddensity, densvar, sampind, muhat, piest))
   
   # data <- data.frame(y = 1:10, x = 2:11)
   #
   # fullmf <- stats::model.frame(formula, na.action =
   #   stats::na.pass, data = data)
   
-  colnames(df_out) <- c(colnames(data), "_xcoordsUTM_", "_ycoordsUTM_",
+  colnames(df_out) <- c(colnames(data), "xcoordsUTM_", "ycoordsUTM_",
     paste(base::all.vars(formula)[1], "_pred",
       sep = ""),
     paste(base::all.vars(formula)[1], "_predvar",
@@ -267,14 +267,19 @@ predict.slmfit <- function(object, FPBKcol = NULL,
     paste(base::all.vars(formula)[1], "_sampind",
       sep = ""),
     paste(base::all.vars(formula)[1], "_muhat",
+      sep = ""),
+    paste(base::all.vars(formula)[1], "_piest",
       sep = ""))
+  
+  CorModel <- object$FPBKpredobj$correlationmod
   obj <- list(FPBKpredictor, pred.var.obs,
     df_out,
     as.vector(covparmests),
-    formula = formula)
+    formula = formula,
+    CorModel = CorModel)
   
   names(obj) <- c("FPBK_Prediction", "PredVar",
-    "Pred_df", "SpatialParms", "formula")
+    "Pred_df", "SpatialParms", "formula", "CorModel")
   
   class(obj) <- "sptotalPredOut"
   

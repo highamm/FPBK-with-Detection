@@ -15,8 +15,6 @@
 #' etc.
 #' @param get_variogram is an indicator for whether or not
 #' a variogram of the residuals should be returned
-#' @param CorModel Covariance model used, which is required to obtain 
-#' the appropriate fitted model semi-variogram.
 #' @param get_report is an indicator for whether a PDF report of some
 #' of the output from \code{get_krigmap}, \code{get_sampdetails},
 #' and \code{get_sampdetails} should be produced.
@@ -37,14 +35,24 @@
 FPBKoutput <- function(pred_info, conf_level = c(0.80, 
   0.90, 0.95),
   get_krigmap = FALSE, get_sampdetails = FALSE,
-  get_variogram = FALSE, get_report = FALSE,
-  CorModel = "Exponential") {
+  get_variogram = FALSE, get_report = FALSE) {
 
-pred.total <- pred_info[[1]]
-pred.total.var <- pred_info[[2]]
-pred.vals <- data.frame(pred_info[[3]])
-covparmests <- pred_info[[4]]
-
+pred.total <- pred_info$FPBK_Prediction
+pred.total.var <- pred_info$PredVar
+pred.vals <- data.frame(pred_info$Pred_df)
+covparmests <- pred_info$SpatialParms
+formula <- pred_info$formula
+respname <- base::all.vars(formula)[1]
+sampind <- pred.vals[ ,paste(base::all.vars(formula)[1], "_sampind",
+  sep = "")]
+preds <- pred.vals[ ,paste(base::all.vars(formula)[1], "_pred",
+  sep = "")]
+responsevar <- pred.vals[ ,base::all.vars(formula)[1]]
+CorModel <- pred_info$CorModel
+muhat <- pred.vals[ ,paste(base::all.vars(formula)[1], "_muhat",
+  sep = "")]
+piest <- pred.vals[ ,paste(base::all.vars(formula)[1], "_piest",
+  sep = "")]
 confbounds <- matrix(NA, nrow = length(conf_level), ncol = 3)
 
 for (k in 1:length(conf_level)){
@@ -70,12 +78,12 @@ basicpred <- t(matrix(round(c(pred.total, sqrt(pred.total.var)))))
 colnames(basicpred) <- c("Predicted Total", "SE(Total)")
 
 if (get_sampdetails == TRUE) {
-  nsitessampled <- sum(pred.vals$sampind)
+  nsitessampled <- sum(sampind)
   nsitestotal <- nrow(pred.vals)
-  animalscounted <- sum(pred.vals$preds[pred.vals$sampind == 1])
-  totalareacol <- pred.vals$preds / pred.vals$preddensity
-  totalarea <- sum(totalareacol)
-  areasampled <- sum(totalareacol[pred.vals$sampind == 1])
+  animalscounted <- sum(responsevar[sampind == 1])
+  totalareacol <- NA##preds / pred.vals$preddensity
+  totalarea <- NA##sum(totalareacol)
+  areasampled <- NA##sum(totalareacol[pred.vals$sampind == 1])
   outptmat <- t(matrix(c(nsitessampled, nsitestotal, animalscounted,
     totalarea, areasampled)))
   colnames(outptmat) <- c("Numb. Sites Sampled", "Total Numb. Sites",
@@ -85,13 +93,21 @@ if (get_sampdetails == TRUE) {
   }
 
 if (get_variogram == TRUE) {
-  sampled_df <- data.frame(subset(pred.vals, pred.vals[ ,"sampind"] == 1))
-  sampled_df$resids <- as.vector(sampled_df$preddensity -
-      sampled_df$muhat)
-
+  sampled_df <- data.frame(subset(pred.vals, sampind == 1))
+  muhatsamp <- muhat[sampind == 1]
+  predsamp <- preds[sampind == 1]
+  piestsamp <- piest[sampind == 1]
+  responsevarsamp <- responsevar[sampind == 1]
+  sampled_df$resids <- as.vector(responsevarsamp / piestsamp -
+      muhatsamp / piestsamp)
+  ##sampled_df$resids <- as.vector(predsamp -
+  ##    muhatsamp / piestsamp)
+  ## not sure what to do about residuals here since we do not
+  ## actually observe any totals
+  
   ## code for empirical variogram
   g_obj <- gstat::gstat(formula = resids ~ 1,
-    locations = ~ xcoords + ycoords,
+    locations = ~ xcoordsUTM_ + ycoordsUTM_,
     data = sampled_df)
   vario_out <- gstat::variogram(g_obj)
   maxy <- max(vario_out$gamma)
@@ -153,19 +169,64 @@ if (get_krigmap == TRUE) {
   ## make rectangles based on minimum distance
   ## this will only work if data form a grid
 
-  minxdist <- min(dist(alldata$xcoords)[dist(alldata$xcoords) != 0])
-  minydist <- min(dist(alldata$ycoords)[dist(alldata$ycoords) != 0])
+  #minxdist <- min(dist(alldata$xcoords)[dist(alldata$xcoords) != 0])
+  #minydist <- min(dist(alldata$ycoords)[dist(alldata$ycoords) != 0])
+ nameresp <- as.vector((noquote(paste(base::all.vars(formula)[1],
+   "_pred",
+    sep = ""))))
+ alldata$sampindfact_ <- factor(sampind)
+ 
+ # name of column with predictions
+ pcolname = paste(base::all.vars(formula)[1], "_pred",
+   sep = "")
 
-  p3 <- ggplot2::ggplot(data = alldata, aes_(x = ~xcoords, y = ~ycoords,
-    colour = ~preds, shape = ~as.factor(sampind))) + 
-      geom_rect(aes_(xmin = ~ (xcoords - minxdist / 2),
-        xmax = ~(xcoords + minxdist / 2),
-        ymin = ~(ycoords - minydist / 2),
-        ymax = ~(ycoords + minydist / 2),
-        fill = ~preds)) +
-      scale_fill_viridis_c() +
-      scale_colour_viridis_c() +
-      scale_shape_manual(values = shapevals)
+ # create breaks according to user-specified breakMethod
+ nbreaks <- 4
+ breakMethod <- 'quantile'
+ 
+ if(breakMethod == 'quantile') {
+   probs = (1:nbreaks)/(nbreaks + 1)
+   brks = c(min(pred.vals[ ,pcolname]) - 1e-10,
+     quantile(pred.vals[ ,pcolname], probs = probs),
+     max(pred.vals[ ,pcolname]) + 1e-10)
+ }
+ if(breakMethod == 'even') {
+   rang = max(pred.vals[ ,pcolname]) + 1e-10 -
+     min(pred.vals[ ,pcolname]) - 1e-10
+   brks = c(min(pred.vals[ ,pcolname]) - 1e-10,
+     min(pred.vals[ ,pcolname]) - 1e-10 +
+       rang*(1:nbreaks)/(nbreaks + 1),
+     max(pred.vals[ ,pcolname]) + 1e-10)
+ }
+ # cut predictions at breakpoints to create a vector of factors and labels
+ cuts = cut(pred.vals[,pcolname], breaks = brks)
+ # create a color palette
+## palette = viridisLite::viridis(length(levels(cuts)))
+
+ 
+ p3 <- ggplot2::ggplot(data = alldata, aes_(x = ~xcoordsUTM_,
+   y = ~ycoordsUTM_, shape = ~sampindfact_)) +  ##)) + 
+   geom_point(aes(colour = cuts), size = 3) +
+   scale_fill_viridis_d() +
+   scale_colour_viridis_d() + 
+   theme_bw() +
+   scale_shape_manual(values = shapevals)
+ 
+ 
+ 
+ 
+ 
+ # ## change this for binning like Jay did in the other package!
+ #  p3 <- ggplot2::ggplot(data = alldata, aes_(x = ~xcoordsUTM_, y = ~ycoordsUTM_, shape = ~sampindfact_)) +  ##)) + 
+ #    geom_point(aes_string(colour = nameresp)) +
+ #     ## geom_rect(aes_(xmin = ~ (xcoords - minxdist / 2),
+ #      ##  xmax = ~(xcoords + minxdist / 2),
+ #      ##  ymin = ~(ycoords - minydist / 2),
+ #      ##  ymax = ~(ycoords + minydist / 2),
+ #      ##  fill = ~preds)) +
+ #      scale_fill_viridis_c() +
+ #      scale_colour_viridis_c() +
+ #      scale_shape_manual(values = shapevals)
   
   print(p3)
   

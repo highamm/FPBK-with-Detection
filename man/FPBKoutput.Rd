@@ -6,8 +6,7 @@
 \usage{
 FPBKoutput(pred_info, conf_level = c(0.8, 0.9, 0.95),
   get_krigmap = FALSE, get_sampdetails = FALSE,
-  get_variogram = FALSE, get_report = FALSE,
-  CorModel = "Exponential")
+  get_variogram = FALSE, get_report = FALSE)
 }
 \arguments{
 \item{pred_info}{is the output from \code{FPBK.pred} in this package.}
@@ -30,9 +29,6 @@ a variogram of the residuals should be returned}
 \item{get_report}{is an indicator for whether a PDF report of some
 of the output from \code{get_krigmap}, \code{get_sampdetails},
 and \code{get_sampdetails} should be produced.}
-
-\item{CorModel}{Covariance model used, which is required to obtain 
-the appropriate fitted model semi-variogram.}
 }
 \value{
 \itemize{
