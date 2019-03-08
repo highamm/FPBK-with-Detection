@@ -18,6 +18,9 @@
 #' @param get_report is an indicator for whether a PDF report of some
 #' of the output from \code{get_krigmap}, \code{get_sampdetails},
 #' and \code{get_sampdetails} should be produced.
+#' @param nbreaks is the number of breakpoints used in the spatial graphic
+#' @param breakMethod is either \code{'quantile'} or \code{'even'} and determines how the break points are constructed.
+#' @param pointsize is the size of the points on the spatial graphic.
 #' @return \itemize{
 #'   \item prediction interval
 #'   \item a map of the kriged counts (optional)
@@ -35,7 +38,10 @@
 FPBKoutput <- function(pred_info, conf_level = c(0.80, 
   0.90, 0.95),
   get_krigmap = FALSE, get_sampdetails = FALSE,
-  get_variogram = FALSE, get_report = FALSE) {
+  get_variogram = FALSE, get_report = FALSE,
+  nbreaks = 4,
+  breakMethod = 'quantile', 
+  pointsize = 2) {
 
 pred.total <- pred_info$FPBK_Prediction
 pred.total.var <- pred_info$PredVar
@@ -181,8 +187,6 @@ if (get_krigmap == TRUE) {
    sep = "")
 
  # create breaks according to user-specified breakMethod
- nbreaks <- 4
- breakMethod <- 'quantile'
  
  if(breakMethod == 'quantile') {
    probs = (1:nbreaks)/(nbreaks + 1)
@@ -206,7 +210,7 @@ if (get_krigmap == TRUE) {
  
  p3 <- ggplot2::ggplot(data = alldata, aes_(x = ~xcoordsUTM_,
    y = ~ycoordsUTM_, shape = ~sampindfact_)) +  ##)) + 
-   geom_point(aes(colour = cuts), size = 3) +
+   geom_point(aes(colour = cuts), size = pointsize) +
    scale_fill_viridis_d() +
    scale_colour_viridis_d() + 
    theme_bw() +
