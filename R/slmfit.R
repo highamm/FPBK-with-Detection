@@ -19,6 +19,8 @@
 #' @param covestimates is an optional vector of covariance parameter estimates (nugget, partial sill, range). If these are given and \code{estmethod = "None"}, the the provided vector are treated as the estimators to create the covariance structure.
 #' @param detectionobj is a fitted model obj from \code{get_detection}. The default is for this object to be \code{NULL}, resulting in
 #' spatial prediction that assumes perfect detection.
+#' @param areacol is the name of the column with the areas of the sites. By default, we assume that all sites have equal area, in which
+#' case a vector of 1's is used as the areas.
 #' @return a list with \itemize{
 #'   \item the spatial covariance estimates
 #'   \item the regression coefficient estimates
@@ -39,7 +41,8 @@ slmfit <- function(formula, data, xcoordcol, ycoordcol,
   CorModel = "Exponential",
   coordtype = "LatLon", estmethod = "REML",
   covestimates = c(NA, NA, NA),
-  detectionobj = NULL) {
+  detectionobj = NULL,
+  areacol = NULL) {
   
   
   ## display error message if estmethod is set to None and the user
@@ -102,10 +105,18 @@ slmfit <- function(formula, data, xcoordcol, ycoordcol,
   if (is.null(detectionobj) == TRUE) {
   ## create the design matrix for unsampled sites, for all of the sites, and for the sampled sites, respectively.
   
+    
+    
+    if (is.null(areacol) == TRUE) {
+      areavar <- rep(1, nrow(datanomiss))
+    } else {
+      areavar <- datanomiss[ ,areacol]
+    }
+    
   fullmf <- stats::model.frame(formula, na.action =
       stats::na.pass, data = datanomiss)
   yvar <- stats::model.response(fullmf, "numeric")
-  density <- yvar
+  density <- yvar / areavar
   
   ## remove any rows with missing values in any of the predictors
   formula.onlypreds <- formula[-2]
@@ -137,7 +148,7 @@ slmfit <- function(formula, data, xcoordcol, ycoordcol,
       stats::na.omit)
   z.sa <- stats::model.response(m.sa)
   Xs <- stats::model.matrix(formula, m.sa)
-  z.density <- z.sa
+  z.density <- z.sa / areavar[ind.sa]
   n <- nrow(Xs)
   
   
@@ -183,7 +194,7 @@ slmfit <- function(formula, data, xcoordcol, ycoordcol,
   muhats <- Xs %*% betahat
   muhatu <- Xu %*% betahat
   
-  resids <- z.sa - muhats
+  resids <- z.density - muhats
   
   muhat <- rep(NA, nrow(datanomiss))
   muhat[ind.sa == TRUE] <- muhats
@@ -203,12 +214,13 @@ slmfit <- function(formula, data, xcoordcol, ycoordcol,
   names(covparms) <- c("Nugget", "Partial Sill", "Range")
   
   FPBKpredobj <- list(formula, datanomiss, xcoordsUTM, ycoordsUTM,
-    estmethod, CorModel, Sigma, Sigma.ssi)
+    estmethod, CorModel, Sigma, Sigma.ssi, areavar)
   names(FPBKpredobj) <- c("formula", "data", "xcoordsUTM",
     "ycoordsUTM",
-    "estmethod","correlationmod", "covmat", "covmatsampi")
+    "estmethod","correlationmod", "covmat", "covmatsampi",
+    "areavar")
   obj <- list(covparms, betahatest, covest, min2loglik, prednames,
-    n, CorModel, resids, Xs, z.sa, detind, FPBKpredobj)
+    n, CorModel, resids, Xs, z.density, detind, FPBKpredobj)
   
   names(obj) <- c("SpatialParmEsts", "CoefficientEsts",
     "BetaCov", "minus2loglike", "PredictorNames", "SampSize",
@@ -274,11 +286,16 @@ slmfit <- function(formula, data, xcoordcol, ycoordcol,
     
     }
     
+    if (is.null(areacol) == TRUE) {
+      areavar <- rep(1, nrow(datanomissboth))
+    } else {
+      areavar <- datanomissboth[ ,areacol]
+    }
     
     fullmf <- stats::model.frame(formula, na.action =
         stats::na.pass, data = datanomissboth)
     yvar <- stats::model.response(fullmf, "numeric")
-    density <- yvar
+    density <- yvar / areavar
     
     ## remove any rows with missing values in any of the predictors
     formula.onlypreds <- formula[-2]
@@ -291,8 +308,8 @@ slmfit <- function(formula, data, xcoordcol, ycoordcol,
     ## on whether the response variable has a number (for sampled sites)
     ## or NA (for unsampled sites)
     
-    ind.sa <- !is.na(yvar)
-    ind.un <- is.na(yvar)
+    ind.sa <- !is.na(density)
+    ind.un <- is.na(density)
     data.sa <- datanomissboth[ind.sa, ]
     data.un <- datanomissboth[ind.un, ]
     
@@ -310,7 +327,7 @@ slmfit <- function(formula, data, xcoordcol, ycoordcol,
         stats::na.omit)
     w.sa <- stats::model.response(m.sa)
     Xs <- stats::model.matrix(formula, m.sa)
-    w.density <- w.sa
+    w.density <- w.sa / areavar[ind.sa]
     n <- nrow(Xs)
     
     prednames <- colnames(Xs)
@@ -358,7 +375,7 @@ slmfit <- function(formula, data, xcoordcol, ycoordcol,
     muhats <- as.matrix(Xs) %*% betahat
     muhatu <- as.matrix(Xu) %*% betahat
     
-    resids <- w.sa - muhats * piest[ind.sa]
+    resids <- w.density - muhats * piest[ind.sa]
     
     muhat <- rep(NA, nrow(datanomissboth))
     muhat[ind.sa == TRUE] <- muhats
@@ -402,13 +419,13 @@ slmfit <- function(formula, data, xcoordcol, ycoordcol,
     FPBKpredobj <- list(formula, datanomissboth, xcoordsUTM,
       ycoordsUTM,
       estmethod, CorModel, Sigma, Sigma.ssi, C,
-      Cinv, Xnstar, R, piest)
+      Cinv, Xnstar, R, piest, areavar)
     names(FPBKpredobj) <- c("formula", "data", "xcoordsUTM",
       "ycoordsUTM",
       "estmethod","correlationmod", "covmat", "covmatsampi", "C",
-      "Cssi", "Xnstar", "R", "piest")
+      "Cssi", "Xnstar", "R", "piest", "areavar")
     obj <- list(covparms, betahatest, covest, min2loglik, prednames,
-      n, CorModel, resids, Xs, w.sa, detind, FPBKpredobj)
+      n, CorModel, resids, Xs, w.density, detind, FPBKpredobj)
     
     names(obj) <- c("SpatialParmEsts", "CoefficientEsts",
       "BetaCov", "minus2loglike", "PredictorNames", "SampSize",

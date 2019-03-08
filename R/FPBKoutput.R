@@ -60,6 +60,8 @@ muhat <- pred.vals[ ,paste(base::all.vars(formula)[1], "_muhat",
 piest <- pred.vals[ ,paste(base::all.vars(formula)[1], "_piest",
   sep = "")]
 confbounds <- matrix(NA, nrow = length(conf_level), ncol = 3)
+areavar <- pred.vals[ ,paste(base::all.vars(formula)[1], "_areas",
+  sep = "")]
 
 for (k in 1:length(conf_level)){
 confbounds[k, ] <- matrix(c(round(as.numeric(pred.total) + c(1, -1) *
@@ -87,13 +89,13 @@ if (get_sampdetails == TRUE) {
   nsitessampled <- sum(sampind)
   nsitestotal <- nrow(pred.vals)
   animalscounted <- sum(responsevar[sampind == 1])
-  totalareacol <- NA##preds / pred.vals$preddensity
-  totalarea <- NA##sum(totalareacol)
-  areasampled <- NA##sum(totalareacol[pred.vals$sampind == 1])
+  totalareacol <- sum(areavar)
+  totalarea <- sum(areavar)
+  areasampled <- sum(areavar[sampind == 1])
   outptmat <- t(matrix(c(nsitessampled, nsitestotal, animalscounted,
     totalarea, areasampled)))
   colnames(outptmat) <- c("Numb. Sites Sampled", "Total Numb. Sites",
-    "Numb. Units Counted", "Total Area", "Area Sampled")
+    "Numb. Units/Animals Counted", "Total Area", "Area Sampled")
   print(outptmat)
   
   }
@@ -101,10 +103,11 @@ if (get_sampdetails == TRUE) {
 if (get_variogram == TRUE) {
   sampled_df <- data.frame(subset(pred.vals, sampind == 1))
   muhatsamp <- muhat[sampind == 1]
-  predsamp <- preds[sampind == 1]
+  predsamp <- preds[sampind == 1] / areavar[sampind == 1]
   piestsamp <- piest[sampind == 1]
   responsevarsamp <- responsevar[sampind == 1]
-  sampled_df$resids <- as.vector(responsevarsamp / piestsamp -
+  sampled_df$resids <- as.vector(responsevarsamp / (piestsamp *
+      areavar[sampind == 1]) -
       muhatsamp / piestsamp)
   ##sampled_df$resids <- as.vector(predsamp -
   ##    muhatsamp / piestsamp)
@@ -212,9 +215,14 @@ if (get_krigmap == TRUE) {
    y = ~ycoordsUTM_, shape = ~sampindfact_)) +  ##)) + 
    geom_point(aes(colour = cuts), size = pointsize) +
    scale_fill_viridis_d() +
-   scale_colour_viridis_d() + 
+   scale_colour_viridis_d(name = "Counts") + 
    theme_bw() +
-   scale_shape_manual(values = shapevals)
+   scale_shape_manual("Samp Indicator", 
+     labels = c("Unsampled", "Sampled"), values = shapevals) +
+   theme(panel.background = element_blank(),
+     panel.grid.major = element_blank(),
+     panel.grid.minor = element_blank()) +
+   xlab("") + ylab("")
  
  
  

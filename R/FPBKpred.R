@@ -42,6 +42,7 @@ predict.slmfit <- function(object, FPBKcol = NULL,
   xcoordsUTM <- object$FPBKpredobj$xcoordsUTM
   ycoordsUTM <- object$FPBKpredobj$ycoordsUTM
   covparmests <- object$SpatialParmEsts
+  areavar <- object$FPBKpredobj$areavar
   
   if (is.null(FPBKcol) == TRUE) {
     predwts <- rep(1, nrow(data))
@@ -61,7 +62,7 @@ predict.slmfit <- function(object, FPBKcol = NULL,
   fullmf <- stats::model.frame(formula, na.action =
       stats::na.pass, data = data)
   yvar <- stats::model.response(fullmf, "numeric")
-  density <- yvar
+  density <- yvar / areavar
   
   ind.sa <- !is.na(yvar)
   ind.un <- is.na(yvar)
@@ -82,7 +83,7 @@ predict.slmfit <- function(object, FPBKcol = NULL,
       stats::na.omit)
   z.sa <- stats::model.response(m.sa)
   Xs <- stats::model.matrix(formula, m.sa)
-  z.density <- z.sa
+  z.density <- z.sa / areavar[ind.sa]
   
   if (object$DetectionInd == TRUE) {
   
@@ -117,20 +118,23 @@ predict.slmfit <- function(object, FPBKcol = NULL,
   
   ## matrices used in the kriging equations
   ## notation follow Ver Hoef (2008)
-  Cmat <- Sigma.ss %*% as.matrix(Bs) +
-    Sigma.su %*% as.matrix(Bu)
-  Dmat <- t(X) %*% matrix(B) - t(Xs) %*% Sigma.ssi %*% Cmat
+  Cmat <- Sigma.ss %*% as.matrix(Bs * areavar[ind.sa]) +
+    Sigma.su %*% as.matrix(Bu * areavar[ind.un])
+  Dmat <- t(X) %*% matrix(B * areavar) - t(Xs) %*% Sigma.ssi %*% Cmat
   Vmat <- solve(t(Xs) %*% Sigma.ssi %*% Xs)
   
   ## the predicted values for the sites that were not sampled
-  zhatu <- (Sigma.us %*% Sigma.ssi %*% (z.density -
-      muhats) + muhatu) / detinfo[1]
+  zhatu <- ((Sigma.us %*% Sigma.ssi %*% (z.density -
+      muhats) + muhatu) / detinfo[1]) 
+  zhatucount <- zhatu * areavar[ind.un]
   
   ## creating a column in the outgoing data set for predicted counts as
   ## well as a column indicating whether or not the observation was sampled
   ## or predicted
   preddensity <- density / detinfo[1]
   preddensity[is.na(preddensity) == TRUE] <- zhatu
+  
+  predcount <- preddensity * areavar
   
   sampind <- rep(1, length(yvar))
   sampind[is.na(yvar) == TRUE] <- 0
@@ -139,7 +143,6 @@ predict.slmfit <- function(object, FPBKcol = NULL,
   
   W <- (t(Xu) - t(Xs) %*% Sigma.ssi %*% Sigma.su) / detinfo[1]
   
-  ## NEED TO CHANGE THIS FOR THE DETECTION CASE
   sitecov <- Sigma.uu - Sigma.us %*% Sigma.ssi %*% Sigma.su +
     t(W) %*% Vmat %*% W
   sitevarnodet <- diag(sitecov)
@@ -149,6 +152,14 @@ predict.slmfit <- function(object, FPBKcol = NULL,
   densvar[sampind == 1] <- 0
   densvar[sampind == 0] <- sitevarnodet
   
+  countcov <- areavar[ind.un] *
+    sitevarnodet * areavar[ind.un]
+  countcovnodet <- countcov
+  
+  countvar <- rep(NA, nrow(data))
+  countvar[sampind == 1] <- 0
+  countvar[sampind == 0] <- countcovnodet
+  
   varpibar <- detinfo[2] ^ 2
   varinvdelta <- varpibar * (1 / detinfo[1]) ^ 4
   
@@ -156,18 +167,22 @@ predict.slmfit <- function(object, FPBKcol = NULL,
     ((1 / detinfo[1]) ^ 2) * densvar +
     densvar * varinvdelta
   
+  sitevarcount <- (predcount ^ 2) * varinvdelta +
+    ((1 / detinfo[1]) ^ 2) * countvar +
+    countvar * varinvdelta
+  
   ## the FPBK predictor: already adjusted for detection
   FPBKpredictor <- (t(B) %*% preddensity)
+  FPBKpredictorcount <- (t(B) %*% predcount)
   
   ## the prediction variance for the FPBK predictor
   ## if detectionest is left as the default, we assume
   ## perfect detection with no variability in the detection estimate
   
-  pred.var <- (t(as.matrix(B)) %*% Sigma %*%
-      as.matrix(B) -
+  pred.var <- (t(as.matrix(B * areavar)) %*% Sigma %*%
+      as.matrix(B * areavar) -
       t(Cmat) %*% Sigma.ssi %*% Cmat +
       t(Dmat) %*% Vmat %*% Dmat)
-  
 
 
   
@@ -177,6 +192,7 @@ predict.slmfit <- function(object, FPBKcol = NULL,
     ((1 / detinfo[1]) ^ 2) * pred.var +
     pred.var * varinvdelta
   
+  piest <- rep(1, nrow(data))
   ## returns a list with 3 components:
   ## 1.) the kriging predictor and prediction variance
   ## 2.) a matrix with x and y coordinates, kriged predctions, and
@@ -193,24 +209,24 @@ predict.slmfit <- function(object, FPBKcol = NULL,
     piest <- object$FPBKpredobj$piest
     
     ## breaking up calculation into a few different parts
-    p10 <- t(B) %*% t(R) %*% Cssi %*% z.density
+    p10 <- t(B * areavar) %*% t(R) %*% Cssi %*% z.density
 
-    p11 <- t(B) %*% X - t(B) %*% t(R) %*% Cssi %*% Xnstar
+    p11 <- t(B) %*% X - t(B * areavar) %*% t(R) %*% Cssi %*% Xnstar
     
     p12 <- solve(t(Xnstar) %*% Cssi %*% Xnstar) %*%
       t(Xnstar) %*% Cssi %*% z.density
     
     FPBKpredictor <- p10 + p11 %*% p12
-    tlambda <- t(B) %*% t(R) %*% Cssi + (t(B) %*% X
-      - t(B) %*% t(R) %*% Cssi %*% Xnstar) %*%
+    tlambda <- t(B * areavar) %*% t(R) %*% Cssi + (t(B * areavar) %*% X
+      - t(B * areavar) %*% t(R) %*% Cssi %*% Xnstar) %*%
       solve(t(Xnstar) %*% Cssi %*% Xnstar) %*% t(Xnstar) %*% Cssi
     
     pred.check <- tlambda %*% z.density
 
     p13 <- tlambda %*% C %*% t(tlambda)
-    p14 <- t(tlambda %*% R %*% B)
-    p15 <- tlambda %*% R %*% B
-    p16 <- t(B) %*% D %*% B
+    p14 <- t(tlambda %*% R %*% (B * areavar))
+    p15 <- tlambda %*% R %*% (B * areavar)
+    p16 <- t(B * areavar) %*% D %*% (B * areavar)
     pred.var.obs <- p13 - p14 - p15 + p16
    ## se <- sqrt(varhat)
     
@@ -241,18 +257,18 @@ predict.slmfit <- function(object, FPBKcol = NULL,
     ##varhat.ML.bin.area <- t(B) %*% varweights %*% B
     
     
-    pred.persite <- (weights %*% z.density)
-    varweightsdiag <- diag(varweights)
+    pred.persite <- (weights %*% z.density) * areavar
+    varweightsdiag <- areavar * diag(varweights) * areavar
     
 
-    preddensity <- pred.persite
-    densvar <- varweightsdiag
+    predcount <- pred.persite
+    countvar <- varweightsdiag
 
   } 
   
   
   df_out <- data.frame(cbind(data, xcoordsUTM, ycoordsUTM,
-    preddensity, densvar, sampind, muhat, piest))
+    predcount, countvar, sampind, muhat, piest, areavar))
   
   # data <- data.frame(y = 1:10, x = 2:11)
   #
@@ -269,6 +285,8 @@ predict.slmfit <- function(object, FPBKcol = NULL,
     paste(base::all.vars(formula)[1], "_muhat",
       sep = ""),
     paste(base::all.vars(formula)[1], "_piest",
+      sep = ""),
+    paste(base::all.vars(formula)[1], "_areas",
       sep = ""))
   
   CorModel <- object$FPBKpredobj$correlationmod

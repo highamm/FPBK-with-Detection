@@ -11,12 +11,15 @@ detectionobj <- get_detection(formula = formula, data = data,
 exampledataset$detpred1 <- runif(40, 0, 1)
 exampledataset$detpred2 <- runif(40, 0, 1)
 
+exampledataset$areas <- rep(0.5, 40)
 slm_info <- slmfit(formula = counts ~ 1,
   data = exampledataset,
   xcoordcol = "xcoords", ycoordcol = "ycoords",  coordtype = "UTM",
-   estmethod = "ML", detectionobj = detectionobj,
-  CorModel = "Gaussian")
-
+   estmethod = "ML", detectionobj = NULL,
+  CorModel = "Gaussian",
+  areacol = "areas")
+slm_info$SpatialParmEsts
+slm_info$CoefficientEsts
 
 predict(object = slm_info, FPBKcol = NULL)$FPBK_Prediction
 predobj <- predict(object = slm_info, FPBKcol = NULL)
@@ -24,7 +27,8 @@ predobj <- predict(object = slm_info, FPBKcol = NULL)
 FPBKoutput(pred_info = predobj, conf_level = c(0.80, 
   0.90, 0.95),
   get_krigmap = TRUE, get_sampdetails = TRUE,
-  get_variogram = TRUE, get_report = TRUE)
+  get_variogram = TRUE, get_report = FALSE,
+  pointsize = 4)
   
   
 slm_info <- slmfit(formula = counts ~ pred1 + pred2,

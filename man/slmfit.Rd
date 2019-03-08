@@ -6,7 +6,7 @@
 \usage{
 slmfit(formula, data, xcoordcol, ycoordcol, CorModel = "Exponential",
   coordtype = "LatLon", estmethod = "REML", covestimates = c(NA, NA,
-  NA), detectionobj = NULL)
+  NA), detectionobj = NULL, areacol = NULL)
 }
 \arguments{
 \item{formula}{is an R linear model formula specifying density as the
@@ -33,6 +33,9 @@ parameters and regression coefficients.}
 
 \item{detectionobj}{is a fitted model obj from \code{get_detection}. The default is for this object to be \code{NULL}, resulting in
 spatial prediction that assumes perfect detection.}
+
+\item{areacol}{is the name of the column with the areas of the sites. By default, we assume that all sites have equal area, in which
+case a vector of 1's is used as the areas.}
 }
 \value{
 a list with \itemize{
