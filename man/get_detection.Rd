@@ -4,7 +4,7 @@
 \alias{get_detection}
 \title{Obtains estimates for detection parameters through logistic regression.}
 \usage{
-get_detection(formula, data, varmethod)
+get_detection(formula, data, varmethod = "Bootstrap")
 }
 \arguments{
 \item{formula}{is an R linear model formula specifying binary detection as the

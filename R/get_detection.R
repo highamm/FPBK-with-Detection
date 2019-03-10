@@ -21,7 +21,7 @@
 #' @export get_detection
 
 get_detection <- function(formula, data, 
-  varmethod = "Delta") {
+  varmethod = "Bootstrap") {
   
   Xall <- model.matrix(formula, model.frame(formula, data,
     na.action = stats::na.pass))

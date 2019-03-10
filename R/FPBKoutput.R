@@ -63,6 +63,10 @@ confbounds <- matrix(NA, nrow = length(conf_level), ncol = 3)
 areavar <- pred.vals[ ,paste(base::all.vars(formula)[1], "_areas",
   sep = "")]
 
+simptab <- t(matrix(c(pred.total, sqrt(pred.total.var))))
+colnames(simptab) <- c("Prediction", "SE(Prediction")
+print(simptab)
+
 for (k in 1:length(conf_level)){
 confbounds[k, ] <- matrix(c(round(as.numeric(pred.total) + c(1, -1) *
     stats::qnorm((1 - conf_level[k]) / 2) *
@@ -95,7 +99,7 @@ if (get_sampdetails == TRUE) {
   outptmat <- t(matrix(c(nsitessampled, nsitestotal, animalscounted,
     totalarea, areasampled)))
   colnames(outptmat) <- c("Numb. Sites Sampled", "Total Numb. Sites",
-    "Numb. Units/Animals Counted", "Total Area", "Area Sampled")
+    "Animals Counted", "Total Area", "Area Sampled")
   print(outptmat)
   
 } else{
@@ -255,7 +259,7 @@ if (get_krigmap == TRUE) {
     
     ## need to think more carefully about where this report
     ## should go.
-    dout <- getwd() ##"~/Desktop/"
+    dout <- "~/Desktop/"
     if (missing(dout)) {
       dout <- getwd()
     }
