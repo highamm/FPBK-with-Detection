@@ -21,7 +21,7 @@
 #' @export get_detection
 
 get_detection <- function(formula, data, 
-  varmethod) {
+  varmethod = "Delta") {
   
   Xall <- model.matrix(formula, model.frame(formula, data,
     na.action = stats::na.pass))
@@ -85,9 +85,15 @@ get_detection <- function(formula, data,
     } else{
     
     ## fit the logistic regression with the resampled rows
+      if (ncol(boot.mat) > 2){
     boot.mod <- base::suppressWarnings(stats::glm(boot.mat[ ,1] ~
         boot.mat[ ,-c(1, 2)],
       family = "binomial"))
+      } else {
+        boot.mod <- base::suppressWarnings(stats::glm(boot.mat[ ,1] ~
+            1,
+          family = "binomial"))
+      }
     boot.coefs[kk, ] <- base::suppressWarnings(base::summary(boot.mod)$coef[ ,1])
     }
     

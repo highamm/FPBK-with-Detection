@@ -221,7 +221,7 @@ predict.slmfit <- function(object, FPBKcol = NULL,
       - t(B * areavar) %*% t(R) %*% Cssi %*% Xnstar) %*%
       solve(t(Xnstar) %*% Cssi %*% Xnstar) %*% t(Xnstar) %*% Cssi
     
-    pred.check <- tlambda %*% z.density
+    FPBKpredictorcount <- tlambda %*% z.density
 
     p13 <- tlambda %*% C %*% t(tlambda)
     p14 <- t(tlambda %*% R %*% (B * areavar))
@@ -290,7 +290,7 @@ predict.slmfit <- function(object, FPBKcol = NULL,
       sep = ""))
   
   CorModel <- object$FPBKpredobj$correlationmod
-  obj <- list(FPBKpredictor, pred.var.obs,
+  obj <- list(FPBKpredictorcount, pred.var.obs,
     df_out,
     as.vector(covparmests),
     formula = formula,

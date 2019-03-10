@@ -399,7 +399,7 @@ slmfit <- function(formula, data, xcoordcol, ycoordcol,
           (1 - as.vector(piest[ind.sa])),
         nrow = nrow(Sigma.ss))
 
-    Cinv <- solve(C)
+    Cinv <- solve(C, tol = 1e-23)
 
     Xnstar <- piest[ind.sa] * Xs
     

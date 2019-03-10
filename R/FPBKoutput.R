@@ -98,6 +98,8 @@ if (get_sampdetails == TRUE) {
     "Numb. Units/Animals Counted", "Total Area", "Area Sampled")
   print(outptmat)
   
+} else{
+    outptmat <- NULL
   }
 
 if (get_variogram == TRUE) {
@@ -118,7 +120,8 @@ if (get_variogram == TRUE) {
   g_obj <- gstat::gstat(formula = resids ~ 1,
     locations = ~ xcoordsUTM_ + ycoordsUTM_,
     data = sampled_df)
-  vario_out <- gstat::variogram(g_obj)
+  vario_out <- gstat::variogram(g_obj, cressie = FALSE)##,
+    ##cutoff = 150)
   maxy <- max(vario_out$gamma)
   
   vartab <- cbind(vario_out$dist, vario_out$gamma, 
@@ -159,7 +162,7 @@ if (get_variogram == TRUE) {
   print(plot_out)
 } else if (get_variogram == FALSE) {
   plot_out <- NULL
-  
+  covparmmat <- NULL
   vartab <- NULL
 }
 
@@ -242,6 +245,8 @@ if (get_krigmap == TRUE) {
   
   print(p3)
   
+} else {
+  p3 <- NULL
 }
 
   if(get_report == TRUE) {
@@ -250,13 +255,13 @@ if (get_krigmap == TRUE) {
     
     ## need to think more carefully about where this report
     ## should go.
-    dout <- "~/Desktop/"
+    dout <- getwd() ##"~/Desktop/"
     if (missing(dout)) {
       dout <- getwd()
     }
     
     rmarkdown::render(file, envir = list(varplot = plot_out, 
-      varinfo = vartab, 
+      varinfo = vartab, krigplot = p3, 
       predtable = basicpred, conftable = confbounds,
       sumtable = outptmat, covparmests = covparmmat),
       output_dir = dout)
