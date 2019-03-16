@@ -134,7 +134,12 @@ predict.slmfit <- function(object, FPBKcol = NULL,
   preddensity <- density / detinfo[1]
   preddensity[is.na(preddensity) == TRUE] <- zhatu
   
-  predcount <- preddensity * areavar
+  pred.persite <- preddensity * areavar
+  
+  
+  predcount <- pred.persite
+  ## adding this line for the graphic at the end
+  predcount[pred.persite <= 0] <- 1e-10
   
   sampind <- rep(1, length(yvar))
   sampind[is.na(yvar) == TRUE] <- 0
@@ -167,13 +172,13 @@ predict.slmfit <- function(object, FPBKcol = NULL,
     ((1 / detinfo[1]) ^ 2) * densvar +
     densvar * varinvdelta
   
-  sitevarcount <- (predcount ^ 2) * varinvdelta +
+  sitevarcount <- (pred.persite ^ 2) * varinvdelta +
     ((1 / detinfo[1]) ^ 2) * countvar +
     countvar * varinvdelta
   
   ## the FPBK predictor: already adjusted for detection
   FPBKpredictor <- (t(B) %*% preddensity)
-  FPBKpredictorcount <- (t(B) %*% predcount)
+  FPBKpredictorcount <- (t(B) %*% pred.persite)
   
   ## the prediction variance for the FPBK predictor
   ## if detectionest is left as the default, we assume
@@ -262,6 +267,8 @@ predict.slmfit <- function(object, FPBKcol = NULL,
     
 
     predcount <- pred.persite
+    ## make any predictions less than 0 equal to 0
+    predcount[pred.persite <= 0] <- 1e-10
     countvar <- varweightsdiag
 
   } 
