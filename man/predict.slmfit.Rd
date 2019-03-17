@@ -23,14 +23,19 @@ variance (0). Using the default assumes perfect detection.}
 a list with \itemize{
   \item the estimated population total
   \item the estimated prediction variance
-  \item a data frame containing \enumerate{
-       \item x-coordinates
-       \item y-coordinates
-       \item density predictions
+  \item a data frame containing the original data with the following variables appended: \enumerate{
+       \item x-coordinates in UTM
+       \item y-coordinates in UTM
+       \item sitewise count predictions
+       \item sitewise prediction variances
        \item indicator variable for whether or not the each site was sampled
        \item estimated mean for each site
+       \item estimated detection probability for each site
+       \item the area of each site
        }
    \item vector with estimated covariance parameters
+   \item the model formula used in \code{slmfit}
+   \item the correlation model used
 }
 }
 \description{

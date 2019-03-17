@@ -38,13 +38,16 @@ probabilities}
 \value{
 a list with \itemize{
    \item a vector of estimated covariance parameters
-   \item the fitted covariance matrix for all of the sites
+   \item the estimated covariance matrix for all sites
+   \item the QR decomposition
+   \item a vector of estimated fixed effects
+   \item other components used in \code{slmfit}
 }
 }
 \description{
-Used to estimate spatial covariance parameters for a few different spatial models.
-Estimated parameters can then be used in \code{FPBKpred} to predict unobserved values.
+Used to estimate spatial covariance parameters for a few different spatial models, including the Exponential, Gaussian, and Spherical.
+Estimated parameters can then be used in \code{predict} to predict unobserved values.
 }
 \details{
-The function is used internally in \code{FPBKpred}.
+The function is used internally in \code{slmfit}.
 }

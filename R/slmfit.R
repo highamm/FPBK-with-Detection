@@ -24,14 +24,25 @@
 #' @return a list with \itemize{
 #'   \item the spatial covariance estimates
 #'   \item the regression coefficient estimates
-#'   \item a list containing \enumerate{
+#'   \item the estimated covariance matrix
+#'   \item minus two times the log-likelihood
+#'   \item the names of the predictors used as covariates
+#'   \item the sample size
+#'   \item the name of the correlation model used
+#'   \item a vector of residuals
+#'   \item the design matrix for the sampled sites
+#'   \item a vector of the density of the observed counts
+#'   \item an indicator for whether the user input detection data
+#'   \item a list with information for \code{predict} containing \enumerate{
 #'        \item formula
-#'        \item data
-#'        \item xcoordcol
-#'        \item ycoordcol
-#'        \item CorModel
+#'        \item data, the data set without any missing values
+#'        \item a vector of x-coordinates (in UTM)
+#'        \item a vector of y-coordinates (in UTM)
+#'        \item whether REML or ML was used
+#'        \item the correlation model used
+#'        \item the covariance matrix for all of the sites
 #'        \item Inverted covariance matrix on the sampled sites
-#'        \item Covariance matrix on all sites
+#'        \item Other items used in \code{predict}
 #'        }
 #' }
 #' @import stats

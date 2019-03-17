@@ -39,7 +39,7 @@ and \code{get_sampdetails} should be produced.}
 }
 \value{
 \itemize{
-  \item prediction interval
+  \item prediction for the total with prediction intervals
   \item a map of the kriged counts (optional)
   \item a summary of the sample data (optional)
   \item an empirical variogram from \code{gstat} with the fitted variogram model with details of the empirical variogram and spatial parameter estimates (optional)
