@@ -64,7 +64,7 @@ areavar <- pred.vals[ ,paste(base::all.vars(formula)[1], "_areas",
   sep = "")]
 
 simptab <- t(matrix(c(pred.total, sqrt(pred.total.var))))
-colnames(simptab) <- c("Prediction", "SE(Prediction")
+colnames(simptab) <- c("Prediction", "SE(Prediction)")
 print(simptab)
 
 for (k in 1:length(conf_level)){
