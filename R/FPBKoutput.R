@@ -174,7 +174,7 @@ if (get_krigmap == TRUE) {
   ## need to make some decisions about how complex the grid/
   ## map should be
   alldata <- data.frame(pred.vals)
-  shapevals <- c(16, 15)
+  shapevals <- c(1, 16)
   # (p1 <- ggplot(data = alldata, aes_(x = ~xcoords, y = ~ycoords,
   #   colour = ~preds, shape = ~as.factor(sampind))) + 
   #   geom_point(size = 4) +
@@ -220,7 +220,8 @@ if (get_krigmap == TRUE) {
  
  p3 <- ggplot2::ggplot(data = alldata, aes_(x = ~xcoordsUTM_,
    y = ~ycoordsUTM_, shape = ~sampindfact_)) +  ##)) + 
-   geom_point(aes(colour = cuts), size = pointsize) +
+   geom_point(aes(colour = cuts), size = pointsize,
+     stroke = 3) +
    scale_fill_viridis_d() +
    scale_colour_viridis_d(name = "Counts") + 
    theme_bw() +
@@ -268,10 +269,13 @@ if (get_krigmap == TRUE) {
       varinfo = vartab, krigplot = p3, 
       predtable = basicpred, conftable = confbounds,
       sumtable = outptmat, covparmests = covparmmat),
-      output_dir = dout)
+      output_dir = dout, 
+      output_file = paste('report.', Sys.Date(), 
+        '.html', sep=''))
+
   }
 
-
+return(p3)
 }
 
 ##pred_info <- FPBKpred(formula = formula, data = data, xcoordcol = xcoordcol,

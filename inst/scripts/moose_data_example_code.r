@@ -12,9 +12,11 @@ exampledataset$detpred1 <- runif(40, 0, 1)
 exampledataset$detpred2 <- runif(40, 0, 1)
 
 exampledataset$areas <- rep(0.5, 40)
+exampledataset$st <- c(rep("H", 25), rep("Low", 15))
+
 slm_info <- slmfit(formula = counts ~ 1,
   data = exampledataset,
-  xcoordcol = "xcoords", ycoordcol = "ycoords",  coordtype = "UTM",
+  xcoordcol = "xcoords", ycoordcol = "ycoords", coordtype = "UTM",
    estmethod = "ML", detectionobj = NULL,
   CorModel = "Gaussian",
   areacol = "areas")
@@ -27,7 +29,7 @@ predobj <- predict(object = slm_info, FPBKcol = NULL)
 FPBKoutput(pred_info = predobj, conf_level = c(0.80, 
   0.90, 0.95),
   get_krigmap = TRUE, get_sampdetails = TRUE,
-  get_variogram = TRUE, get_report = FALSE,
+  get_variogram = TRUE, get_report = TRUE,
   pointsize = 4)
   
   
