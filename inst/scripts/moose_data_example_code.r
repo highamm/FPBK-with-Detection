@@ -26,13 +26,15 @@ slm_info$CoefficientEsts
 predict(object = slm_info, FPBKcol = NULL)$FPBK_Prediction
 predobj <- predict(object = slm_info, FPBKcol = NULL)
 
-FPBKoutput(pred_info = predobj, conf_level = c(0.80, 
+tabsandstuff <- FPBKoutput(pred_info = predobj, conf_level = c(0.80, 
   0.90, 0.95),
   get_krigmap = TRUE, get_sampdetails = TRUE,
-  get_variogram = TRUE, get_report = TRUE,
+  get_variogram = TRUE,
   pointsize = 4)
   
   
+get_reportdoc(output_info = tabsandstuff)
+
 slm_info <- slmfit(formula = counts ~ pred1 + pred2,
   data = exampledataset,
   xcoordcol = "xcoords", ycoordcol = "ycoords",  coordtype = "UTM",

@@ -6,8 +6,8 @@
 \usage{
 FPBKoutput(pred_info, conf_level = c(0.8, 0.9, 0.95),
   get_krigmap = FALSE, get_sampdetails = FALSE,
-  get_variogram = FALSE, get_report = FALSE, nbreaks = 4,
-  breakMethod = "quantile", pointsize = 2)
+  get_variogram = FALSE, nbreaks = 4, breakMethod = "quantile",
+  pointsize = 2)
 }
 \arguments{
 \item{pred_info}{is the output from \code{FPBK.pred} in this package.}
@@ -26,10 +26,6 @@ etc.}
 
 \item{get_variogram}{is an indicator for whether or not
 a variogram of the residuals should be returned}
-
-\item{get_report}{is an indicator for whether a PDF report of some
-of the output from \code{get_krigmap}, \code{get_sampdetails},
-and \code{get_sampdetails} should be produced.}
 
 \item{nbreaks}{is the number of breakpoints used in the spatial graphic}
 

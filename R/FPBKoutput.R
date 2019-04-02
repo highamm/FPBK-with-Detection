@@ -15,9 +15,6 @@
 #' etc.
 #' @param get_variogram is an indicator for whether or not
 #' a variogram of the residuals should be returned
-#' @param get_report is an indicator for whether a PDF report of some
-#' of the output from \code{get_krigmap}, \code{get_sampdetails},
-#' and \code{get_sampdetails} should be produced.
 #' @param nbreaks is the number of breakpoints used in the spatial graphic
 #' @param breakMethod is either \code{'quantile'} or \code{'even'} and determines how the break points are constructed.
 #' @param pointsize is the size of the points on the spatial graphic.
@@ -38,7 +35,7 @@
 FPBKoutput <- function(pred_info, conf_level = c(0.80, 
   0.90, 0.95),
   get_krigmap = FALSE, get_sampdetails = FALSE,
-  get_variogram = FALSE, get_report = FALSE,
+  get_variogram = FALSE,
   nbreaks = 4,
   breakMethod = 'quantile', 
   pointsize = 2) {
@@ -254,28 +251,12 @@ if (get_krigmap == TRUE) {
   p3 <- NULL
 }
 
-  if(get_report == TRUE) {
-    
-    file <- system.file("ReportTest.Rmd", package = "FPBKPack2")
-    
-    ## need to think more carefully about where this report
-    ## should go.
-    dout <- "~/Desktop/"
-    if (missing(dout)) {
-      dout <- getwd()
-    }
-    
-    rmarkdown::render(file, envir = list(varplot = plot_out, 
-      varinfo = vartab, krigplot = p3, 
-      predtable = basicpred, conftable = confbounds,
-      sumtable = outptmat, covparmests = covparmmat),
-      output_dir = dout, 
-      output_file = paste('report.', Sys.Date(), 
-        '.html', sep=''))
-
-  }
-
-return(p3)
+tabsandfigs <- list(simptab, confbounds, outptmat, plot_out,
+  covparmmat, vartab, p3)
+names(tabsandfigs) <- c("basic", "conf", "suminfo",
+  "varplot", "covparms",
+  "varplottab", "krigmap")
+return(tabsandfigs)
 }
 
 ##pred_info <- FPBKpred(formula = formula, data = data, xcoordcol = xcoordcol,
