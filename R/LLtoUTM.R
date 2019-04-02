@@ -17,6 +17,16 @@
 #' @param miny is `NULL` by default
 #'
 #' @return A list with the TM coordinates as the first component of the list. The first component of the list contains x coordinates in the first column and y coordinates in the second column
+#' 
+#' @examples
+#' ## Add TM x and y coordinates to a data frame with
+#' ## latitude/longitude coordinates
+#' exampledataset$xc_TM_ <- LLtoUTM(cm = base::mean(exampledataset[ ,"xcoords"]),
+#'  lat = exampledataset[ ,"ycoords"],
+#'  lon = exampledataset[ ,"xcoords"])$xy[ ,1]
+#' exampledataset$yc_TM_ <- LLtoUTM(cm = base::mean(exampledataset[ ,"xcoords"]),
+#'  lat = exampledataset[ ,"ycoords"],
+#'  lon = exampledataset[ ,"xcoords"])$xy[ ,2]
 #' @export LLtoUTM
 
 LLtoUTM <- function(cm, lat, lon, xcol = "x", ycol = "y", minx = NULL, miny = NULL)

@@ -48,8 +48,9 @@ multistrat <- function(formula, data, xcoordcol, ycoordcol,
   for (k in 1:length(levels(data$stratvar))) {
   slmfitouts[[k]] <- slmfit(formula = formula,
     data = subset(data, data$stratvar == levels(data$stratvar)[k]),
-    xcoordcol = xcoordcol, ycoordcol = ycoordcol, CorModel = CorModel, 
-    coordtype = coordtype, estmethod = estmethod,
+    xcoordcol = xcoordcol, ycoordcol = ycoordcol,
+    CorModel = CorModel, 
+     estmethod = estmethod,
     covestimates = covestimates, detectionobj = detectionobj,
     areacol = areacol)
   
