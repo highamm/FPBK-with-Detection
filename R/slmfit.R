@@ -83,6 +83,12 @@ slmfit <- function(formula, data, xcoordcol, ycoordcol,
       with the y coordinates")
   }
   
+  if (length(data[ ,xcoordcol]) != nrow(data) |
+      length(data[ ,ycoordcol]) != nrow(data)) {
+    stop("xcoordcol and ycoordcol must be the names of the columns
+      in the data set (in quotes) that specify the x and y coordinates.")
+  }
+  
   
   Xall <- model.matrix(formula, model.frame(formula, data,
     na.action = stats::na.pass))
@@ -120,6 +126,10 @@ slmfit <- function(formula, data, xcoordcol, ycoordcol,
       stats::na.pass, data = datanomiss)
   yvar <- stats::model.response(fullmf, "numeric")
   density <- yvar / areavar
+  
+  if (is.numeric(yvar) == FALSE) {
+    stop("Check to make sure response variable is numeric, not a factor or character.")
+  }
   
   ## remove any rows with missing values in any of the predictors
   formula.onlypreds <- formula[-2]
@@ -299,6 +309,10 @@ slmfit <- function(formula, data, xcoordcol, ycoordcol,
         stats::na.pass, data = datanomissboth)
     yvar <- stats::model.response(fullmf, "numeric")
     density <- yvar / areavar
+    
+    if (is.numeric(yvar) == FALSE) {
+      stop("Check to make sure response variable is numeric, not a factor or character.")
+    }
     
     ## remove any rows with missing values in any of the predictors
     formula.onlypreds <- formula[-2]
