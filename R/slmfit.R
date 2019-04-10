@@ -85,6 +85,11 @@ slmfit <- function(formula, data, xcoordcol, ycoordcol,
       (nugget, partial sill, range)")
   }
   
+  if (estmethod == "None" & sum(covestimates < 0) > 0) {
+    stop("'covestimates' must be a vector of positive values with
+      the (nugget, partial sill, range) specified.")
+  }
+  
   ## display some warnings if the user, for example tries to input the
   ## vector of xcoordinates as the input instead of the name of the column
   if(is.character(xcoordcol) == FALSE) {
