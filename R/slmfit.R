@@ -54,6 +54,21 @@ slmfit <- function(formula, data, xcoordcol, ycoordcol,
   detectionobj = NULL,
   areacol = NULL) {
   
+  ## make sure estmethod is either REML, ML, or None
+  
+  if (estmethod != "REML" & estmethod != "ML" &
+      estmethod != "None") {
+    stop("estmethod must be either 'REML' for restricted maximum
+      likelihood, 'ML' for maximum likelihood, or 'None' with
+      covariance parameters specified in the covestimates
+      argument.")
+  }
+  ## make sure CorModel is one of the options we have set-up
+  if (CorModel != "Exponential" & CorModel != "Spherical" &
+      CorModel != "Gaussian") {
+    stop("'CorModel' must be either 'Exponential', 'Spherical', or
+      'Gaussian'")
+  }
   
   ## display error message if estmethod is set to None and the user
   ## does not input covariance estimates
@@ -83,8 +98,8 @@ slmfit <- function(formula, data, xcoordcol, ycoordcol,
       with the y coordinates")
   }
   
-  if (length(data[ ,xcoordcol]) != nrow(data) |
-      length(data[ ,ycoordcol]) != nrow(data)) {
+  if (sum(names(data) == xcoordcol) == 0 |
+      sum(names(data) == ycoordcol) == 0) {
     stop("xcoordcol and ycoordcol must be the names of the columns
       in the data set (in quotes) that specify the x and y coordinates.")
   }
