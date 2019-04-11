@@ -108,6 +108,10 @@ get_detection <- function(formula, data,
   
   obj <- list(coefs = coefs, covmat = F, formula = formula,
     boot.coefs = boot.coefs, varmethod = varmethod)
+  
+  class(obj) <- "get_detection"
+  return(obj)
+  
 }
 
 
