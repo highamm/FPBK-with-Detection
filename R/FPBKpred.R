@@ -40,6 +40,11 @@ predict.slmfit <- function(object, FPBKcol = NULL,
   ## with the weights for the sites that we are predicting (eg. a vector
   ## of 1's and 0's for predicting the total of the sites marked with 1's)
   
+  if (is.null(FPBKcol) == FALSE) {
+    if (sum(names(data) == FPBKcol) == 0) {
+    stop("FPBKcol must be the name of the column (in quotes) in the data used in 'slmfit' that specifies the column with the prediction weights. ")
+    }
+  }
   
   formula <- object$FPBKpredobj$formula
   data <- object$FPBKpredobj$data
@@ -70,6 +75,11 @@ predict.slmfit <- function(object, FPBKcol = NULL,
   
   ind.sa <- !is.na(yvar)
   ind.un <- is.na(yvar)
+  
+  if (sum(ind.un) == 0) {
+    stop("None of the values for the response variable are missing (NA). Therefore, prediction cannot be performed for any values of the response.")
+  }
+  
   data.sa <- data[ind.sa, ]
   data.un <- data[ind.un, ]
   
