@@ -40,11 +40,7 @@ predict.slmfit <- function(object, FPBKcol = NULL,
   ## with the weights for the sites that we are predicting (eg. a vector
   ## of 1's and 0's for predicting the total of the sites marked with 1's)
   
-  if (is.null(FPBKcol) == FALSE) {
-    if (sum(names(data) == FPBKcol) == 0) {
-    stop("FPBKcol must be the name of the column (in quotes) in the data used in 'slmfit' that specifies the column with the prediction weights. ")
-    }
-  }
+
   
   formula <- object$FPBKpredobj$formula
   data <- object$FPBKpredobj$data
@@ -52,6 +48,12 @@ predict.slmfit <- function(object, FPBKcol = NULL,
   ycoordsUTM <- object$FPBKpredobj$ycoordsUTM
   covparmests <- object$SpatialParmEsts
   areavar <- object$FPBKpredobj$areavar
+  
+  if (is.null(FPBKcol) == FALSE) {
+    if (sum(colnames(data) == FPBKcol) == 0) {
+      stop("FPBKcol must be the name of the column (in quotes) in the data used in 'slmfit' that specifies the column with the prediction weights. ")
+    }
+  }
   
   if (is.null(FPBKcol) == TRUE) {
     predwts <- rep(1, nrow(data))

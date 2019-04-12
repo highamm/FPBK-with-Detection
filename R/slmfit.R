@@ -120,8 +120,11 @@ slmfit <- function(formula, data, xcoordcol, ycoordcol,
   
   ## convert all character predictor variables into factors,
   ## with a warning message.
-  datapredsonly <- data[ ,attr(terms(formula), "term.labels")]
+  datapredsonly <- data.frame(data[ ,attr(terms(formula), "term.labels")])
+  colnames(datapredsonly) <- attr(terms(formula), "term.labels")
   predictormatch <- match(names(data), names(datapredsonly))
+  
+  if (ncol(datapredsonly) >= 1) {
   
   if (sum(sapply(datapredsonly, is.character)) > 0) {
     warning("At least one predictor variable is a character, which has been converted into a factor.")
@@ -136,6 +139,7 @@ slmfit <- function(formula, data, xcoordcol, ycoordcol,
     warning("At least one predictor variable has more than 20 factor levels.")
   }
   
+  }
   Xall <- model.matrix(formula, model.frame(formula, data,
     na.action = stats::na.pass))
   
@@ -158,7 +162,7 @@ slmfit <- function(formula, data, xcoordcol, ycoordcol,
   detind <- is.null(detectionobj)
   
   if (is.null(areacol) == FALSE) {
-    if (is.numeric(datanomiss[ ,areacol]) == FALSE !
+    if (is.numeric(datanomiss[ ,areacol]) == FALSE |
         sum(is.na(datanomiss[ ,areacol])) > 0) {
       stop("'areacol' must specify the name of the column in the data set with the areas for each site. This column must be numeric 
         without any missing values.")
