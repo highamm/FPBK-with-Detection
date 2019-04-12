@@ -157,6 +157,13 @@ slmfit <- function(formula, data, xcoordcol, ycoordcol,
   
   detind <- is.null(detectionobj)
   
+  if (is.null(areacol) == FALSE) {
+    if (is.numeric(datanomiss[ ,areacol]) == FALSE !
+        sum(is.na(datanomiss[ ,areacol])) > 0) {
+      stop("'areacol' must specify the name of the column in the data set with the areas for each site. This column must be numeric 
+        without any missing values.")
+    }
+  }
   if (is.null(detectionobj) == TRUE) {
   ## create the design matrix for unsampled sites, for all of the sites, and for the sampled sites, respectively.
   
