@@ -29,7 +29,8 @@ get_detection <- function(formula, data,
   missingind <- base::apply(is.na(Xall), MARGIN = 1, FUN = sum)
   nmissing <- sum(missingind >= 1)
   
-  datanomiss <- data[missingind == 0, ]
+  datanomiss <- as.data.frame(data[missingind == 0, ])
+  colnames(datanomiss) <- colnames(data)
   
   if (nmissing >= 1) {
     warning(paste("There were", nmissing, "sites with predictors with missing values. These will be removed from the data set and further analysis will be completed without these observations."))
