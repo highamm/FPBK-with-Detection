@@ -17,3 +17,19 @@
 #'   ...
 #' }
 "exampledataset"
+
+
+#' Data Set with Alaska Moose Observations.
+#'
+#' A data set that can be used with the \code{sptotal} package. In
+#' this example, the counts are of moose on 860 sites of equal area.
+#'
+#' @format A spatial polygons object inclding:
+#' \describe{
+#'   \item{CENTRLAT}{The latitude of the centroid for each site}
+#'   \item{CENTRLON}{The latitude of the centroid for each site}
+#'   \item{STRAT}{A stratification variable}
+#'   \item{TOTAL}{The total moose count on each site}
+#'   ...
+#' }
+"AKmoose"

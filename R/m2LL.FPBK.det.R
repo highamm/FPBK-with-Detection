@@ -57,6 +57,11 @@ m2LL.FPBK.det <- function(theta, zcol, XDesign, xcoord, ycoord,
     (as.matrix(mu) %*% t(as.matrix(mu))) * Vnn  +
     (diag(nugget, nrow = nrow(Sigmat)) + Sigmat) * Vnn
   
+  nug_prop <- nugget / (nugget + parsil)
+  if (nug_prop < 0.0001) {
+    Cmat <- Cmat + diag(1e-6, nrow = nrow(Cmat))
+  }
+  
   Ci <- solve(Cmat, tol = 1e-27)
   minusloglik <- (1 / 2) * determinant(Cmat, logarithm = TRUE)$modulus +
     (1 / 2) * (t(as.matrix(zcol) -
