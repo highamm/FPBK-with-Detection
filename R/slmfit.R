@@ -120,26 +120,26 @@ slmfit <- function(formula, data, xcoordcol, ycoordcol,
   
   ## convert all character predictor variables into factors,
   ## with a warning message.
-  datapredsonly <- data.frame(data[ ,attr(terms(formula), "term.labels")])
-  colnames(datapredsonly) <- attr(terms(formula), "term.labels")
-  predictormatch <- match(names(data), names(datapredsonly))
-  
-  if (ncol(datapredsonly) >= 1) {
-  
-  if (sum(sapply(datapredsonly, is.character)) > 0) {
-    warning("At least one predictor variable is a character, which has been converted into a factor.")
-  }
-  
-  data[ ,sapply(data, is.character) & is.na(predictormatch) == FALSE] <- factor(data[ ,which(sapply(data, is.character))])
-  
-  
-  ## check to make sure number of factor levels is somewhat small.
-  ## If not, return a warning.
-  if (max(sapply(datapredsonly[ ,sapply(datapredsonly, is.factor)], nlevels)) > 20) {
-    warning("At least one predictor variable has more than 20 factor levels.")
-  }
-  
-  }
+  # datapredsonly <- data.frame(data[ ,attr(terms(formula), "term.labels")])
+  # colnames(datapredsonly) <- attr(terms(formula), "term.labels")
+  # predictormatch <- match(names(data), names(datapredsonly))
+  # 
+  # if (ncol(datapredsonly) >= 1) {
+  # 
+  # if (sum(sapply(datapredsonly, is.character)) > 0) {
+  #   warning("At least one predictor variable is a character, which has been converted into a factor.")
+  # }
+  # 
+  # data[ ,sapply(data, is.character) & is.na(predictormatch) == FALSE] <- factor(data[ ,which(sapply(data, is.character))])
+  # 
+  # 
+  # ## check to make sure number of factor levels is somewhat small.
+  # ## If not, return a warning.
+  # if (max(sapply(datapredsonly[ ,sapply(datapredsonly, is.factor)], nlevels)) > 20) {
+  #   warning("At least one predictor variable has more than 20 factor levels.")
+  # }
+  # 
+  # }
   Xall <- model.matrix(formula, model.frame(formula, data,
     na.action = stats::na.pass))
   
