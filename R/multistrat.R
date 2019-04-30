@@ -167,6 +167,7 @@ multistrat <- function(formula, data, xcoordcol, ycoordcol,
   names(output_info) <- c("basic", "conf",
     "suminfo", "varplot", "covparms", "varplottab",
     "krigmap")
+  return(output_info)
   #get_reportdoc(output_info = output_info)
   
   ## export all figures into their own jpeg files
