@@ -35,19 +35,19 @@ multistrat <- function(formula, data, xcoordcol, ycoordcol,
   areacol = NULL,
   stratcol = NULL) {
   
-  data$stratvar <- factor(data[ ,stratcol])
+  stratvar <- factor(data[ ,stratcol])
 
-  slmfitouts <- vector("list",  length(levels(data$stratvar)))
-  predictouts <- vector("list",  length(levels(data$stratvar)))
-  dfout <- vector("list", length(levels(data$stratvar)))
-  prediction <- vector("list", length(levels(data$stratvar)))
-  predictionvar <- vector("list", length(levels(data$stratvar)))
-  tabsout <- vector("list", length(levels(data$stratvar)))
-  maxy <- rep(NA, length(levels(data$stratvar)))
+  slmfitouts <- vector("list",  length(levels(stratvar)))
+  predictouts <- vector("list",  length(levels(stratvar)))
+  dfout <- vector("list", length(levels(stratvar)))
+  prediction <- vector("list", length(levels(stratvar)))
+  predictionvar <- vector("list", length(levels(stratvar)))
+  tabsout <- vector("list", length(levels(stratvar)))
+  maxy <- rep(NA, length(levels(stratvar)))
   
-  for (k in 1:length(levels(data$stratvar))) {
+  for (k in 1:length(levels(stratvar))) {
   slmfitouts[[k]] <- slmfit(formula = formula,
-    data = subset(data, data$stratvar == levels(data$stratvar)[k]),
+    data = subset(data, stratvar == levels(stratvar)[k]),
     xcoordcol = xcoordcol, ycoordcol = ycoordcol,
     CorModel = CorModel, 
      estmethod = estmethod,
@@ -67,7 +67,7 @@ multistrat <- function(formula, data, xcoordcol, ycoordcol,
     nbreaks = 4,
     breakMethod = 'quantile', 
     pointsize = 2)
-  stratname <- levels(data$stratvar)[k]
+  stratname <- levels(stratvar)[k]
   rownames(tabsout[[k]]$basic) <- stratname
   rownames(tabsout[[k]]$conf) <- paste(stratname,
     rownames(tabsout[[k]]$conf))
@@ -116,18 +116,18 @@ multistrat <- function(formula, data, xcoordcol, ycoordcol,
   tabsall$krigmap <- tabsall$krigmap + ggplot2::ggtitle("Map of Predictions for All Sites")
 
 
-  basicinfotab <- vector("list", nlevels(data$stratvar))
+  basicinfotab <- vector("list", nlevels(stratvar))
   basicinfotab[[1]] <- round(tabsout[[1]][[1]], 2)
-  conftab <- vector("list", nlevels(data$stratvar))
+  conftab <- vector("list", nlevels(stratvar))
   conftab[[1]] <- tabsout[[1]][[2]]
-  suminform <- vector("list", nlevels(data$stratvar))
+  suminform <- vector("list", nlevels(stratvar))
   suminform[[1]] <- round(tabsout[[1]][[3]], 0)
-  covparmtab <- vector("list", nlevels(data$stratvar))
+  covparmtab <- vector("list", nlevels(stratvar))
   covparmtab[[1]] <- round(tabsout[[1]]$covparms, 3)
-  vartab <- vector("list", nlevels(data$stratvar))
+  vartab <- vector("list", nlevels(stratvar))
   vartab[[1]] <- round(tabsout[[1]]$varplottab, 2)
   
-    for (k in 2:length(levels(data$stratvar))) {
+    for (k in 2:length(levels(stratvar))) {
       basicinfotab[[k]] <- rbind(basicinfotab[[k - 1]],
         round(tabsout[[k]][[1]], 2))
       conftab[[k]] <- rbind(conftab[[k - 1]], 
@@ -146,8 +146,8 @@ multistrat <- function(formula, data, xcoordcol, ycoordcol,
     }
   
 
-  varplots <- vector("list", nlevels(data$stratvar))
-  for (k in 1:nlevels(data$stratvar)) {
+  varplots <- vector("list", nlevels(stratvar))
+  for (k in 1:nlevels(stratvar)) {
   varplots[[k]] <- tabsout[[k]]$varplot + ggplot2::ylim(c(0, maxall))
   }
   

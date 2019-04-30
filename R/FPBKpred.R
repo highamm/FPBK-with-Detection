@@ -107,7 +107,8 @@ predict.slmfit <- function(object, FPBKcol = NULL,
   Sigma <- object$FPBKpredobj$covmat
   
   ## used in the Kriging formulas
-  Sigma.us <- Sigma[ind.un, ind.sa]
+  Sigma.us <- matrix(Sigma[ind.un, ind.sa],
+    nrow = sum(ind.un), ncol = sum(ind.sa))
   Sigma.su <- t(Sigma.us)
   Sigma.ss <- Sigma[ind.sa, ind.sa]
   Sigma.uu <- Sigma[ind.un, ind.un]
@@ -134,6 +135,8 @@ predict.slmfit <- function(object, FPBKcol = NULL,
   
   ## matrices used in the kriging equations
   ## notation follow Ver Hoef (2008)
+  
+  
   Cmat <- Sigma.ss %*% as.matrix(Bs * areavar[ind.sa]) +
     Sigma.su %*% as.matrix(Bu * areavar[ind.un])
   Dmat <- t(X) %*% matrix(B * areavar) - t(Xs) %*% Sigma.ssi %*% Cmat
