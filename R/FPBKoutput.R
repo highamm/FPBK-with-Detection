@@ -252,10 +252,10 @@ if (get_krigmap == TRUE) {
 }
 
 tabsandfigs <- list(simptab, confbounds, outptmat, plot_out,
-  covparmmat, vartab, p3)
+  covparmmat, vartab, p3, pred.vals)
 names(tabsandfigs) <- c("basic", "conf", "suminfo",
   "varplot", "covparms",
-  "varplottab", "krigmap")
+  "varplottab", "krigmap", "predvals")
 return(tabsandfigs)
 }
 
