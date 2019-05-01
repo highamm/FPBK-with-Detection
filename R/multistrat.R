@@ -142,6 +142,9 @@ multistrat <- function(formula, data, xcoordcol, ycoordcol,
       
      vartab[[k]] <- rbind(vartab[[k - 1]], rep(".", ncol(tabsout[[1]]$varplottab)), rep(".", ncol(tabsout[[1]]$varplottab)),
         round(tabsout[[k]]$varplottab, 2))
+     
+     dfout[[k]] <- rbind(dfout[[k - 1]], dfout[[k]])
+     
       ## keep variogram tables separate
     }
   
@@ -161,12 +164,13 @@ multistrat <- function(formula, data, xcoordcol, ycoordcol,
   covparms <- covparmtab[[k]]
   varplottab <- vartab[[k]]
   krigmap <- tabsall$krigmap
-
+  pred.vals <- dfout[[k]]
+  
   output_info <- list(basic, conf, suminfo, varplot, 
-    covparms, varplottab, krigmap)
+    covparms, varplottab, krigmap, pred.vals)
   names(output_info) <- c("basic", "conf",
     "suminfo", "varplot", "covparms", "varplottab",
-    "krigmap")
+    "krigmap", "predvals")
   return(output_info)
   #get_reportdoc(output_info = output_info)
   
