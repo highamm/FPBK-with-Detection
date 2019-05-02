@@ -156,7 +156,7 @@ multistrat <- function(formula, data, xcoordcol, ycoordcol,
 
   varplots <- vector("list", nlevels(stratvar))
   for (k in 1:nlevels(stratvar)) {
-  varplots[[k]] <- tabsout[[k]]$varplot + ggplot2::ylim(c(0, maxall))
+ varplots[[k]] <- suppressMessages(tabsout[[k]]$varplot + ggplot2::ylim(c(0, maxall)))
   }
   
   
