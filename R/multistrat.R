@@ -19,6 +19,10 @@
 #' @param covestimates is an optional vector of covariance parameter estimates (nugget, partial sill, range). If these are given and \code{estmethod = "None"}, the the provided vector are treated as the estimators to create the covariance structure.
 #' @param detectionobj is a fitted model obj from \code{get_detection}. The default is for this object to be \code{NULL}, resulting in
 #' spatial prediction that assumes perfect detection.
+#' @param detinfo is a vector consisting of the mean detection
+#' probability and its standard error. By default, it is set to
+#' \code{c(1, 0)}, indicating perfect detection (1) with no
+#' variance (0). Using the default assumes perfect detection.
 #' @param areacol is the name of the column with the areas of the sites. By default, we assume that all sites have equal area, in which
 #' case a vector of 1's is used as the areas.
 #' @param stratcol is the column in the data set that contains the stratification variable. 
@@ -32,6 +36,7 @@ multistrat <- function(formula, data, xcoordcol, ycoordcol,
   coordtype = "LatLon", estmethod = "REML",
   covestimates = c(NA, NA, NA),
   detectionobj = NULL,
+  detinfo = c(1, 0), 
   areacol = NULL,
   stratcol = NULL) {
   
@@ -55,7 +60,7 @@ multistrat <- function(formula, data, xcoordcol, ycoordcol,
     areacol = areacol)
   
   predictouts[[k]] <- predict(object = slmfitouts[[k]],
-    FPBKcol = NULL, detinfo = c(1, 0))
+    FPBKcol = NULL, detinfo = detinfo)
   
   ## essentially have to store the report for each k,
   ## then append these reports to the final report for all
