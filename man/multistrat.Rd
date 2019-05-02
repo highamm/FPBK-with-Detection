@@ -6,7 +6,8 @@
 \usage{
 multistrat(formula, data, xcoordcol, ycoordcol, CorModel = "Exponential",
   coordtype = "LatLon", estmethod = "REML", covestimates = c(NA, NA,
-  NA), detectionobj = NULL, areacol = NULL, stratcol = NULL)
+  NA), detectionobj = NULL, detinfo = c(1, 0), areacol = NULL,
+  stratcol = NULL)
 }
 \arguments{
 \item{formula}{is an R linear model formula specifying density as the
@@ -33,6 +34,11 @@ parameters and regression coefficients.}
 
 \item{detectionobj}{is a fitted model obj from \code{get_detection}. The default is for this object to be \code{NULL}, resulting in
 spatial prediction that assumes perfect detection.}
+
+\item{detinfo}{is a vector consisting of the mean detection
+probability and its standard error. By default, it is set to
+\code{c(1, 0)}, indicating perfect detection (1) with no
+variance (0). Using the default assumes perfect detection.}
 
 \item{areacol}{is the name of the column with the areas of the sites. By default, we assume that all sites have equal area, in which
 case a vector of 1's is used as the areas.}
