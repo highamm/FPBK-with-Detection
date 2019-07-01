@@ -217,8 +217,8 @@ if (get_krigmap == TRUE) {
  
  p3 <- ggplot2::ggplot(data = alldata, aes_(x = ~xcoordsUTM_,
    y = ~ycoordsUTM_, shape = ~sampindfact_)) +  ##)) + 
-   geom_point(aes(colour = cuts), ##size = pointsize,
-     stroke = 3) +
+   geom_point(aes(colour = cuts))#, ##size = pointsize,
+    ## stroke = 3) +
    scale_fill_viridis_d() +
    scale_colour_viridis_d(name = "Counts") + 
    theme_bw() +
