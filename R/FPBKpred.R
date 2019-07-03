@@ -217,6 +217,7 @@ predict.slmfit <- function(object, FPBKcol = NULL,
     pred.var * varinvdelta
   
   piest <- rep(1, nrow(data))
+  tlambda <- NULL
   ## returns a list with 3 components:
   ## 1.) the kriging predictor and prediction variance
   ## 2.) a matrix with x and y coordinates, kriged predctions, and
@@ -320,10 +321,12 @@ predict.slmfit <- function(object, FPBKcol = NULL,
     df_out,
     as.vector(covparmests),
     formula = formula,
-    CorModel = CorModel)
+    CorModel = CorModel,
+    tlambda = tlambda)
   
   names(obj) <- c("FPBK_Prediction", "PredVar",
-    "Pred_df", "SpatialParms", "formula", "CorModel")
+    "Pred_df", "SpatialParms", "formula", "CorModel",
+    "tlambda")
   
   class(obj) <- "sptotalPredOut"
   

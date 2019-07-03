@@ -346,6 +346,7 @@ slmfit <- function(formula, data, xcoordcol, ycoordcol,
           exp(logitpi)) ^ 2, nrow = 1)
     
     Vnn <- vtv * covmu
+    piboot <- NULL
     
     } else if (detectionobj$varmethod == "Bootstrap") {
       
@@ -499,13 +500,14 @@ slmfit <- function(formula, data, xcoordcol, ycoordcol,
       "estmethod","correlationmod", "covmat", "covmatsampi", "C",
       "Cssi", "Xnstar", "R", "piest", "areavar")
     obj <- list(covparms, betahatest, covest, min2loglik, prednames,
-      n, CorModel, resids, Xs, w.density, detind, FPBKpredobj)
+      n, CorModel, resids, Xs, w.density, detind, FPBKpredobj,
+      piboot)
     
     names(obj) <- c("SpatialParmEsts", "CoefficientEsts",
       "BetaCov", "minus2loglike", "PredictorNames", "SampSize",
       "CovarianceMod",
       "resids", "DesignMat", "Density", "DetectionInd",
-      "FPBKpredobj")
+      "FPBKpredobj", "piboot")
     
   }
   class(obj) <- "slmfit"

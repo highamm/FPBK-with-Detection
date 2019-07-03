@@ -48,6 +48,9 @@ multistrat <- function(formula, data, xcoordcol, ycoordcol,
   prediction <- vector("list", length(levels(stratvar)))
   predictionvar <- vector("list", length(levels(stratvar)))
   tabsout <- vector("list", length(levels(stratvar)))
+  muhat <- vector("list", length(levels(stratvar)))
+  corrpimat <- vector("list", length(levels(stratvar)))
+  tlambda <- vector("list", length(levels(stratvar)))
   maxy <- rep(NA, length(levels(stratvar)))
   
   for (k in 1:length(levels(stratvar))) {
@@ -62,6 +65,24 @@ multistrat <- function(formula, data, xcoordcol, ycoordcol,
   predictouts[[k]] <- predict(object = slmfitouts[[k]],
     FPBKcol = NULL, detinfo = detinfo)
   
+ # 2 * muhat.cov.ML.bin[1] * muhat.cov.ML.bin[2] *
+#    sum(matrixcalc::hadamard.prod((t(tlambda.boot.ML.bin[[1]]) %*% tlambda.boot.ML.bin[[2]]),
+ #     cov(t(mat[[1]]), t(mat[[2]]), use = "complete.obs")))
+  
+  if (is.null(detectionobj) == FALSE) {
+    sampind <- predictouts[[k]]$Pred_df[ ,"counts_sampind"] 
+    
+    corrpimat[[k]] <- slmfitouts[[k]]$piboot[sampind, ]
+    
+    muhat[[k]] <- predictouts[[k]]$Pred_df[sampind , paste(base::all.vars(formula)[1], "_muhat", sep = "")]
+    
+    tlambda[[k]] <- predictouts[[k]]$tlambda
+    
+  } else {
+    
+  }
+  
+
   ## essentially have to store the report for each k,
   ## then append these reports to the final report for all
   ## of the strata that is generated outside of the loop
@@ -92,13 +113,37 @@ multistrat <- function(formula, data, xcoordcol, ycoordcol,
   ## a bit of work combining the results but not too much I think
   }
   
+  ##stratvartest <- factor(c("A", "B", "C"))
+  
+  ## next: incorporate this into the FPBKoutput only for
+  ## this multistrat function part
+  
+  if (is.null(detectionobj) == FALSE) {
+  extravar <- matrix(0, nrow = nlevels(stratvar),
+    ncol = nlevels(stratvar))
+  
+  for (j in 1:nlevels(stratvar)) {
+    for (jj in 1:nlevels(stratvar)) {
+      if (j != jj) {
+        extravar[j, jj] <- matrixcalc::hadamard.prod(tlambda[[j]], t(matrix(muhat[[j]]))) %*%
+          cov(t(corrpimat[[j]]), t(corrpimat[[jj]])) %*%
+          t(matrixcalc::hadamard.prod(tlambda[[jj]], t(matrix(muhat[[jj]]))))
+      }
+    }
+  }
+  } else {
+    extravar <- 0
+  }
+  
+  
   maxall <- max(maxy)
   
   allFPBKobj <- vector("list", length(predictouts[[k]]))
   allFPBKobj[[1]] <- matrix(do.call("sum", prediction))
   ## need to update the variance to account for covariance
   ## from using the same detection for each stratum
-  allFPBKobj[[2]] <- matrix(do.call("sum", predictionvar))
+  allFPBKobj[[2]] <- matrix(do.call("sum", predictionvar) +
+      sum(extravar)) 
   allFPBKobj[[3]] <- do.call("rbind", dfout)
   allFPBKobj[[4]] <- c(NA, NA, NA)
   allFPBKobj[[5]] <- formula
