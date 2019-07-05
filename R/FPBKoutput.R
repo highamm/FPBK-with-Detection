@@ -195,38 +195,38 @@ if (get_krigmap == TRUE) {
 
  # create breaks according to user-specified breakMethod
  
- if(breakMethod == 'quantile') {
-   probs = (1:nbreaks)/(nbreaks + 1)
-   brks = c(min(pred.vals[ ,pcolname]) - 1e-10,
-     quantile(pred.vals[ ,pcolname], probs = probs),
-     max(pred.vals[ ,pcolname]) + 1e-10)
-   
-   ## NEW
-   if (length(unique(brks)) != length(brks)) {
-     breakMethod <- 'even'
-   }
-   
- }
- if(breakMethod == 'even') {
-   rang = max(pred.vals[ ,pcolname]) + 1e-10 -
-     min(pred.vals[ ,pcolname]) - 1e-10
-   brks = c(min(pred.vals[ ,pcolname]) - 1e-10,
-     min(pred.vals[ ,pcolname]) - 1e-10 +
-       rang*(1:nbreaks)/(nbreaks + 1),
-     max(pred.vals[ ,pcolname]) + 1e-10)
- }
- # cut predictions at breakpoints to create a vector of factors and labels
- cuts = cut(pred.vals[,pcolname], breaks = brks)
- # create a color palette
+ # if(breakMethod == 'quantile') {
+ #   probs = (1:nbreaks)/(nbreaks + 1)
+ #   brks = c(min(pred.vals[ ,pcolname]) - 1e-10,
+ #     quantile(pred.vals[ ,pcolname], probs = probs),
+ #     max(pred.vals[ ,pcolname]) + 1e-10)
+ #   
+ #   ## NEW
+ #   if (length(unique(brks)) != length(brks)) {
+ #     breakMethod <- 'even'
+ #   }
+ #   
+ # }
+ # if(breakMethod == 'even') {
+ #   rang = max(pred.vals[ ,pcolname]) + 1e-10 -
+ #     min(pred.vals[ ,pcolname]) - 1e-10
+ #   brks = c(min(pred.vals[ ,pcolname]) - 1e-10,
+ #     min(pred.vals[ ,pcolname]) - 1e-10 +
+ #       rang*(1:nbreaks)/(nbreaks + 1),
+ #     max(pred.vals[ ,pcolname]) + 1e-10)
+ # }
+ # # cut predictions at breakpoints to create a vector of factors and labels
+ # cuts = cut(pred.vals[,pcolname], breaks = brks)
+ # # create a color palette
 ## palette = viridisLite::viridis(length(levels(cuts)))
 
  
  p3 <- ggplot2::ggplot(data = alldata, aes_(x = ~xcoordsUTM_,
    y = ~ycoordsUTM_, shape = ~sampindfact_)) +  ##)) + 
-   geom_point(aes(colour = cuts)) + #, ##size = pointsize,
+   geom_point(aes(colour = pcolname)) + #, ##size = pointsize,
     ## stroke = 3) +
-   scale_fill_viridis_d() +
-   scale_colour_viridis_d(name = "Counts") + 
+   viridis::scale_fill_viridis_d() +
+   viridis::scale_colour_viridis_c(name = "Counts") + 
    theme_bw() +
    scale_shape_manual("Samp Indicator", 
      labels = c("Unsampled", "Sampled"), values = shapevals) +
