@@ -144,8 +144,8 @@ multistrat <- function(formula, data, xcoordcol, ycoordcol,
   allFPBKobj[[1]] <- matrix(do.call("sum", prediction))
   ## need to update the variance to account for covariance
   ## from using the same detection for each stratum
-  allFPBKobj[[2]] <- matrix(do.call("sum", predictionvar) +
-      sum(extravar)) 
+  allFPBKobj[[2]] <- ##matrix(do.call("sum", predictionvar) +
+      matrix(sum(extravar))##) 
   allFPBKobj[[3]] <- do.call("rbind", dfout)
   allFPBKobj[[4]] <- c(NA, NA, NA)
   allFPBKobj[[5]] <- formula
