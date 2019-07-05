@@ -36,8 +36,6 @@ FPBKoutput <- function(pred_info, conf_level = c(0.80,
   0.90, 0.95),
   get_krigmap = FALSE, get_sampdetails = FALSE,
   get_variogram = FALSE,
-  nbreaks = 4,
-  breakMethod = 'quantile', 
   pointsize = 2) {
 
 pred.total <- pred_info$FPBK_Prediction
@@ -220,13 +218,15 @@ if (get_krigmap == TRUE) {
  # # create a color palette
 ## palette = viridisLite::viridis(length(levels(cuts)))
 
+ preds <- alldata[ ,pcolname]
  
  p3 <- ggplot2::ggplot(data = alldata, aes_(x = ~xcoordsUTM_,
    y = ~ycoordsUTM_, shape = ~sampindfact_)) +  ##)) + 
-   geom_point(aes(colour = pcolname)) + #, ##size = pointsize,
+   geom_point(aes(colour = preds)) +
+   #, ##size = pointsize,
     ## stroke = 3) +
-   viridis::scale_fill_viridis_d() +
-   viridis::scale_colour_viridis_c(name = "Counts") + 
+   scale_fill_viridis_c() +
+   scale_colour_viridis_c(name = "Counts") + 
    theme_bw() +
    scale_shape_manual("Samp Indicator", 
      labels = c("Unsampled", "Sampled"), values = shapevals) +

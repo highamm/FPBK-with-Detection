@@ -91,8 +91,8 @@ multistrat <- function(formula, data, xcoordcol, ycoordcol,
     0.90, 0.95),
     get_krigmap = FALSE, get_sampdetails = TRUE,
     get_variogram = TRUE,
-    nbreaks = 4,
-    breakMethod = 'quantile', 
+   ## nbreaks = 4,
+  ##  breakMethod = 'quantile', 
     pointsize = 2)
   stratname <- levels(stratvar)[k]
   rownames(tabsout[[k]]$basic) <- stratname
@@ -159,8 +159,8 @@ multistrat <- function(formula, data, xcoordcol, ycoordcol,
     0.90, 0.95),
     get_krigmap = TRUE, get_sampdetails = TRUE,
     get_variogram = FALSE,
-    nbreaks = 4,
-    breakMethod = 'quantile', 
+  ##  nbreaks = 4,
+  ##  breakMethod = 'quantile', 
     pointsize = 7)
 
   rownames(tabsall$basic) <- "Total"
