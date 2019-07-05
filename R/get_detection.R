@@ -103,7 +103,6 @@ get_detection <- function(formula, data,
   
   } else if (varmethod == "Delta") {
     boot.coefs <- NULL
-    corrpimat <- NULL
   } else {
     stop("varmethod must be either 'Delta' or 'Bootstrap' to obtain
       covariance matrix for detection probabilities")
@@ -113,8 +112,7 @@ get_detection <- function(formula, data,
   
   
   obj <- list(coefs = coefs, covmat = F, formula = formula,
-    boot.coefs = boot.coefs, varmethod = varmethod, 
-    corrpimat = corrpimat)
+    boot.coefs = boot.coefs, varmethod = varmethod)
   
   class(obj) <- "get_detection"
   return(obj)
