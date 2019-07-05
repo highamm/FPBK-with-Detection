@@ -70,7 +70,7 @@ multistrat <- function(formula, data, xcoordcol, ycoordcol,
  #     cov(t(mat[[1]]), t(mat[[2]]), use = "complete.obs")))
   
   if (is.null(detectionobj) == FALSE) {
-    sampind <- predictouts[[k]]$Pred_df[ ,"counts_sampind"] 
+    sampind <- predictouts[[k]]$Pred_df[ ,paste(base::all.vars(formula)[1], "_sampind", sep = "")] 
     
     corrpimat[[k]] <- slmfitouts[[k]]$piboot[sampind, ]
     

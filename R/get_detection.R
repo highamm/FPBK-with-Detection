@@ -101,12 +101,6 @@ get_detection <- function(formula, data,
     
   }
   
-  ## NEW
-  pi.estimated.logit.boot <- X %*% t(boot.coefs)
-  corrpimat <- exp(pi.estimated.logit.boot) / (1 +
-      exp(pi.estimated.logit.boot))
-
-  
   } else if (varmethod == "Delta") {
     boot.coefs <- NULL
     corrpimat <- NULL
