@@ -200,6 +200,12 @@ if (get_krigmap == TRUE) {
    brks = c(min(pred.vals[ ,pcolname]) - 1e-10,
      quantile(pred.vals[ ,pcolname], probs = probs),
      max(pred.vals[ ,pcolname]) + 1e-10)
+   
+   ## NEW
+   if (length(unique(brks)) != length(brks)) {
+     breakMethod == 'even'
+   }
+   
  }
  if(breakMethod == 'even') {
    rang = max(pred.vals[ ,pcolname]) + 1e-10 -
