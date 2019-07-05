@@ -119,21 +119,22 @@ multistrat <- function(formula, data, xcoordcol, ycoordcol,
   ## next: incorporate this into the FPBKoutput only for
   ## this multistrat function part
   
-  if (is.null(detectionobj) == FALSE & detectionobj$varmethod == "Bootstrap") {
-  extravar <- matrix(0, nrow = nlevels(stratvar),
-    ncol = nlevels(stratvar))
-  
-  for (j in 1:nlevels(stratvar)) {
-    for (jj in 1:nlevels(stratvar)) {
-      if (j != jj) {
-        extravar[j, jj] <- matrixcalc::hadamard.prod(tlambda[[j]], t(matrix(muhat[[j]]))) %*%
-          cov(t(corrpimat[[j]]), t(corrpimat[[jj]])) %*%
-          t(matrixcalc::hadamard.prod(tlambda[[jj]], t(matrix(muhat[[jj]]))))
-      } else if (j == jj) {
-        extravar[j, jj] <- 0
+  if (is.null(detectionobj) == FALSE &
+      detectionobj$varmethod == "Bootstrap") {
+    extravar <- matrix(0, nrow = nlevels(stratvar),
+      ncol = nlevels(stratvar))
+    
+    for (j in 1:nlevels(stratvar)) {
+      for (jj in 1:nlevels(stratvar)) {
+        if (j != jj) {
+          extravar[j, jj] <- matrixcalc::hadamard.prod(tlambda[[j]], t(matrix(muhat[[j]]))) %*%
+            cov(t(corrpimat[[j]]), t(corrpimat[[jj]])) %*%
+            t(matrixcalc::hadamard.prod(tlambda[[jj]], t(matrix(muhat[[jj]]))))
+        } else if (j == jj) {
+          extravar[j, jj] <- 0
+        }
       }
     }
-  }
   } else if (is.null(detectionobj) == FALSE & detectionobj$varmethod == "Delta") {
     extravar <- 0
     warning("The confidence interval from using the delta method to obtain the variance of the detection probabilities will be slightly too small due to not accounting for correlation across strata due to using the same detection data.")
