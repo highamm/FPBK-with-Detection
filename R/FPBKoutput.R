@@ -15,8 +15,6 @@
 #' etc.
 #' @param get_variogram is an indicator for whether or not
 #' a variogram of the residuals should be returned
-#' @param nbreaks is the number of breakpoints used in the spatial graphic
-#' @param breakMethod is either \code{'quantile'} or \code{'even'} and determines how the break points are constructed.
 #' @param pointsize is the size of the points on the spatial graphic.
 #' @return \itemize{
 #'   \item prediction for the total with prediction intervals
