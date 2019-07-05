@@ -54,7 +54,7 @@ slmfit <- function(formula, data, xcoordcol, ycoordcol,
   estmethod = "REML",
   covestimates = c(NA, NA, NA),
   detectionobj = NULL,
-  coordtype = NULL,
+  coordtype = "TM",
   areacol = NULL) {
   
   ## make sure that detectionobj comes from get_detection if included
