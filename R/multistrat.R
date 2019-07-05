@@ -128,6 +128,8 @@ multistrat <- function(formula, data, xcoordcol, ycoordcol,
         extravar[j, jj] <- matrixcalc::hadamard.prod(tlambda[[j]], t(matrix(muhat[[j]]))) %*%
           cov(t(corrpimat[[j]]), t(corrpimat[[jj]])) %*%
           t(matrixcalc::hadamard.prod(tlambda[[jj]], t(matrix(muhat[[jj]]))))
+      } else if (j == jj) {
+        extravar <- 0
       }
     }
   }
