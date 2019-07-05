@@ -18,6 +18,8 @@
 #' @param covestimates is an optional vector of covariance parameter estimates (nugget, partial sill, range). If these are given and \code{estmethod = "None"}, the the provided vector are treated as the estimators to create the covariance structure.
 #' @param detectionobj is a fitted model obj from \code{get_detection}. The default is for this object to be \code{NULL}, resulting in
 #' spatial prediction that assumes perfect detection.
+#' @param coordtype specifies whether the coordinates are in 
+#' Lat/Lon or already in TM or UTM
 #' @param areacol is the name of the column with the areas of the sites. By default, we assume that all sites have equal area, in which
 #' case a vector of 1's is used as the areas.
 #' @return a list with \itemize{
@@ -52,6 +54,7 @@ slmfit <- function(formula, data, xcoordcol, ycoordcol,
   estmethod = "REML",
   covestimates = c(NA, NA, NA),
   detectionobj = NULL,
+  coordtype = NULL,
   areacol = NULL) {
   
   ## make sure that detectionobj comes from get_detection if included
@@ -155,9 +158,15 @@ slmfit <- function(formula, data, xcoordcol, ycoordcol,
   
   ## ASSUME that coordinates are in TM
 
+  if (coordtype == "LatLon") {
+    coords <- as.data.frame(cbind(datanomiss[ ,xcoordcol],
+      datanomiss[ ,ycoordcol]))
+    xcoordsUTM <- LLtoUTM(cm = mean(coords[ ,1]), lat = coords[ ,2], lon = coords[ ,1])$xy[ ,1]
+    ycoordsUTM <- LLtoUTM(cm = mean(coords[ ,1]), lat = coords[ ,2], lon = coords[ ,1])$xy[ ,2]
+  } else {
     xcoordsUTM <- datanomiss[ ,xcoordcol]
     ycoordsUTM <- datanomiss[ ,ycoordcol]
-  
+  }
   
   detind <- is.null(detectionobj)
   

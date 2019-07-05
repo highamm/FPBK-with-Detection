@@ -58,6 +58,7 @@ multistrat <- function(formula, data, xcoordcol, ycoordcol,
     data = subset(data, stratvar == levels(stratvar)[k]),
     xcoordcol = xcoordcol, ycoordcol = ycoordcol,
     CorModel = CorModel, 
+    coordtype = coordtype,
      estmethod = estmethod,
     covestimates = covestimates, detectionobj = detectionobj,
     areacol = areacol)
