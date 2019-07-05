@@ -203,7 +203,7 @@ if (get_krigmap == TRUE) {
    
    ## NEW
    if (length(unique(brks)) != length(brks)) {
-     breakMethod == 'even'
+     breakMethod <- 'even'
    }
    
  }
