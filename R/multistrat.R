@@ -120,8 +120,9 @@ multistrat <- function(formula, data, xcoordcol, ycoordcol,
   ## next: incorporate this into the FPBKoutput only for
   ## this multistrat function part
   
-  if (is.null(detectionobj) == FALSE &
-      detectionobj$varmethod == "Bootstrap") {
+  if (is.null(detectionobj) == FALSE) {
+    
+      if(detectionobj$varmethod == "Bootstrap") {
     extravar <- matrix(0, nrow = nlevels(stratvar),
       ncol = nlevels(stratvar))
     
@@ -136,10 +137,11 @@ multistrat <- function(formula, data, xcoordcol, ycoordcol,
         }
       }
     }
-  } else if (is.null(detectionobj) == FALSE & detectionobj$varmethod == "Delta") {
+  } else if(detectionobj$varmethod == "Delta") {
     extravar <- 0
     warning("The confidence interval from using the delta method to obtain the variance of the detection probabilities will be slightly too small due to not accounting for correlation across strata due to using the same detection data.")
-  } else {
+  } 
+    } else {
     extravar <- 0
   }
   

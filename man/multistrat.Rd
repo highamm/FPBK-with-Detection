@@ -7,7 +7,7 @@
 multistrat(formula, data, xcoordcol, ycoordcol, CorModel = "Exponential",
   coordtype = "LatLon", estmethod = "REML", covestimates = c(NA, NA,
   NA), detectionobj = NULL, detinfo = c(1, 0), areacol = NULL,
-  stratcol = NULL)
+  FPBKcol = NULL, stratcol = NULL)
 }
 \arguments{
 \item{formula}{is an R linear model formula specifying density as the
@@ -42,6 +42,11 @@ variance (0). Using the default assumes perfect detection.}
 
 \item{areacol}{is the name of the column with the areas of the sites. By default, we assume that all sites have equal area, in which
 case a vector of 1's is used as the areas.}
+
+\item{FPBKcol}{is the name of the column with the prediction 
+weights if the analyst would like to predict something other
+than the population total, like the total for a subset of the
+entire region of interest.}
 
 \item{stratcol}{is the column in the data set that contains the stratification variable.}
 }
