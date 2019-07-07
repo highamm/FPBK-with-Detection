@@ -25,6 +25,10 @@
 #' variance (0). Using the default assumes perfect detection.
 #' @param areacol is the name of the column with the areas of the sites. By default, we assume that all sites have equal area, in which
 #' case a vector of 1's is used as the areas.
+#' @param FPBKcol is the name of the column with the prediction 
+#' weights if the analyst would like to predict something other
+#' than the population total, like the total for a subset of the
+#' entire region of interest.
 #' @param stratcol is the column in the data set that contains the stratification variable. 
 #' @return a report with information about the predicted total across all sites as well as variogram information for each stratum in the column \code{stratcol}.
 #' @import stats
@@ -38,6 +42,7 @@ multistrat <- function(formula, data, xcoordcol, ycoordcol,
   detectionobj = NULL,
   detinfo = c(1, 0), 
   areacol = NULL,
+  FPBKcol = NULL,
   stratcol = NULL) {
   
   stratvar <- factor(data[ ,stratcol])
@@ -64,11 +69,7 @@ multistrat <- function(formula, data, xcoordcol, ycoordcol,
     areacol = areacol)
   
   predictouts[[k]] <- predict(object = slmfitouts[[k]],
-    FPBKcol = NULL, detinfo = detinfo)
-  
- # 2 * muhat.cov.ML.bin[1] * muhat.cov.ML.bin[2] *
-#    sum(matrixcalc::hadamard.prod((t(tlambda.boot.ML.bin[[1]]) %*% tlambda.boot.ML.bin[[2]]),
- #     cov(t(mat[[1]]), t(mat[[2]]), use = "complete.obs")))
+    FPBKcol = FPBKcol, detinfo = detinfo)
   
   if (is.null(detectionobj) == FALSE) {
     sampind <- predictouts[[k]]$Pred_df[ ,paste(base::all.vars(formula)[1], "_sampind", sep = "")] 
