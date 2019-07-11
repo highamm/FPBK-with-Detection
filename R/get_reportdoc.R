@@ -14,9 +14,9 @@ file <- system.file("ReportTest.Rmd", package = "FPBKPack2")
 ## need to think more carefully about where this report
 ## should go.
 ##dout <- "~/Desktop/"
-if (missing(dout)) {
+##if (missing(dout)) {
   dout <- getwd()
-}
+##}
 
 rmarkdown::render(file, envir = list(varplot = output_info$varplot, 
   varinfo = output_info$varplottab, krigplot = output_info$krigmap, 
