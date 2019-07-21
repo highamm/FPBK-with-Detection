@@ -112,6 +112,12 @@
 <li>Section 2 shows how to obtain a population prediction assuming constant detection across all sites.</li>
 <li>Section 3 shows how to obtain a population prediction using radiocollar data with the possibility of site covariates useful for predicting detection.</li>
 </ul>
+<p>To cite the package, run the following lines:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## install the package first with devtools
+## devtools::install_git("https://github.com/highamm/FPBKPack2.git")
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(FPBKPack2)
+<span class="kw"><a href="https://rdrr.io/r/utils/citation.html">citation</a></span>(<span class="st">"FPBKPack2"</span>)</code></pre></div>
+<hr>
 </div>
 <div id="section-1-perfect-detection" class="section level2">
 <h2 class="hasAnchor">
@@ -205,16 +211,18 @@ p3 &lt;-<span class="st"> </span><span class="kw"><a href="https://ggplot2.tidyv
 <span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span>(<span class="st">"Grid of Sites Showing Which Were Sampled"</span>)
 <span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(p3)</code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="my-vignette_files/figure-html/unnamed-chunk-2-1.png" alt=" Stratifiacation" width="576"><p class="caption">
+<img src="my-vignette_files/figure-html/unnamed-chunk-3-1.png" alt=" Stratifiacation" width="576"><p class="caption">
 Stratifiacation
 </p>
 </div>
 <p>And we can examine a grid of the stratification structure:</p>
-<p><img src="my-vignette_files/figure-html/unnamed-chunk-3-1.png" width="576"></p>
+<p><img src="my-vignette_files/figure-html/unnamed-chunk-4-1.png" width="576"></p>
+<hr>
 <div id="r-shiny-app" class="section level4">
 <h4 class="hasAnchor">
 <a href="#r-shiny-app" class="anchor"></a>R Shiny App</h4>
 <p>Much of the functionality of this package will be made available in an <code>R Shiny</code> app to be developed before the end of summer of 2019. The following Vignette shows how to use the package in <code>R</code> or <code>RStudio</code> directly. See the <code>Shiny</code> vignette if interested in using the package through the <code>Shiny</code> app.</p>
+<hr>
 </div>
 <div id="package-functions" class="section level4">
 <h4 class="hasAnchor">
@@ -233,6 +241,7 @@ Stratifiacation
 <code>get_reportdoc</code> to obtain a report similar to the Winfonet report.</li>
 </ul>
 <p>Most of the remainder of the functions in the package are helper functions called within the four main functions above.</p>
+<hr>
 </div>
 <div id="the-slmfit-function" class="section level4">
 <h4 class="hasAnchor">
@@ -287,6 +296,7 @@ slmobj &lt;-<span class="st"> </span><span class="kw"><a href="../reference/slmf
 <span class="co">#&gt; Partial Sill       74912.62873</span>
 <span class="co">#&gt; Range              37324.30856</span></code></pre></div>
 <p>When <code>areacol</code> is included, then the spatial prediction utilizes densities, not counts. So, the coefficient estimate is the estimate the mean density in the high stratum. The densities are transformed back to counts in the <code>predict</code> function, which is described next.</p>
+<hr>
 </div>
 <div id="the-predict-function" class="section level4">
 <h4 class="hasAnchor">
@@ -312,6 +322,7 @@ slmobj &lt;-<span class="st"> </span><span class="kw"><a href="../reference/slmf
 <code>response_muhat</code>, a column of means for the density at each site.</li>
 </ul>
 <p>Some of these features are summarized in the following output function that generates a mini-report. However, having the appended data set available to the user can be beneficial to anyone who might want to obtain their own specific summary statistics, graphics, etc. using <code>R</code> or other software like GIS.</p>
+<hr>
 </div>
 <div id="the-fpbkoutput-function" class="section level4">
 <h4 class="hasAnchor">
@@ -334,6 +345,7 @@ slmobj &lt;-<span class="st"> </span><span class="kw"><a href="../reference/slmf
 <span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(pred_df)</code></pre></div>
 <p>The column with the predictions is generally named <code>name_of_count_variable_pred</code>. We can get a report from the outputobj as</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/get_reportdoc.html">get_reportdoc</a></span>(outputobj)</code></pre></div>
+<hr>
 </div>
 <div id="a-couple-of-extra-notes" class="section level4">
 <h4 class="hasAnchor">
@@ -359,6 +371,7 @@ predobj_noarea<span class="op">$</span>FPBK_Prediction
 <span class="co">#&gt;          [,1]</span>
 <span class="co">#&gt; [1,] 81.74994</span></code></pre></div>
 <p>Secondly, there is a choice of how to include stratification in the estimator. In the current WinfoNet estimator, strata are treated completely separately in the predictions. In other words, we get a prediction, covariance parameter estimates, etc. for the low stratum and a prediction, covariance parameter estimates, etc. for the high stratum. Our total prediction is simply the sum of the stratum predictions. The extra assumption that we make is that there is no <strong>cross-correlation</strong> across the strata.</p>
+<hr>
 </div>
 <div id="the-multistrat-function" class="section level4">
 <h4 class="hasAnchor">
@@ -382,6 +395,7 @@ predobj_noarea<span class="op">$</span>FPBK_Prediction
   <span class="dt">CorModel =</span> <span class="st">"Exponential"</span>,
   <span class="dt">areacol =</span> <span class="st">"Area"</span>)</code></pre></div>
 <p>Note that, for either method (fitting each stratum separately or using stratum as a covariate in the linear model), the user is able to supply more than two stratum if desired.</p>
+<hr>
 </div>
 </div>
 <div id="section-2-constant-detection-across-sites" class="section level2">
@@ -422,6 +436,7 @@ preddf &lt;-<span class="st"> </span>output_objdet<span class="op">$</span>predv
 ## Total: both stratum
 preddf_strat &lt;-<span class="st"> </span>multiobjdetection<span class="op">$</span>predvals
 <span class="kw"><a href="../reference/get_reportdoc.html">get_reportdoc</a></span>(preddf_strat)</code></pre></div>
+<hr>
 </div>
 <div id="section-3-estimating-detection-using-logistic-regression-on-radiocollar-data" class="section level2">
 <h2 class="hasAnchor">
@@ -587,14 +602,14 @@ preddf_strat &lt;-<span class="st"> </span>multiobjdetection<span class="op">$</
 predobj_dethigh &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(<span class="dt">object =</span> slmobj_dethigh)
 predobj_dethigh<span class="op">$</span>FPBK_Prediction
 <span class="co">#&gt;          [,1]</span>
-<span class="co">#&gt; [1,] 1510.384</span>
+<span class="co">#&gt; [1,] 1478.885</span>
 output_sightability &lt;-<span class="st"> </span><span class="kw"><a href="../reference/FPBKoutput.html">FPBKoutput</a></span>(<span class="dt">pred_info =</span> predobj_dethigh)
 <span class="co">#&gt;      Prediction SE(Prediction)</span>
-<span class="co">#&gt; [1,]   1510.384       186.1395</span>
+<span class="co">#&gt; [1,]   1478.885       180.6537</span>
 <span class="co">#&gt;      Lower Bound Upper Bound Proportion of Mean</span>
-<span class="co">#&gt; 80 %        1272        1749               0.16</span>
-<span class="co">#&gt; 90 %        1204        1817               0.20</span>
-<span class="co">#&gt; 95 %        1146        1875               0.24</span></code></pre></div>
+<span class="co">#&gt; 80 %        1247        1710               0.16</span>
+<span class="co">#&gt; 90 %        1182        1776               0.20</span>
+<span class="co">#&gt; 95 %        1125        1833               0.24</span></code></pre></div>
 <p>We can also predict the population total, fitting a covariance model for the high and low strata separately using <code>multistrat</code>:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">multiobjsightability &lt;-<span class="st"> </span><span class="kw"><a href="../reference/multistrat.html">multistrat</a></span>(<span class="dt">formula =</span> Moose <span class="op">~</span><span class="st"> </span><span class="dv">1</span>,
   <span class="dt">data =</span> simdf,
@@ -607,6 +622,7 @@ output_sightability<span class="op">$</span>predvals
 
 <span class="kw"><a href="../reference/get_reportdoc.html">get_reportdoc</a></span>(multiobjsightability)
 multiobjsightability<span class="op">$</span>predvals</code></pre></div>
+<hr>
 <div id="predicting-for-a-quantity-other-than-the-population-total" class="section level4">
 <h4 class="hasAnchor">
 <a href="#predicting-for-a-quantity-other-than-the-population-total" class="anchor"></a>Predicting for a Quantity Other than the Population Total</h4>
@@ -675,18 +691,18 @@ pander<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/pa
 predobj_predwts &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(<span class="dt">object =</span> slmobj_predwts,
   <span class="dt">FPBKcol =</span> <span class="st">"predwts"</span>) ## added FPBKcol argument here
 predobj_predwts<span class="op">$</span>FPBK_Prediction
-<span class="co">#&gt;         [,1]</span>
-<span class="co">#&gt; [1,] 1701.66</span>
+<span class="co">#&gt;          [,1]</span>
+<span class="co">#&gt; [1,] 1697.611</span>
 <span class="kw"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span>(predobj_predwts<span class="op">$</span>PredVar)
 <span class="co">#&gt;          [,1]</span>
-<span class="co">#&gt; [1,] 203.8704</span>
+<span class="co">#&gt; [1,] 196.8374</span>
 output_predwts &lt;-<span class="st"> </span><span class="kw"><a href="../reference/FPBKoutput.html">FPBKoutput</a></span>(predobj_predwts)
 <span class="co">#&gt;      Prediction SE(Prediction)</span>
-<span class="co">#&gt; [1,]    1701.66       203.8704</span>
+<span class="co">#&gt; [1,]   1697.611       196.8374</span>
 <span class="co">#&gt;      Lower Bound Upper Bound Proportion of Mean</span>
-<span class="co">#&gt; 80 %        1440        1963               0.15</span>
-<span class="co">#&gt; 90 %        1366        2037               0.20</span>
-<span class="co">#&gt; 95 %        1302        2101               0.23</span></code></pre></div>
+<span class="co">#&gt; 80 %        1445        1950               0.15</span>
+<span class="co">#&gt; 90 %        1374        2021               0.19</span>
+<span class="co">#&gt; 95 %        1312        2083               0.23</span></code></pre></div>
 <p>If fitting a separate covariance model for each stratum, we would incorporate the <code>FPBKcol</code> argument in the multistrat function:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">multiobj_predwts &lt;-<span class="st"> </span><span class="kw"><a href="../reference/multistrat.html">multistrat</a></span>(<span class="dt">formula =</span> Moose <span class="op">~</span><span class="st"> </span><span class="dv">1</span>,
   <span class="dt">data =</span> simdf,
@@ -695,6 +711,7 @@ output_predwts &lt;-<span class="st"> </span><span class="kw"><a href="../refere
   <span class="dt">detectionobj =</span> sightability_info,
   <span class="dt">FPBKcol =</span> <span class="st">"predwts"</span>)</code></pre></div>
 <p>The resulting prediction and standard error are then associated with the region of interest. We can again obtain a data frame with site-by-site predictions as well as an html report specifying the <code>$predvals</code> output to <code>multiobj_predwts</code> or <code>output_predwts</code> and using the <code>get_reportdoc</code> function.</p>
+<hr>
 </div>
 </div>
 <div id="conclusion" class="section level2">
@@ -725,7 +742,7 @@ output_predwts &lt;-<span class="st"> </span><span class="kw"><a href="../refere
 
 
       <footer><div class="copyright">
-  <p>Developed by Higham Matt, Ver Hoef Jay, Madsen Lisa.</p>
+  <p>Developed by Higham, Matt, Ver Hoef, Jay, Madsen, Lisa.</p>
 </div>
 
 <div class="pkgdown">

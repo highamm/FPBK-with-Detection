@@ -203,12 +203,6 @@ runGitHub("Shiny-FPBK", "highamm", destdir = "~/Desktop/appfolder",
 
 If all goes well, you should see something pop up in your browser like this:
 
-
-The question is old, but still receives a lot of attention. As the existing answers are outdated, here a more up-to-date solution:
-
-Resizing local images
-As of knitr 1.12, there is the function include_graphics. From ?include_graphics (emphasis mine):
-
 The major advantage of using this function is that it is portable in the sense that it works for all document formats that knitr supports, so you do not need to think if you have to use, for example, LaTeX or Markdown syntax, to embed an external image. Chunk options related to graphics output that work for normal R plots also work for these images, such as out.width and out.height.
 
 Example:
@@ -216,8 +210,6 @@ Example:
 ```{r, out.width = "700px"}
 knitr::include_graphics("Shinystart.png")
 ```
-
-<!-- ![First Screen of Shiny App](Shinystart.png) -->
 
 Let's first assume that we have perfect sightability. Then, in the `Shiny` app, we can completely ignore the "Radiocollar Sightability" tab and focus only on the "GSPE" tab. 
 
