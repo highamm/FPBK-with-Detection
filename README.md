@@ -1,7 +1,8 @@
-
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 FPBKPack2
 =========
+
+Vignettes can be found on the following website: [FPBKPack2 Website](https://highamm.github.io/FPBKPack2/)
 
 The goal of FPBKPack2 is to predict a population total when
 
