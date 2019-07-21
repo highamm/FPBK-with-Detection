@@ -17,8 +17,6 @@ knitr::opts_chunk$set(
   comment = "#>",
   echo = FALSE
 )
-library(pander)
-library(ggplot2)
 ```
 
 
@@ -128,7 +126,7 @@ write.csv(countdford, "vignettecount.csv")
 ```{r, echo = FALSE}
 library(FPBKPack2)
 simdf <- vignettecount
-pander(head(simdf[ ,c("Xcoords", "Ycoords", "Moose",
+pander::pander(head(simdf[ ,c("Xcoords", "Ycoords", "Moose",
   "CountPred", "Stratum")]))
 ```
 
@@ -270,26 +268,6 @@ _____________________________________
 #### Step 4: Get a Report and a Data Frame with Site-by-site Predictions
 
 The `R` output in the main panel is not "pretty" and really only serves as a check to make sure everything went okay with the uploaded data. The __Get Report__ button will generate a nice-looking report while the __Get_Prediction_Data__ button will generate a .csv file with the original data as well as site-by-site predictions and a few other appended columns. The report and prediction data set will be in the folder that you made in the very first step using the `runGitHub` function. The report is in HTML format with a title "report.date_of_today.html". The data set is named "predictions.csv". 
-
-```{r}
-## Next Steps:
-
-## add something to the package that checks to see if any
-## of the spatial coordinates are NA
-
-
-
-## 2. Make tables and graphs showing the example count data set
-## 3. Begin with perfect detection in the vignette
-## 4. Move to constant detection
-## 5. Make tables and graphs showing the detection data set
-## 6. Move to Radiocollar Data
-## 7. Write conclusion and send email to McCrea
-
-## I also want to make a screencast video of me using the App
-## on the example data set.
-
-```
 
 _____________________________________
 
