@@ -19,8 +19,8 @@ You can install the FPBKPack2 from [GitHub](https://github.com/highamm/FPBKPack2
 devtools::install_git("https://github.com/highamm/FPBKPack2.git")
 ```
 
-Example
--------
+Basic Example
+-------------
 
 The following example shows how to predict the counts on unsampled sites in a simulated data set. See the `Using the GSPE R Package` vignette under "Articles" for more details.
 

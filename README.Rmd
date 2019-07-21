@@ -76,7 +76,7 @@ pred_df <- outputobj$predvals
 get_reportdoc(outputobj)
 ```
 
-We can also incorporate imperfect detection by adding a couple of extra arguments (see Sections 2 and 3 of the Article `Using the GSPE R Package`). The Article also has information on other options to the functions, such as specifying a specific region to predict, fitting separate covariance models for each stratum, etc.
+We  can also incorporate imperfect detection by adding a couple of extra arguments (see Sections 2 and 3 of the Article `Using the GSPE R Package`). The Article also has information on other options to the functions, such as specifying a specific region to predict, fitting separate covariance models for each stratum, etc.
 
 Finally, the Article `Using the GSPE Shiny App` gives directions on how to upload data and then use the package with a `Shiny` interface. 
 
