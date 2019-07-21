@@ -24,5 +24,6 @@ Suggests:
     rmarkdown,
     knitr,
     testthat, 
-    pander
+    pander,
+    shiny
 VignetteBuilder: knitr
