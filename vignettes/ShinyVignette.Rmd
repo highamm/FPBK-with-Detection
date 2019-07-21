@@ -30,9 +30,9 @@ The purpose of this vignette is to illustrate how to use the GSPE `R Shiny` app 
 
 If using the app for the first time, we recommend making sure that the steps in Section 1 work first before trying to add sightability to the model. Before looking at the `Shiny` app, let's first examine the example data set we will be using.
 
-To cite the package, run the following lines:
+<!-- To cite the package, run the following lines: -->
 
-```{r, echo=TRUE, warning=FALSE, results = "asis", eval=FALSE}
+```{r, echo=FALSE, warning=FALSE, results = "asis", eval=FALSE}
 ## install the package first with devtools
 ## devtools::install_git("https://github.com/highamm/FPBKPack2.git")
 library(FPBKPack2)
