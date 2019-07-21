@@ -1,6 +1,6 @@
 template:
   params:
-    bootswatch: darkly
+    bootswatch: flatly
     ganalytics: UA-11414212-0
 navbar:
   structure:
@@ -32,7 +32,6 @@ navbar:
     github:
       icon: fab fa-github fa-lg
       href: https://github.com/highamm/FPBKPack2
-
 reference:
 - title: All functions
   desc: ~

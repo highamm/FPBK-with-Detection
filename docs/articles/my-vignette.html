@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Using the GSPE R Package • FPBKPack2</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/darkly/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/flatly/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
@@ -112,12 +112,7 @@
 <li>Section 2 shows how to obtain a population prediction assuming constant detection across all sites.</li>
 <li>Section 3 shows how to obtain a population prediction using radiocollar data with the possibility of site covariates useful for predicting detection.</li>
 </ul>
-<p>To cite the package, run the following lines:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## install the package first with devtools
-## devtools::install_git("https://github.com/highamm/FPBKPack2.git")
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(FPBKPack2)
-<span class="kw"><a href="https://rdrr.io/r/utils/citation.html">citation</a></span>(<span class="st">"FPBKPack2"</span>)</code></pre></div>
-<hr>
+<!-- To cite the package, run the following lines: --><hr>
 </div>
 <div id="section-1-perfect-detection" class="section level2">
 <h2 class="hasAnchor">
@@ -602,14 +597,14 @@ preddf_strat &lt;-<span class="st"> </span>multiobjdetection<span class="op">$</
 predobj_dethigh &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(<span class="dt">object =</span> slmobj_dethigh)
 predobj_dethigh<span class="op">$</span>FPBK_Prediction
 <span class="co">#&gt;          [,1]</span>
-<span class="co">#&gt; [1,] 1478.885</span>
+<span class="co">#&gt; [1,] 1483.087</span>
 output_sightability &lt;-<span class="st"> </span><span class="kw"><a href="../reference/FPBKoutput.html">FPBKoutput</a></span>(<span class="dt">pred_info =</span> predobj_dethigh)
 <span class="co">#&gt;      Prediction SE(Prediction)</span>
-<span class="co">#&gt; [1,]   1478.885       180.6537</span>
+<span class="co">#&gt; [1,]   1483.087       188.2299</span>
 <span class="co">#&gt;      Lower Bound Upper Bound Proportion of Mean</span>
-<span class="co">#&gt; 80 %        1247        1710               0.16</span>
-<span class="co">#&gt; 90 %        1182        1776               0.20</span>
-<span class="co">#&gt; 95 %        1125        1833               0.24</span></code></pre></div>
+<span class="co">#&gt; 80 %        1242        1724               0.16</span>
+<span class="co">#&gt; 90 %        1173        1793               0.21</span>
+<span class="co">#&gt; 95 %        1114        1852               0.25</span></code></pre></div>
 <p>We can also predict the population total, fitting a covariance model for the high and low strata separately using <code>multistrat</code>:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">multiobjsightability &lt;-<span class="st"> </span><span class="kw"><a href="../reference/multistrat.html">multistrat</a></span>(<span class="dt">formula =</span> Moose <span class="op">~</span><span class="st"> </span><span class="dv">1</span>,
   <span class="dt">data =</span> simdf,
@@ -692,17 +687,17 @@ predobj_predwts &lt;-<span class="st"> </span><span class="kw"><a href="https://
   <span class="dt">FPBKcol =</span> <span class="st">"predwts"</span>) ## added FPBKcol argument here
 predobj_predwts<span class="op">$</span>FPBK_Prediction
 <span class="co">#&gt;          [,1]</span>
-<span class="co">#&gt; [1,] 1697.611</span>
+<span class="co">#&gt; [1,] 1695.816</span>
 <span class="kw"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span>(predobj_predwts<span class="op">$</span>PredVar)
 <span class="co">#&gt;          [,1]</span>
-<span class="co">#&gt; [1,] 196.8374</span>
+<span class="co">#&gt; [1,] 204.4047</span>
 output_predwts &lt;-<span class="st"> </span><span class="kw"><a href="../reference/FPBKoutput.html">FPBKoutput</a></span>(predobj_predwts)
 <span class="co">#&gt;      Prediction SE(Prediction)</span>
-<span class="co">#&gt; [1,]   1697.611       196.8374</span>
+<span class="co">#&gt; [1,]   1695.816       204.4047</span>
 <span class="co">#&gt;      Lower Bound Upper Bound Proportion of Mean</span>
-<span class="co">#&gt; 80 %        1445        1950               0.15</span>
-<span class="co">#&gt; 90 %        1374        2021               0.19</span>
-<span class="co">#&gt; 95 %        1312        2083               0.23</span></code></pre></div>
+<span class="co">#&gt; 80 %        1434        1958               0.15</span>
+<span class="co">#&gt; 90 %        1360        2032               0.20</span>
+<span class="co">#&gt; 95 %        1295        2096               0.24</span></code></pre></div>
 <p>If fitting a separate covariance model for each stratum, we would incorporate the <code>FPBKcol</code> argument in the multistrat function:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">multiobj_predwts &lt;-<span class="st"> </span><span class="kw"><a href="../reference/multistrat.html">multistrat</a></span>(<span class="dt">formula =</span> Moose <span class="op">~</span><span class="st"> </span><span class="dv">1</span>,
   <span class="dt">data =</span> simdf,
@@ -742,7 +737,7 @@ output_predwts &lt;-<span class="st"> </span><span class="kw"><a href="../refere
 
 
       <footer><div class="copyright">
-  <p>Developed by Higham, Matt, Ver Hoef, Jay, Madsen, Lisa.</p>
+  <p>Developed by Higham Matt, Ver Hoef Jay, Madsen Lisa.</p>
 </div>
 
 <div class="pkgdown">

@@ -1,8 +1,7 @@
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 FPBKPack2
 =========
-
-Vignettes can be found on the following website: [FPBKPack2 Website](https://highamm.github.io/FPBKPack2/)
 
 The goal of FPBKPack2 is to predict a population total when
 
@@ -25,7 +24,7 @@ devtools::install_git("https://github.com/highamm/FPBKPack2.git")
 Basic Example
 -------------
 
-The following example shows how to predict the counts on unsampled sites in a simulated data set. See the `Using the GSPE R Package` vignette under "Articles" for more details.
+The following example shows how to predict the counts on unsampled sites in a simulated data set. See the `Using the GSPE R Package` vignette under "Articles" for a more detailed description of how to use the package.
 
 The plot below shows that only some of the sites were sampled. In this simulated example, the counts represent moose. The remaining sites that were not sampled do not have observed moose counts. In the plot below, sites without observed counts are coloured grey.
 
