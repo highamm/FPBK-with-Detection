@@ -37,8 +37,8 @@
 #'   \item a list with information for \code{predict} containing \enumerate{
 #'        \item formula
 #'        \item data, the data set without any missing values
-#'        \item a vector of x-coordinates (in UTM)
-#'        \item a vector of y-coordinates (in UTM)
+#'        \item a vector of x-coordinates (in TM)
+#'        \item a vector of y-coordinates (in TM)
 #'        \item whether REML or ML was used
 #'        \item the correlation model used
 #'        \item the covariance matrix for all of the sites

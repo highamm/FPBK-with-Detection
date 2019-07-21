@@ -21,7 +21,7 @@
 
 #' Data Set with Alaska Moose Observations.
 #'
-#' A data set that can be used with the \code{sptotal} package. In
+#' A data set that can be used with the \code{FPBKPack2} package. In
 #' this example, the counts are of moose on 860 sites of equal area.
 #'
 #' @format A spatial polygons object inclding:
@@ -33,3 +33,33 @@
 #'   ...
 #' }
 "AKmoose"
+
+#' Simulated Data Set with Moose count observations.
+#'
+#' A data set that can be used with the \code{FPBKPack2} package. In
+#' this example, the counts are of moose on 860 sites of equal area.
+#'
+#' @format A data frame object including:
+#' \describe{
+#'   \item{X}{ID number for the sites}
+#'   \item{Xcoords}{The x coordinates of the centroid for each site}
+#'   \item{Ycoords}{The y coordinates of the centroid for each site}
+#'   \item{Moose}{The total moose count on each site}
+#'   ...
+#' }
+"vignettecount"
+
+#' Simulated Data Set with Moose Radiocollar sightability observations.
+#'
+#' A data set that can be used with the \code{FPBKPack2} package. In
+#' this example, the there are two predictors for detection.
+#'
+#' @format A data frame object including:
+#' \describe{
+#'   \item{X}{ID number for the radiocollared moose}
+#'   \item{Detected}{1 if detected, 0 if not}
+#'   \item{DetPred1}{A predictor for detection}
+#'   \item{DetPred2}{A second predictor for detection}
+#'   ...
+#' }
+"vignettedetection"

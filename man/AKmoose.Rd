@@ -16,7 +16,7 @@
 AKmoose
 }
 \description{
-A data set that can be used with the \code{sptotal} package. In
+A data set that can be used with the \code{FPBKPack2} package. In
 this example, the counts are of moose on 860 sites of equal area.
 }
 \keyword{datasets}
