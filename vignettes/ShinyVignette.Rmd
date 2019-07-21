@@ -6,7 +6,7 @@ output:
   rmarkdown::html_vignette:
     fig_caption: yes
 vignette: >
-  %\VignetteIndexEntry{Using the GSPE R Package}
+  %\VignetteIndexEntry{Using the GSPE Shiny Package}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -209,6 +209,7 @@ Example:
 
 ```{r, out.width = "700px"}
 knitr::include_graphics("Shinystart.png")
+
 ```
 
 Let's first assume that we have perfect sightability. Then, in the `Shiny` app, we can completely ignore the "Radiocollar Sightability" tab and focus only on the "GSPE" tab. 
