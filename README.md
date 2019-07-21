@@ -10,6 +10,8 @@ The goal of FPBKPack2 is to predict a population total when
 3.  There might be imperfect detection of units on the sites that are sampled.
 4.  There is spatial autocorrelation among the counts.
 
+Note that the estimator is called the *GSPE* (Geo-Spatial Population Estimator) by many biologists in Alaska and Canada. Throughout the website and package documentation, *FPBK* (Finite Population Block Kriging) estimator and the *GSPE* are used interchangeably. Both refer to the same prediction process.
+
 Installation
 ------------
 
