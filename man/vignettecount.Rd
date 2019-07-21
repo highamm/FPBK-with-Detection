@@ -10,6 +10,11 @@
   \item{Xcoords}{The x coordinates of the centroid for each site}
   \item{Ycoords}{The y coordinates of the centroid for each site}
   \item{Moose}{The total moose count on each site}
+  \item{Area}{The area of each site}
+  \item{CountPred}{A predictor for site-by-site abundance}
+  \item{DetPred1}{A predictor for detection}
+  \item{DetPred2}{A second predictor for detection}
+  \item{Stratum}{A factor with two levels, High and Low}
   ...
 }}
 \usage{

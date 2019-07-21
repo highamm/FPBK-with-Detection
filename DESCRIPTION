@@ -23,5 +23,6 @@ Imports: matrixcalc,
 Suggests: 
     rmarkdown,
     knitr,
-    testthat
+    testthat, 
+    pander
 VignetteBuilder: knitr
