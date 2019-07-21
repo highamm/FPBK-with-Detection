@@ -1,0 +1,61 @@
+template:
+  params:
+    bootswatch: darkly
+    ganalytics: UA-11414212-0
+navbar:
+  structure:
+    left:
+    - home
+    - intro
+    - reference
+    - articles
+    - tutorials
+    - news
+    right: github
+  components:
+    home:
+      icon: fas fa-home fa-lg
+      href: index.html
+    reference:
+      text: Reference
+      href: reference/index.html
+    articles:
+      text: Articles
+      menu:
+      - text: Using the GSPE Shiny App
+        href: articles/ShinyVignette.html
+      - text: Using the GSPE R Package
+        href: articles/my-vignette.html
+    news:
+      text: Changelog
+      href: news/index.html
+    github:
+      icon: fab fa-github fa-lg
+      href: https://github.com/highamm/FPBKPack2
+
+reference:
+- title: All functions
+  desc: ~
+  contents:
+  - '`AKmoose`'
+  - '`FPBKPack2`'
+  - '`FPBKoutput`'
+  - '`LLtoUTM`'
+  - '`coef.slmfit`'
+  - '`corModelExponential`'
+  - '`estcovparm`'
+  - '`exampledataset`'
+  - '`get_detection`'
+  - '`get_reportdoc`'
+  - '`m2LL.FPBK.det`'
+  - '`m2LL.FPBK.nodet`'
+  - '`mginv`'
+  - '`multistrat`'
+  - '`predict.slmfit`'
+  - '`print.summary.slmfit`'
+  - '`residuals.slmfit`'
+  - '`slmfit`'
+  - '`summary.slmfit`'
+  - '`vignettecount`'
+  - '`vignettedetection`'
+

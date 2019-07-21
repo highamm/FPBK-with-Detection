@@ -1,0 +1,6 @@
+title: MODIStsp
+url: http://lbusett.github.io/MODIStsp
+template:
+  params:
+    bootswatch: darkly
+    ganalytics: UA-12345678-0
