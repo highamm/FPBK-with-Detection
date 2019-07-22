@@ -16,11 +16,12 @@ the estimated mean detection probability with a standard error
 of that estimator.
 }
 \details{
-\code{FPBKPack2} Main Functions:
-
-\code{FPBKpred} is the function used to generate the kriged predictions
-on the unsampled sites.
-
-\code{FPBKoutput} takes the resulting object from FPBKpred to construct
-confidence intervals, variograms, and maps.
+\code{FPBKPack2} Main Functions
+\describe{
+\item{\code{slmfit}}{fits a spatial linear model to the observed data,}
+\item{\code{predict}}{uses Finite Population Block Kriging to predict counts on unobserved sites,}
+\item{\code{FPBKoutput}}{takes the resulting object from FPBKpred to construct confidence intervals, variograms, and maps,}
+\item{\code{get_reportdoc}}{puts the output into nice HTML format, and}
+\item{\code{multistrat}}{combines \code{slmfit}, \code{predict}, and \code{FPBKoutput} into one function so that the user can fit the spatial linear model to strata separately.}
+}
 }

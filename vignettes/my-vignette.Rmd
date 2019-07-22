@@ -26,8 +26,6 @@ The purpose of this vignette is to illustrate how to use the GSPE `R` Package fo
 - Section 2 shows how to obtain a population prediction assuming constant detection across all sites.
 - Section 3 shows how to obtain a population prediction using radiocollar data with the possibility of site covariates useful for predicting detection.
 
-<!-- To cite the package, run the following lines: -->
-
 ```{r, echo=FALSE, warning=FALSE, results = "asis", eval=FALSE}
 ## install the package first with devtools
 ## devtools::install_git("https://github.com/highamm/FPBKPack2.git")
@@ -41,8 +39,12 @@ _____________________________________
 
 As mentioned above, we will use a simulated moose survey. Though we have sightability trials for this particular data set, suppose first that we want to assume perfect detection. Like many moose data sets, the sites are stratified into a "High" strata and a "Low" strata. Let's load the `FPBKPack2` library and take a look at the data set and at an accompanying map of the stratification.
 
+The easiest way to install the package from GitHub is to use the `install_git` function in the `devtools` library.
+
 ```{r, echo = TRUE}
 ## install the package first with devtools
+## install.packages("devtools")
+
 ## devtools::install_git("https://github.com/highamm/FPBKPack2.git")
 library(FPBKPack2)
 

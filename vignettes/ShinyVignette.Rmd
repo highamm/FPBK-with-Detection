@@ -188,7 +188,11 @@ You will need to open `R` or `RStudio` on your personal desktop and run the foll
 ##library(shiny)
 ```
 
+You will also need to install the `FPBKPack2` package from GitHub. The easiest way to do this is to use the `install_git` function in the `devtools` library.
+
 ```{r, echo=TRUE, eval=FALSE}
+##install.packages("devtools")
+
 ## install the R Package here
 devtools::install_git("https://github.com/highamm/FPBKPack2.git")
 ```
@@ -197,7 +201,19 @@ This installs the `R` package needed to run the `Shiny` app. Next, we will copy 
 
 ```{r, echo=TRUE, eval=FALSE}
 ## running this line should open a web browser with the Shiny app.
-runGitHub("Shiny-FPBK", "highamm", destdir = "~/Desktop/appfolder",
+## On a Mac, the ~ starts the path on your home directory
+shiny::runGitHub("Shiny-FPBK", "highamm", 
+  destdir = "~/Desktop/appfolder",
+  launch.browser = TRUE)
+
+## full path name for a PC
+shiny::runGitHub("Shiny-FPBK", "highamm",
+  destdir = "C:/Users/highamm/Desktop/appfolder",
+  launch.browser = TRUE)
+
+## full path name for a Mac
+shiny::runGitHub("Shiny-FPBK", "highamm",
+  destdir = "/Users/highamm/Desktop/appfolder",
   launch.browser = TRUE)
 ```
 

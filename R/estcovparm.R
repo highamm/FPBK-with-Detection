@@ -208,13 +208,13 @@ estcovparm <- function(response, designmatrix, xcoordsvec, ycoordsvec,
     
     zhat <- response[ind.sa] / pivecsa
     
-    possible.nugget <- c(0.01, var(zhat), var(zhat) / 2)
+    possible.nugget <- c(var(zhat) / 4, var(zhat), var(zhat) / 2)
     possible.theta1 <- log(possible.nugget)
     
-    possible.parsil <- c(0.01, var(zhat), var(zhat) / 2)
+    possible.parsil <- c(var(zhat) / 4, var(zhat), var(zhat) / 2)
     possible.theta2 <- log(possible.parsil)
     
-    possible.range <- c(0.01, median(distmat),
+    possible.range <- c(median(distmat) / 2, median(distmat),
       max(distmat))
     possible.theta3 <- log(possible.range)
     
