@@ -94,7 +94,7 @@
       <h1>Using the GSPE Shiny App</h1>
                         <h4 class="author">Matt Higham</h4>
             
-            <h4 class="date">2019-07-21</h4>
+            <h4 class="date">2019-07-22</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/highamm/FPBKPack2/blob/master/vignettes/ShinyVignette.Rmd"><code>vignettes/ShinyVignette.Rmd</code></a></small>
       <div class="hidden name"><code>ShinyVignette.Rmd</code></div>
@@ -204,11 +204,26 @@
 ## install.packages("shiny")
 ## install.packages("shinyFiles")
 ##library(shiny)</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## install the R Package here
+<p>You will also need to install the <code>FPBKPack2</code> package from GitHub. The easiest way to do this is to use the <code>install_git</code> function in the <code>devtools</code> library.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">##install.packages("devtools")
+
+## install the R Package here
 devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/reexports.html">install_git</a></span>(<span class="st">"https://github.com/highamm/FPBKPack2.git"</span>)</code></pre></div>
 <p>This installs the <code>R</code> package needed to run the <code>Shiny</code> app. Next, we will copy the files that generate the <code>Shiny</code> app onto your personal computer. You may want to modify the <code>destdir</code> argument so that the code creates a folder at a different location of your computer. Currently, running the line of code will create a folder titled “appfolder” on my Desktop.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## running this line should open a web browser with the Shiny app.
-<span class="kw">runGitHub</span>(<span class="st">"Shiny-FPBK"</span>, <span class="st">"highamm"</span>, <span class="dt">destdir =</span> <span class="st">"~/Desktop/appfolder"</span>,
+## On a Mac, the ~ starts the path on your home directory
+shiny<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/shiny/man/runUrl.html">runGitHub</a></span>(<span class="st">"Shiny-FPBK"</span>, <span class="st">"highamm"</span>, 
+  <span class="dt">destdir =</span> <span class="st">"~/Desktop/appfolder"</span>,
+  <span class="dt">launch.browser =</span> <span class="ot">TRUE</span>)
+
+## full path name for a PC
+shiny<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/shiny/man/runUrl.html">runGitHub</a></span>(<span class="st">"Shiny-FPBK"</span>, <span class="st">"highamm"</span>,
+  <span class="dt">destdir =</span> <span class="st">"C:/Users/highamm/Desktop/appfolder"</span>,
+  <span class="dt">launch.browser =</span> <span class="ot">TRUE</span>)
+
+## full path name for a Mac
+shiny<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/shiny/man/runUrl.html">runGitHub</a></span>(<span class="st">"Shiny-FPBK"</span>, <span class="st">"highamm"</span>,
+  <span class="dt">destdir =</span> <span class="st">"/Users/highamm/Desktop/appfolder"</span>,
   <span class="dt">launch.browser =</span> <span class="ot">TRUE</span>)</code></pre></div>
 <p>If all goes well, you should see something pop up in your browser like this:</p>
 <p>The major advantage of using this function is that it is portable in the sense that it works for all document formats that knitr supports, so you do not need to think if you have to use, for example, LaTeX or Markdown syntax, to embed an external image. Chunk options related to graphics output that work for normal R plots also work for these images, such as out.width and out.height.</p>

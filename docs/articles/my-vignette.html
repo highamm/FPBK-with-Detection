@@ -94,7 +94,7 @@
       <h1>Using the GSPE R Package</h1>
                         <h4 class="author">Matt Higham</h4>
             
-            <h4 class="date">2019-07-21</h4>
+            <h4 class="date">2019-07-22</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/highamm/FPBKPack2/blob/master/vignettes/my-vignette.Rmd"><code>vignettes/my-vignette.Rmd</code></a></small>
       <div class="hidden name"><code>my-vignette.Rmd</code></div>
@@ -112,13 +112,16 @@
 <li>Section 2 shows how to obtain a population prediction assuming constant detection across all sites.</li>
 <li>Section 3 shows how to obtain a population prediction using radiocollar data with the possibility of site covariates useful for predicting detection.</li>
 </ul>
-<!-- To cite the package, run the following lines: --><hr>
+<hr>
 </div>
 <div id="section-1-perfect-detection" class="section level2">
 <h2 class="hasAnchor">
 <a href="#section-1-perfect-detection" class="anchor"></a>Section 1: Perfect Detection</h2>
 <p>As mentioned above, we will use a simulated moose survey. Though we have sightability trials for this particular data set, suppose first that we want to assume perfect detection. Like many moose data sets, the sites are stratified into a “High” strata and a “Low” strata. Let’s load the <code>FPBKPack2</code> library and take a look at the data set and at an accompanying map of the stratification.</p>
+<p>The easiest way to install the package from GitHub is to use the <code>install_git</code> function in the <code>devtools</code> library.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## install the package first with devtools
+## install.packages("devtools")
+
 ## devtools::install_git("https://github.com/highamm/FPBKPack2.git")
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(FPBKPack2)
 
@@ -596,15 +599,15 @@ preddf_strat &lt;-<span class="st"> </span>multiobjdetection<span class="op">$</
 
 predobj_dethigh &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(<span class="dt">object =</span> slmobj_dethigh)
 predobj_dethigh<span class="op">$</span>FPBK_Prediction
-<span class="co">#&gt;          [,1]</span>
-<span class="co">#&gt; [1,] 1483.087</span>
+<span class="co">#&gt;         [,1]</span>
+<span class="co">#&gt; [1,] 1504.31</span>
 output_sightability &lt;-<span class="st"> </span><span class="kw"><a href="../reference/FPBKoutput.html">FPBKoutput</a></span>(<span class="dt">pred_info =</span> predobj_dethigh)
 <span class="co">#&gt;      Prediction SE(Prediction)</span>
-<span class="co">#&gt; [1,]   1483.087       188.2299</span>
+<span class="co">#&gt; [1,]    1504.31       182.6476</span>
 <span class="co">#&gt;      Lower Bound Upper Bound Proportion of Mean</span>
-<span class="co">#&gt; 80 %        1242        1724               0.16</span>
-<span class="co">#&gt; 90 %        1173        1793               0.21</span>
-<span class="co">#&gt; 95 %        1114        1852               0.25</span></code></pre></div>
+<span class="co">#&gt; 80 %        1270        1738               0.16</span>
+<span class="co">#&gt; 90 %        1204        1805               0.20</span>
+<span class="co">#&gt; 95 %        1146        1862               0.24</span></code></pre></div>
 <p>We can also predict the population total, fitting a covariance model for the high and low strata separately using <code>multistrat</code>:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">multiobjsightability &lt;-<span class="st"> </span><span class="kw"><a href="../reference/multistrat.html">multistrat</a></span>(<span class="dt">formula =</span> Moose <span class="op">~</span><span class="st"> </span><span class="dv">1</span>,
   <span class="dt">data =</span> simdf,
@@ -687,17 +690,17 @@ predobj_predwts &lt;-<span class="st"> </span><span class="kw"><a href="https://
   <span class="dt">FPBKcol =</span> <span class="st">"predwts"</span>) ## added FPBKcol argument here
 predobj_predwts<span class="op">$</span>FPBK_Prediction
 <span class="co">#&gt;          [,1]</span>
-<span class="co">#&gt; [1,] 1695.816</span>
+<span class="co">#&gt; [1,] 1725.785</span>
 <span class="kw"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span>(predobj_predwts<span class="op">$</span>PredVar)
 <span class="co">#&gt;          [,1]</span>
-<span class="co">#&gt; [1,] 204.4047</span>
+<span class="co">#&gt; [1,] 208.5682</span>
 output_predwts &lt;-<span class="st"> </span><span class="kw"><a href="../reference/FPBKoutput.html">FPBKoutput</a></span>(predobj_predwts)
 <span class="co">#&gt;      Prediction SE(Prediction)</span>
-<span class="co">#&gt; [1,]   1695.816       204.4047</span>
+<span class="co">#&gt; [1,]   1725.785       208.5682</span>
 <span class="co">#&gt;      Lower Bound Upper Bound Proportion of Mean</span>
-<span class="co">#&gt; 80 %        1434        1958               0.15</span>
-<span class="co">#&gt; 90 %        1360        2032               0.20</span>
-<span class="co">#&gt; 95 %        1295        2096               0.24</span></code></pre></div>
+<span class="co">#&gt; 80 %        1458        1993               0.15</span>
+<span class="co">#&gt; 90 %        1383        2069               0.20</span>
+<span class="co">#&gt; 95 %        1317        2135               0.24</span></code></pre></div>
 <p>If fitting a separate covariance model for each stratum, we would incorporate the <code>FPBKcol</code> argument in the multistrat function:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">multiobj_predwts &lt;-<span class="st"> </span><span class="kw"><a href="../reference/multistrat.html">multistrat</a></span>(<span class="dt">formula =</span> Moose <span class="op">~</span><span class="st"> </span><span class="dv">1</span>,
   <span class="dt">data =</span> simdf,
