@@ -31,7 +31,9 @@ Note that the estimator is called the _GSPE_ (Geo-Spatial Population Estimator) 
 You can install the FPBKPack2 from [GitHub](https://github.com/highamm/FPBKPack2) with:
 
 ```{r, echo=TRUE, message=FALSE, warning=FALSE, results = "hide"}
+## install.packages("devtools")
 devtools::install_git("https://github.com/highamm/FPBKPack2.git")
+library(FPBKPack2)
 ```
 
 ## Basic Example

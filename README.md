@@ -20,7 +20,9 @@ Installation
 You can install the FPBKPack2 from [GitHub](https://github.com/highamm/FPBKPack2) with:
 
 ``` r
+## install.packages("devtools")
 devtools::install_git("https://github.com/highamm/FPBKPack2.git")
+library(FPBKPack2)
 ```
 
 Basic Example
