@@ -94,7 +94,7 @@
       <h1>Using the GSPE R Package</h1>
                         <h4 class="author">Matt Higham</h4>
             
-            <h4 class="date">2019-07-22</h4>
+            <h4 class="date">2019-07-24</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/highamm/FPBKPack2/blob/master/vignettes/my-vignette.Rmd"><code>vignettes/my-vignette.Rmd</code></a></small>
       <div class="hidden name"><code>my-vignette.Rmd</code></div>
@@ -599,15 +599,20 @@ preddf_strat &lt;-<span class="st"> </span>multiobjdetection<span class="op">$</
 
 predobj_dethigh &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(<span class="dt">object =</span> slmobj_dethigh)
 predobj_dethigh<span class="op">$</span>FPBK_Prediction
-<span class="co">#&gt;         [,1]</span>
-<span class="co">#&gt; [1,] 1504.31</span>
+<span class="co">#&gt;          [,1]</span>
+<span class="co">#&gt; [1,] 1510.328</span>
 output_sightability &lt;-<span class="st"> </span><span class="kw"><a href="../reference/FPBKoutput.html">FPBKoutput</a></span>(<span class="dt">pred_info =</span> predobj_dethigh)
 <span class="co">#&gt;      Prediction SE(Prediction)</span>
-<span class="co">#&gt; [1,]    1504.31       182.6476</span>
+<span class="co">#&gt; [1,]   1510.328       184.2228</span>
 <span class="co">#&gt;      Lower Bound Upper Bound Proportion of Mean</span>
-<span class="co">#&gt; 80 %        1270        1738               0.16</span>
-<span class="co">#&gt; 90 %        1204        1805               0.20</span>
-<span class="co">#&gt; 95 %        1146        1862               0.24</span></code></pre></div>
+<span class="co">#&gt; 80 %        1274        1746               0.16</span>
+<span class="co">#&gt; 90 %        1207        1813               0.20</span>
+<span class="co">#&gt; 95 %        1149        1871               0.24</span>
+<span class="co">#&gt;      Numb. Sites Sampled Total Numb. Sites Animals Counted Total Area</span>
+<span class="co">#&gt; [1,]                  60               127             501        254</span>
+<span class="co">#&gt;      Area Sampled</span>
+<span class="co">#&gt; [1,]          120</span></code></pre></div>
+<p><img src="my-vignette_files/figure-html/unnamed-chunk-22-1.png" width="700"><img src="my-vignette_files/figure-html/unnamed-chunk-22-2.png" width="700"></p>
 <p>We can also predict the population total, fitting a covariance model for the high and low strata separately using <code>multistrat</code>:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">multiobjsightability &lt;-<span class="st"> </span><span class="kw"><a href="../reference/multistrat.html">multistrat</a></span>(<span class="dt">formula =</span> Moose <span class="op">~</span><span class="st"> </span><span class="dv">1</span>,
   <span class="dt">data =</span> simdf,
@@ -690,17 +695,22 @@ predobj_predwts &lt;-<span class="st"> </span><span class="kw"><a href="https://
   <span class="dt">FPBKcol =</span> <span class="st">"predwts"</span>) ## added FPBKcol argument here
 predobj_predwts<span class="op">$</span>FPBK_Prediction
 <span class="co">#&gt;          [,1]</span>
-<span class="co">#&gt; [1,] 1725.785</span>
+<span class="co">#&gt; [1,] 1730.832</span>
 <span class="kw"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span>(predobj_predwts<span class="op">$</span>PredVar)
 <span class="co">#&gt;          [,1]</span>
-<span class="co">#&gt; [1,] 208.5682</span>
+<span class="co">#&gt; [1,] 211.0285</span>
 output_predwts &lt;-<span class="st"> </span><span class="kw"><a href="../reference/FPBKoutput.html">FPBKoutput</a></span>(predobj_predwts)
 <span class="co">#&gt;      Prediction SE(Prediction)</span>
-<span class="co">#&gt; [1,]   1725.785       208.5682</span>
+<span class="co">#&gt; [1,]   1730.832       211.0285</span>
 <span class="co">#&gt;      Lower Bound Upper Bound Proportion of Mean</span>
-<span class="co">#&gt; 80 %        1458        1993               0.15</span>
-<span class="co">#&gt; 90 %        1383        2069               0.20</span>
-<span class="co">#&gt; 95 %        1317        2135               0.24</span></code></pre></div>
+<span class="co">#&gt; 80 %        1460        2001               0.16</span>
+<span class="co">#&gt; 90 %        1384        2078               0.20</span>
+<span class="co">#&gt; 95 %        1317        2144               0.24</span>
+<span class="co">#&gt;      Numb. Sites Sampled Total Numb. Sites Animals Counted Total Area</span>
+<span class="co">#&gt; [1,]                 100               400            1011        800</span>
+<span class="co">#&gt;      Area Sampled</span>
+<span class="co">#&gt; [1,]          200</span></code></pre></div>
+<p><img src="my-vignette_files/figure-html/unnamed-chunk-26-1.png" width="700"><img src="my-vignette_files/figure-html/unnamed-chunk-26-2.png" width="700"></p>
 <p>If fitting a separate covariance model for each stratum, we would incorporate the <code>FPBKcol</code> argument in the multistrat function:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">multiobj_predwts &lt;-<span class="st"> </span><span class="kw"><a href="../reference/multistrat.html">multistrat</a></span>(<span class="dt">formula =</span> Moose <span class="op">~</span><span class="st"> </span><span class="dv">1</span>,
   <span class="dt">data =</span> simdf,
