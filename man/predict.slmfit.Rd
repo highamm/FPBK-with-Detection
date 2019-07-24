@@ -20,7 +20,7 @@ variance (0). Using the default assumes perfect detection.}
 \item{...}{Additional arguments}
 }
 \value{
-a list with \itemize{
+a list of class \code{sptotalPredOut} with \itemize{
   \item the estimated population total
   \item the estimated prediction variance
   \item a data frame containing the original data with the following variables appended: \enumerate{
@@ -36,10 +36,17 @@ a list with \itemize{
    \item vector with estimated covariance parameters
    \item the model formula used in \code{slmfit}
    \item the correlation model used
+   \item the prediction weights.
 }
 }
 \description{
 Takes the output of \code{slmfit} and uses FPBK to predict the counts on the unsampled sites.
 The column with the counts should have numeric values for the observed counts
 on the sampled sites and `NA` for any site that was not sampled.
+}
+\examples{
+slmfitobj <- slmfit(formula = Moose ~ CountPred + Stratum,
+data = vignettecount,
+xcoordcol = "Xcoords", ycoordcol = "Ycoords")
+predict(object = slmfitobj)
 }

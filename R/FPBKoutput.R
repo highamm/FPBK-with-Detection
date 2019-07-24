@@ -21,19 +21,23 @@
 #'   \item a map of the kriged counts (optional)
 #'   \item a summary of the sample data (optional)
 #'   \item an empirical variogram from \code{gstat} with the fitted variogram model with details of the empirical variogram and spatial parameter estimates (optional)
+#'   \item a data frame with the site-by-site predictions
 #' }
+#' @examples 
+#' slmfitobj <- slmfit(formula = Moose ~ CountPred + Stratum,
+#' data = vignettecount,
+#' xcoordcol = "Xcoords", ycoordcol = "Ycoords")
+#' predobj <- predict(object = slmfitobj)
+#' FPBKoutput(pred_info = predobj)
 #' @import ggplot2
 #' @export FPBKoutput
 
-## next steps: write up delta method
-## consider scaling the nugget variance for the stratified sites
-## add option to input shapefile
-## make sure maps show counts, not densities
+
 
 FPBKoutput <- function(pred_info, conf_level = c(0.80, 
   0.90, 0.95),
-  get_krigmap = FALSE, get_sampdetails = FALSE,
-  get_variogram = FALSE,
+  get_krigmap = TRUE, get_sampdetails = TRUE,
+  get_variogram = TRUE,
   pointsize = 2) {
 
 pred.total <- pred_info$FPBK_Prediction

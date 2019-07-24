@@ -17,6 +17,9 @@
 #'   \item The method used to get the variance covariance matrix
 #'   for detection probabilities.
 #' }
+#' @examples
+#' df <- data.frame(y = rbinom(30, 1, 0.7), x = rnorm(30, 4, 0.4))
+#' get_detection(formula = y ~ x, data = df)
 #' @import stats
 #' @export get_detection
 

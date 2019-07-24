@@ -1,6 +1,6 @@
 #' Summarizes a fitted spatial linear model
 #'
-#' @param object is an object generated from \code{slmfit}.
+#' @param object is an object generated from \code{\link{slmfit}}.
 #' @param ... are options to be passed to \code{print}
 #' @return a list with \itemize{
 #'   \item model formula

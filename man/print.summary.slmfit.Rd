@@ -8,7 +8,7 @@
   3L), signif.stars = getOption("show.signif.stars"), ...)
 }
 \arguments{
-\item{x}{is an summary object generated from}
+\item{x}{is an object generated from \code{\link{slmfit}}}
 
 \item{digits}{is the number of digits to be displayed in the
 model output}

@@ -68,3 +68,7 @@ a list with \itemize{
 Estimates regression coefficients and spatial autocorrelation
 parameters.
 }
+\examples{
+slmfit(formula = Moose ~ CountPred + Stratum, data = vignettecount,
+xcoordcol = "Xcoords", ycoordcol = "Ycoords")
+}

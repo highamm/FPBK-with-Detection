@@ -5,8 +5,8 @@
 \title{Create maps and summaries from FPBK results.}
 \usage{
 FPBKoutput(pred_info, conf_level = c(0.8, 0.9, 0.95),
-  get_krigmap = FALSE, get_sampdetails = FALSE,
-  get_variogram = FALSE, pointsize = 2)
+  get_krigmap = TRUE, get_sampdetails = TRUE, get_variogram = TRUE,
+  pointsize = 2)
 }
 \arguments{
 \item{pred_info}{is the output from \code{FPBK.pred} in this package.}
@@ -34,9 +34,17 @@ a variogram of the residuals should be returned}
   \item a map of the kriged counts (optional)
   \item a summary of the sample data (optional)
   \item an empirical variogram from \code{gstat} with the fitted variogram model with details of the empirical variogram and spatial parameter estimates (optional)
+  \item a data frame with the site-by-site predictions
 }
 }
 \description{
 The main purpose of this function is to take the results from FPBK and make
 readable maps, a fitted variogram plot, and normal-based prediction intervals. The main input for this function is the output from the \code{FPBK.pred} function.
+}
+\examples{
+slmfitobj <- slmfit(formula = Moose ~ CountPred + Stratum,
+data = vignettecount,
+xcoordcol = "Xcoords", ycoordcol = "Ycoords")
+predobj <- predict(object = slmfitobj)
+FPBKoutput(pred_info = predobj)
 }

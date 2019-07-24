@@ -5,8 +5,8 @@
 \title{Performs Block Kriging for Multiple Strata Separately}
 \usage{
 multistrat(formula, data, xcoordcol, ycoordcol, CorModel = "Exponential",
-  coordtype = "LatLon", estmethod = "REML", covestimates = c(NA, NA,
-  NA), detectionobj = NULL, detinfo = c(1, 0), areacol = NULL,
+  coordtype = "TM", estmethod = "REML", covestimates = c(NA, NA, NA),
+  detectionobj = NULL, detinfo = c(1, 0), areacol = NULL,
   FPBKcol = NULL, stratcol = NULL)
 }
 \arguments{
@@ -51,9 +51,23 @@ entire region of interest.}
 \item{stratcol}{is the column in the data set that contains the stratification variable.}
 }
 \value{
-a report with information about the predicted total across all sites as well as variogram information for each stratum in the column \code{stratcol}.
+Information about the predicted total across all sites as well as variogram information for each stratum in the column \code{stratcol}. Output is in similar structure to \code{\link{FPBKoutput}} but with multiple strata.
 }
 \description{
 Runs \code{slmfit}, \code{predict}, and \code{FPBKoutput} for each
 stratum in a user-specified stratification variable. Note: if fitting the spatial model separately for each stratum, then stratum cannot be included as a covariate in the \code{formula} argument.
+}
+\examples{
+multistrat(formula = Moose ~ CountPred, data = vignettecount,
+xcoordcol = "Xcoords", ycoordcol = "Ycoords",
+areacol = "Area", stratcol = "Stratum")
+
+## Note how the column names for coordinates, area, and stratum
+## must be in quotes:
+
+\dontrun{
+multistrat(formula = Moose ~ CountPred, data = vignettecount,
+xcoordcol = Xcoords, ycoordcol = Ycoords,
+areacol = Area, stratcol = Stratum)
+#' }
 }

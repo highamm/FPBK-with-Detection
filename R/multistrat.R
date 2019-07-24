@@ -30,14 +30,27 @@
 #' than the population total, like the total for a subset of the
 #' entire region of interest.
 #' @param stratcol is the column in the data set that contains the stratification variable. 
-#' @return a report with information about the predicted total across all sites as well as variogram information for each stratum in the column \code{stratcol}.
+#' @return Information about the predicted total across all sites as well as variogram information for each stratum in the column \code{stratcol}. Output is in similar structure to \code{\link{FPBKoutput}} but with multiple strata.
+#' @examples
+#' multistrat(formula = Moose ~ CountPred, data = vignettecount,
+#' xcoordcol = "Xcoords", ycoordcol = "Ycoords",
+#' areacol = "Area", stratcol = "Stratum")
+#' 
+#' ## Note how the column names for coordinates, area, and stratum
+#' ## must be in quotes:
+#' 
+#' \dontrun{
+#' multistrat(formula = Moose ~ CountPred, data = vignettecount,
+#' xcoordcol = Xcoords, ycoordcol = Ycoords,
+#' areacol = Area, stratcol = Stratum)
+#' #' }
 #' @import stats
 #' @export multistrat
 
 
 multistrat <- function(formula, data, xcoordcol, ycoordcol,
   CorModel = "Exponential",
-  coordtype = "LatLon", estmethod = "REML",
+  coordtype = "TM", estmethod = "REML",
   covestimates = c(NA, NA, NA),
   detectionobj = NULL,
   detinfo = c(1, 0), 

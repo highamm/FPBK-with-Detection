@@ -4,6 +4,7 @@
 #' the finite population block kriging from \code{FPBKoutput}.
 #'
 #' @param output_info is the output from \code{FPBKoutput} in this package.
+#' @return An HTML report in your current working directory.
 #' @import ggplot2
 #' @export get_reportdoc
 

@@ -7,7 +7,7 @@
 \method{residuals}{slmfit}(object, ...)
 }
 \arguments{
-\item{object}{a slmfit object}
+\item{object}{an object from \code{\link{slmfit}}}
 
 \item{...}{additional arguments}
 }

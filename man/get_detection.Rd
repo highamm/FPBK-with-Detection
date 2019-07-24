@@ -30,3 +30,7 @@ a list with \itemize{
 \description{
 Estimates logistic regression coefficients from detection data.
 }
+\examples{
+df <- data.frame(y = rbinom(30, 1, 0.7), x = rnorm(30, 4, 0.4))
+get_detection(formula = y ~ x, data = df)
+}

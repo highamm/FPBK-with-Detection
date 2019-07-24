@@ -46,6 +46,9 @@
 #'        \item Other items used in \code{predict}
 #'        }
 #' }
+#' @examples 
+#' slmfit(formula = Moose ~ CountPred + Stratum, data = vignettecount,
+#' xcoordcol = "Xcoords", ycoordcol = "Ycoords")
 #' @import stats
 #' @export slmfit
 

@@ -1,6 +1,6 @@
 #' Extract Model Residuals
 #'
-#' @param object a slmfit object
+#' @param object an object from \code{\link{slmfit}}
 #' @param ... additional arguments
 #' @return a vector of residuals. Without detection, the residuals are  each observed count minus the estimated mean. With detection, the residuals are each observed count minus (estimated mean times the estimated detection).
 #' @export

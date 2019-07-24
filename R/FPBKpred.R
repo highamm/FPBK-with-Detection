@@ -12,7 +12,7 @@
 #' \code{c(1, 0)}, indicating perfect detection (1) with no
 #' variance (0). Using the default assumes perfect detection.
 #' @param ... Additional arguments
-#' @return a list with \itemize{
+#' @return a list of class \code{sptotalPredOut} with \itemize{
 #'   \item the estimated population total
 #'   \item the estimated prediction variance
 #'   \item a data frame containing the original data with the following variables appended: \enumerate{
@@ -28,9 +28,16 @@
 #'    \item vector with estimated covariance parameters
 #'    \item the model formula used in \code{slmfit}
 #'    \item the correlation model used
+#'    \item the prediction weights.
 #' }
+#' @examples 
+#' slmfitobj <- slmfit(formula = Moose ~ CountPred + Stratum,
+#' data = vignettecount,
+#' xcoordcol = "Xcoords", ycoordcol = "Ycoords")
+#' predict(object = slmfitobj)
 #' @import stats
 #' @export
+
 
 predict.slmfit <- function(object, FPBKcol = NULL,
   detinfo = c(1, 0), ...) {

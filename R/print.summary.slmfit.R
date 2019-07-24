@@ -1,6 +1,6 @@
 #' Prints the summary of a fitted spatial linear model
 #'
-#' @param x is an summary object generated from
+#' @param x is an object generated from \code{\link{slmfit}}
 #' @param digits is the number of digits to be displayed in the
 #' model output
 #' @param signif.stars is an option to show which predictors

@@ -9,6 +9,9 @@ get_reportdoc(output_info)
 \arguments{
 \item{output_info}{is the output from \code{FPBKoutput} in this package.}
 }
+\value{
+An HTML report in your current working directory.
+}
 \description{
 This function produces an HTML report with the results from 
 the finite population block kriging from \code{FPBKoutput}.
