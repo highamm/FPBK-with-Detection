@@ -373,18 +373,21 @@ _____________________________________
 
 Finally, the grid or predictions in the HTML output is only a scatterplot coloured by the predicted values with different shapes for whether or not a site was sampled. The .csv file that is uploaded with the prediction data does not have the spatial information necessary to make a more complete map of the predictions. If you have a shapefile along with its associate files (.shp, .dbf, .shx, and .prj) along with the data set with predictions generated from the "Get Prediction Data" button, you can upload both sets of files in the Map with Shapefile tab. 
 
-In order to use this feature, first make sure that the `rgdal` and `sp` packages are both installed. 
+In order to use this feature, first make sure that `rgeos`, `maptools`, `rgdal`, `sp`, and `broom` packages are all installed. This only need to be installed once.
 
 ```{r, echo=TRUE, eval=FALSE}
+install.packages("rgeos")
+install.packages("maptools")
 install.packages("rgdal")
 install.packages("sp")
+install.packages("broom")
 ```
 
 What is crucial is that there is an ID number in the shapefile that matches ID numbers in the prediction data set. The common site ID numbers is how the `Shiny` app merges the two data sets so that the predictions go to the correct sites. 
 
 _Note_: When uploading the .shp, .dbf, .shx, and .prj files, you must upload all of the files at the __same__ time.
 
-Select the matching ID columns in the shapefile and in the prediction data set as well as the column with the predictions and then click the Submit button. If successful, a map should appear in the `Shiny` browser window. The map will automatically be saved in the folder you created in the Section 1 `runGitHub` step.
+Select the matching ID columns in the shapefile and in the prediction data set as well as the column with the predictions and then click the Submit button. If successful, a map should appear in the `Shiny` browser window. The map will automatically be saved in the folder you created in the Section 1 `runGitHub` step under the title _krigmap.png_.
 
 ALternatively, you can also make the map yourself using GIS software, Python, or some other software because the prediction data set is always output to a .csv file.
 
