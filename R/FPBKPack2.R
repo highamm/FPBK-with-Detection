@@ -11,11 +11,11 @@
 #' 
 #' \code{FPBKPack2} Main Functions
 #' \describe{
-#' \item{\code{slmfit}}{fits a spatial linear model to the observed data,}
-#' \item{\code{predict}}{uses Finite Population Block Kriging to predict counts on unobserved sites,}
-#' \item{\code{FPBKoutput}}{takes the resulting object from FPBKpred to construct confidence intervals, variograms, and maps,}
-#' \item{\code{get_reportdoc}}{puts the output into nice HTML format, and}
-#' \item{\code{multistrat}}{combines \code{slmfit}, \code{predict}, and \code{FPBKoutput} into one function so that the user can fit the spatial linear model to strata separately.}
+#' \item{\code{\link{slmfit}}}{fits a spatial linear model to the observed data,}
+#' \item{\code{\link{predict}}}{uses Finite Population Block Kriging to predict counts on unobserved sites,}
+#' \item{\code{\link{FPBKoutput}}}{takes the resulting object from FPBKpred to construct confidence intervals, variograms, and maps,}
+#' \item{\code{\link{get_reportdoc}}}{puts the output into nice HTML format, and}
+#' \item{\code{\link{multistrat}}}{combines \code{\link{slmfit}}, \code{\link{predict}}, and \code{\link{FPBKoutput}} into one function so that the user can fit the spatial linear model to strata separately.}
 #' }
 #' @docType package
 #' @name FPBKPack2

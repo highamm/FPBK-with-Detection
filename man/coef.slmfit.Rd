@@ -7,7 +7,7 @@
 \method{coef}{slmfit}(object, ...)
 }
 \arguments{
-\item{object}{a slmfit object}
+\item{object}{a \code{\link{slmfit}} object}
 
 \item{...}{additional arguments}
 }

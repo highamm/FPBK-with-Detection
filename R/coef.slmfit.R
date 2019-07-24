@@ -1,6 +1,6 @@
 #' Extract Model Coefficients
 #'
-#' @param object a slmfit object
+#' @param object a \code{\link{slmfit}} object
 #' @param ... additional arguments
 #' @return a vector of fitted model coefficients.
 #' @export

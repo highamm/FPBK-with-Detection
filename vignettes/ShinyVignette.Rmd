@@ -188,7 +188,7 @@ You will need to open `R` or `RStudio` on your personal desktop and run the foll
 ##library(shiny)
 ```
 
-You will also need to install the `FPBKPack2` package from GitHub. The easiest way to do this is to use the `install_git` function in the `devtools` library.
+You will also need to install the `FPBKPack2` package from GitHub. The easiest way to do this is to use the `install_git` function in the `devtools` library. You will need to first install `devtools` if you have not installed this package on your machine previously.
 
 ```{r, echo=TRUE, eval=FALSE}
 ##install.packages("devtools")
@@ -372,6 +372,13 @@ _____________________________________
 ##### `Map with Shapefile`
 
 Finally, the grid or predictions in the HTML output is only a scatterplot coloured by the predicted values with different shapes for whether or not a site was sampled. The .csv file that is uploaded with the prediction data does not have the spatial information necessary to make a more complete map of the predictions. If you have a shapefile along with its associate files (.shp, .dbf, .shx, and .prj) along with the data set with predictions generated from the "Get Prediction Data" button, you can upload both sets of files in the Map with Shapefile tab. 
+
+In order to use this feature, first make sure that the `rgdal` and `sp` packages are both installed. 
+
+```{r, echo=TRUE, eval=FALSE}
+install.packages("rgdal")
+install.packages("sp")
+```
 
 What is crucial is that there is an ID number in the shapefile that matches ID numbers in the prediction data set. The common site ID numbers is how the `Shiny` app merges the two data sets so that the predictions go to the correct sites. 
 
