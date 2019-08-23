@@ -68,3 +68,11 @@ get_reportdoc(outputobj)
 We can also incorporate imperfect detection by adding a couple of extra arguments (see Sections 2 and 3 of the Article `Using the GSPE R Package`). The Article also has information on other options to the functions, such as specifying a specific region to predict, fitting separate covariance models for each stratum, etc.
 
 Finally, the Article `Using the GSPE Shiny App` gives directions on how to upload data and then use the package with a `Shiny` interface.
+
+Links to videos on how to use the `Shiny` app interface are given below:
+
+1.  [Loading the Shiny App](https://www.youtube.com/watch?v=I6L_-MlNgcw)
+
+2.  [Using the Shiny App with Perfect Detection](https://www.youtube.com/watch?v=Rp8Oefyda18)
+
+3.  [Incorporating Imperfect Detection into the Shiny App](https://www.youtube.com/watch?v=OtELtk-Yink)

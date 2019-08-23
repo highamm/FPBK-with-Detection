@@ -84,3 +84,11 @@ We  can also incorporate imperfect detection by adding a couple of extra argumen
 
 Finally, the Article `Using the GSPE Shiny App` gives directions on how to upload data and then use the package with a `Shiny` interface. 
 
+Links to videos on how to use the `Shiny` app interface are given below:
+
+1. [Loading the Shiny App](https://www.youtube.com/watch?v=I6L_-MlNgcw
+)
+
+2. [Using the Shiny App with Perfect Detection](https://www.youtube.com/watch?v=Rp8Oefyda18)
+
+3. [Incorporating Imperfect Detection into the Shiny App](https://www.youtube.com/watch?v=OtELtk-Yink)
