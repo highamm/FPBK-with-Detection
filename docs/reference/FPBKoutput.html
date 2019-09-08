@@ -8,10 +8,12 @@
 
 <title>Create maps and summaries from FPBK results. — FPBKoutput • FPBKPack2</title>
 
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/flatly/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
@@ -32,11 +34,12 @@
 
 
 
-<meta property="og:title" content="Create maps and summaries from FPBK results. — FPBKoutput" />
 
+<meta property="og:title" content="Create maps and summaries from FPBK results. — FPBKoutput" />
 <meta property="og:description" content="The main purpose of this function is to take the results from FPBK and make
 readable maps, a fitted variogram plot, and normal-based prediction intervals. The main input for this function is the output from the FPBK.pred function." />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -111,7 +114,6 @@ readable maps, a fitted variogram plot, and normal-based prediction intervals. T
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/highamm/FPBKPack2">
@@ -138,16 +140,14 @@ readable maps, a fitted variogram plot, and normal-based prediction intervals. T
     </div>
 
     <div class="ref-description">
-    
     <p>The main purpose of this function is to take the results from FPBK and make
 readable maps, a fitted variogram plot, and normal-based prediction intervals. The main input for this function is the output from the <code>FPBK.pred</code> function.</p>
-    
     </div>
 
     <pre class="usage"><span class='fu'>FPBKoutput</span>(<span class='no'>pred_info</span>, <span class='kw'>conf_level</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.8</span>, <span class='fl'>0.9</span>, <span class='fl'>0.95</span>),
   <span class='kw'>get_krigmap</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>get_sampdetails</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>get_variogram</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>pointsize</span> <span class='kw'>=</span> <span class='fl'>2</span>)</pre>
-    
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -183,7 +183,7 @@ a variogram of the residuals should be returned</p></td>
       <td><p>is the size of the points on the spatial graphic.</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     
@@ -195,7 +195,6 @@ a variogram of the residuals should be returned</p></td>
 <li><p>a data frame with the site-by-site predictions</p></li>
 </ul>
 
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>slmfitobj</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='slmfit.html'>slmfit</a></span>(<span class='kw'>formula</span> <span class='kw'>=</span> <span class='no'>Moose</span> ~ <span class='no'>CountPred</span> + <span class='no'>Stratum</span>,
@@ -1460,9 +1459,7 @@ a variogram of the residuals should be returned</p></td>
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-      
       <li><a href="#examples">Examples</a></li>
     </ul>
 

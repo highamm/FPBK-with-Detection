@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Extract Model Coefficients — coef.slmfit • FPBKPack2</title>
+<title>Data Set with Togiak March Moose Observatations. — MarchMoose • FPBKPack2</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,9 @@
 
 
 
-<meta property="og:title" content="Extract Model Coefficients — coef.slmfit" />
-<meta property="og:description" content="Extract Model Coefficients" />
+<meta property="og:title" content="Data Set with Togiak March Moose Observatations. — MarchMoose" />
+<meta property="og:description" content="A data set that can be used with the FPBKPack2 package. In
+this example, the counts are of moose on 860 sites of equal area." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -133,41 +134,33 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Extract Model Coefficients</h1>
-    <small class="dont-index">Source: <a href='https://github.com/highamm/FPBKPack2/blob/master/R/coef.slmfit.R'><code>R/coef.slmfit.R</code></a></small>
-    <div class="hidden name"><code>coef.slmfit.Rd</code></div>
+    <h1>Data Set with Togiak March Moose Observatations.</h1>
+    <small class="dont-index">Source: <a href='https://github.com/highamm/FPBKPack2/blob/master/R/data.R'><code>R/data.R</code></a></small>
+    <div class="hidden name"><code>MarchMoose.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Extract Model Coefficients</p>
+    <p>A data set that can be used with the <code>FPBKPack2</code> package. In
+this example, the counts are of moose on 860 sites of equal area.</p>
     </div>
 
-    <pre class="usage"><span class='co'># S3 method for slmfit</span>
-<span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='no'>object</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='no'>MarchMoose</span></pre>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>object</th>
-      <td><p>a <code><a href='slmfit.html'>slmfit</a></code> object</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>additional arguments</p></td>
-    </tr>
-    </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
-    <p>a vector of fitted model coefficients.</p>
+    <p>A data frame object:</p><dl class='dl-horizontal'>
+  <dt>centrlat</dt><dd><p>The latitude of the centroid for each site</p></dd>
+  <dt>centrlon</dt><dd><p>The latitude of the centroid for each site</p></dd>
+  <dt>Strat</dt><dd><p>A stratification variable</p></dd>
+  ...
+</dl>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#value">Value</a></li>
+      <li><a href="#format">Format</a></li>
     </ul>
 
   </div>

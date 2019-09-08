@@ -94,7 +94,7 @@
       <h1>Using the GSPE Shiny App</h1>
                         <h4 class="author">Matt Higham</h4>
             
-            <h4 class="date">2019-07-24</h4>
+            <h4 class="date">2019-09-08</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/highamm/FPBKPack2/blob/master/vignettes/ShinyVignette.Rmd"><code>vignettes/ShinyVignette.Rmd</code></a></small>
       <div class="hidden name"><code>ShinyVignette.Rmd</code></div>
@@ -330,18 +330,22 @@ SE</code></pre></div>
 <a href="#map-with-shapefile" class="anchor"></a><code>Map with Shapefile</code>
 </h5>
 <p>Finally, the grid or predictions in the HTML output is only a scatterplot coloured by the predicted values with different shapes for whether or not a site was sampled. The .csv file that is uploaded with the prediction data does not have the spatial information necessary to make a more complete map of the predictions. If you have a shapefile along with its associate files (.shp, .dbf, .shx, and .prj) along with the data set with predictions generated from the “Get Prediction Data” button, you can upload both sets of files in the Map with Shapefile tab.</p>
-<p>In order to use this feature, first make sure that the <code>rgdal</code> and <code>sp</code> packages are both installed.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"rgdal"</span>)
-<span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"sp"</span>)</code></pre></div>
+<p>In order to use this feature, first make sure that <code>rgeos</code>, <code>maptools</code>, <code>rgdal</code>, <code>sp</code>, and <code>broom</code> packages are all installed. This only need to be installed once.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"rgeos"</span>)
+<span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"maptools"</span>)
+<span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"rgdal"</span>)
+<span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"sp"</span>)
+<span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"broom"</span>)</code></pre></div>
 <p>What is crucial is that there is an ID number in the shapefile that matches ID numbers in the prediction data set. The common site ID numbers is how the <code>Shiny</code> app merges the two data sets so that the predictions go to the correct sites.</p>
 <p><em>Note</em>: When uploading the .shp, .dbf, .shx, and .prj files, you must upload all of the files at the <strong>same</strong> time.</p>
-<p>Select the matching ID columns in the shapefile and in the prediction data set as well as the column with the predictions and then click the Submit button. If successful, a map should appear in the <code>Shiny</code> browser window. The map will automatically be saved in the folder you created in the Section 1 <code>runGitHub</code> step.</p>
+<p>Select the matching ID columns in the shapefile and in the prediction data set as well as the column with the predictions and then click the Submit button. If successful, a map should appear in the <code>Shiny</code> browser window. The map will automatically be saved in the folder you created in the Section 1 <code>runGitHub</code> step under the title <em>krigmap.png</em>.</p>
 <p>ALternatively, you can also make the map yourself using GIS software, Python, or some other software because the prediction data set is always output to a .csv file.</p>
 </div>
 </div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+
         <div id="tocnav">
       <h2 class="hasAnchor">
 <a href="#tocnav" class="anchor"></a>Contents</h2>

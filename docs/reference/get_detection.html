@@ -8,10 +8,12 @@
 
 <title>Obtains estimates for detection parameters through logistic regression. — get_detection • FPBKPack2</title>
 
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/flatly/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
@@ -32,10 +34,11 @@
 
 
 
-<meta property="og:title" content="Obtains estimates for detection parameters through logistic regression. — get_detection" />
 
+<meta property="og:title" content="Obtains estimates for detection parameters through logistic regression. — get_detection" />
 <meta property="og:description" content="Estimates logistic regression coefficients from detection data." />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -110,7 +113,6 @@
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/highamm/FPBKPack2">
@@ -137,13 +139,11 @@
     </div>
 
     <div class="ref-description">
-    
     <p>Estimates logistic regression coefficients from detection data.</p>
-    
     </div>
 
     <pre class="usage"><span class='fu'>get_detection</span>(<span class='no'>formula</span>, <span class='no'>data</span>, <span class='kw'>varmethod</span> <span class='kw'>=</span> <span class='st'>"Bootstrap"</span>)</pre>
-    
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -162,7 +162,7 @@ be used in the logistic regression, and the spatial coordinates for all of the s
       <td><p>is the method to obtain the variance matrix for the detection probabilities, either "Delta" or "Bootstrap".</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>a list with</p><ul>
@@ -176,7 +176,6 @@ be used in the logistic regression, and the spatial coordinates for all of the s
   for detection probabilities.</p></li>
 </ul>
 
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>df</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>y</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/Binomial.html'>rbinom</a></span>(<span class='fl'>30</span>, <span class='fl'>1</span>, <span class='fl'>0.7</span>), <span class='kw'>x</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>30</span>, <span class='fl'>4</span>, <span class='fl'>0.4</span>))
@@ -191,7 +190,7 @@ be used in the logistic regression, and the spatial coordinates for all of the s
 #&gt; 
 #&gt; $formula
 #&gt; y ~ x
-#&gt; &lt;environment: 0x7fc1ec7f7320&gt;
+#&gt; &lt;environment: 0x7f88d23d1e88&gt;
 #&gt; 
 #&gt; $boot.coefs
 #&gt;                  [,1]          [,2]
@@ -1606,9 +1605,7 @@ be used in the logistic regression, and the spatial coordinates for all of the s
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-      
       <li><a href="#examples">Examples</a></li>
     </ul>
 

@@ -24,7 +24,7 @@
 #' A data set that can be used with the \code{FPBKPack2} package. In
 #' this example, the counts are of moose on 860 sites of equal area.
 #'
-#' @format A spatial polygons object inclding:
+#' @format A spatial polygons object including:
 #' \describe{
 #'   \item{CENTRLAT}{The latitude of the centroid for each site}
 #'   \item{CENTRLON}{The latitude of the centroid for each site}
@@ -68,3 +68,30 @@
 #'   ...
 #' }
 "vignettedetection"
+
+#' Data Set with Togiak March Moose Observatations.
+#'
+#' A data set that can be used with the \code{FPBKPack2} package. In
+#' this example, the counts are of moose on 860 sites of equal area.
+#'
+#' @format A data frame object:
+#' \describe{
+#'   \item{centrlat}{The latitude of the centroid for each site}
+#'   \item{centrlon}{The latitude of the centroid for each site}
+#'   \item{Strat}{A stratification variable}
+#'   ...
+#' }
+"MarchMoose"
+
+#' Simulated Data Set with Moose Radiocollar sightability observations.
+#'
+#' A data set that can be used with the \code{FPBKPack2} package. In
+#' this example, the there are two predictors for detection.
+#'
+#' @format A data frame object including:
+#' \describe{
+#'   \item{Moo.ID}{ID number for the radiocollared moose}
+#'   \item{Detected.}{Y if detected, N if not}
+#'   ...
+#' }
+"MarchSight"
