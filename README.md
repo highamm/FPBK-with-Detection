@@ -22,7 +22,7 @@ You can install the FPBK-with-Detection from [GitHub](https://github.com/highamm
 ``` r
 ## install.packages("devtools")
 devtools::install_git("https://github.com/highamm/FPBK-with-Detection.git")
-library(FPBK-with-Detection)
+library(FPBKPack2)
 ```
 
 Basic Example
