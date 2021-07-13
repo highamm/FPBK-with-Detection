@@ -1,11 +1,11 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-FPBKPack2
+FPBK-with-Detection
 =========
 
-The website for `FPBKPack2` can be found at its [Package Website](https://highamm.github.io/FPBKPack2/).
+The website for `FPBK-with-Detection` can be found at its [Package Website](https://highamm.github.io/FPBKPack2/).
 
-The goal of `FPBKPack2` is to predict a population total when
+The goal of `FPBK-with-Detection` is to predict a population total when
 
 1.  There are a finite number of sites in a region of interest.
 2.  Not all of the sites are sampled.
@@ -17,12 +17,12 @@ Note that the estimator is called the *GSPE* (Geo-Spatial Population Estimator) 
 Installation
 ------------
 
-You can install the FPBKPack2 from [GitHub](https://github.com/highamm/FPBKPack2) with:
+You can install the FPBK-with-Detection from [GitHub](https://github.com/highamm/FPBKPack-with-Detection) with:
 
 ``` r
 ## install.packages("devtools")
-devtools::install_git("https://github.com/highamm/FPBKPack2.git")
-library(FPBKPack2)
+devtools::install_git("https://github.com/highamm/FPBK-with-Detection.git")
+library(FPBK-with-Detection)
 ```
 
 Basic Example
