@@ -3,7 +3,7 @@
 FPBK-with-Detection
 =========
 
-The website for `FPBK-with-Detection` can be found at its [Package Website](https://highamm.github.io/FPBKPack2/).
+The website for `FPBK-with-Detection` can be found at its [Package Website](https://highamm.github.io/FPBK-with-Detection/).
 
 The goal of `FPBK-with-Detection` is to predict a population total when
 
